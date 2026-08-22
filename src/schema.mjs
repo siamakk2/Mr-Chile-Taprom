@@ -1,58 +1,49 @@
-import { site, faqs, fullAddress } from './site.config.mjs';
+import { site, faqs, fullAddress, L } from './site.config.mjs';
+import { ROUTES } from './routes.mjs';
 
-const ID = {
-  org: `${site.origin}/#business`,
-  site: `${site.origin}/#website`,
-  place: `${site.origin}/#place`,
-};
+const O = site.origin;
+const ID = { org: `${O}/#business`, site: `${O}/#website` };
+const abs = (p) => `${O}${p}`;
 
 const openingHours = () =>
-  site.hours
-    .filter((h) => h.open)
-    .map((h) => ({
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: `https://schema.org/${h.schemaDay}`,
-      opens: h.open,
-      closes: h.close,
-    }));
+  site.hours.filter((h) => h.open).map((h) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: `https://schema.org/${h.schemaDay}`,
+    opens: h.open,
+    closes: h.close,
+  }));
 
-const postalAddress = () => ({
-  '@type': 'PostalAddress',
-  streetAddress: site.street,
-  addressLocality: site.locality,
-  addressRegion: site.region,
-  postalCode: site.postal,
-  addressCountry: site.country,
-});
-
-const geo = () => ({ '@type': 'GeoCoordinates', latitude: site.lat, longitude: site.lng });
-
-// -----------------------------------------------------------------------------
-// The root business node. Multi-typed on purpose: BarOrPub carries the food and
-// drink semantics, EventVenue carries the bookable-venue semantics. Both are
-// true, and each unlocks a different class of query.
-// -----------------------------------------------------------------------------
-export const businessNode = () => ({
+// Multi-typed on purpose. BarOrPub competes for "taproom near me"; EventVenue
+// competes for "private event venue Santa Rosa", which is worth more. Both true.
+export const businessNode = (loc = 'en') => ({
   '@type': ['BarOrPub', 'EventVenue'],
   '@id': ID.org,
   name: site.name,
   alternateName: site.altName,
-  description: site.entityClaim,
+  description: L(site.entityClaim, loc),
   slogan: site.tagline,
-  url: `${site.origin}/`,
+  url: `${O}/`,
+  logo: abs('/img/logo.png'),
+  image: [abs('/img/patio-wide-1280.jpg'), abs('/img/taproom-1280.jpg'), abs('/img/tacos-beer-640.jpg')],
   telephone: site.phoneE164,
   email: site.email,
-  address: postalAddress(),
-  geo: geo(),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.street,
+    addressLocality: site.locality,
+    addressRegion: site.region,
+    postalCode: site.postal,
+    addressCountry: site.country,
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: site.lat, longitude: site.lng },
   hasMap: `https://www.google.com/maps/search/?api=1&query=${site.lat},${site.lng}`,
   openingHoursSpecification: openingHours(),
   priceRange: site.priceRange,
-  currenciesAccepted: site.currency,
+  currenciesAccepted: 'USD',
   paymentAccepted: 'Cash, Credit Card, Debit Card',
   foundingDate: site.founded,
   smokingAllowed: false,
   publicAccess: true,
-  isAccessibleForFree: true,
   maximumAttendeeCapacity: 150,
   knowsLanguage: ['en-US', 'es-US'],
   areaServed: [
@@ -61,71 +52,67 @@ export const businessNode = () => ({
     { '@type': 'AdministrativeArea', name: 'North Bay' },
   ],
   servesCuisine: ['Bar food', 'Mexican', 'American'],
-  hasMenu: `${site.origin}/menu/`,
+  hasMenu: abs(ROUTES.menu[loc]),
   amenityFeature: site.amenities.map((a) => ({
     '@type': 'LocationFeatureSpecification',
-    name: a.name,
+    name: L(a.name, loc),
     value: true,
-    description: a.detail,
+    description: L(a.detail, loc),
   })),
-  sameAs: site.profiles.filter((u) => !u.endsWith('goo.gl/')),
-  potentialAction: [
-    {
-      '@type': 'ReserveAction',
-      name: 'Book a private event',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${site.origin}/private-events/`,
-        actionPlatform: [
-          'https://schema.org/DesktopWebPlatform',
-          'https://schema.org/MobileWebPlatform',
-        ],
-      },
+  sameAs: site.profiles,
+  potentialAction: [{
+    '@type': 'ReserveAction',
+    name: loc === 'es' ? 'Reservar un evento privado' : 'Book a private event',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: abs(ROUTES.private[loc]),
+      actionPlatform: ['https://schema.org/DesktopWebPlatform', 'https://schema.org/MobileWebPlatform'],
     },
-  ],
+  }],
 });
 
-export const websiteNode = () => ({
+export const websiteNode = (loc = 'en') => ({
   '@type': 'WebSite',
   '@id': ID.site,
-  url: `${site.origin}/`,
+  url: `${O}/`,
   name: site.name,
-  inLanguage: 'en-US',
+  inLanguage: loc === 'es' ? 'es-US' : 'en-US',
   publisher: { '@id': ID.org },
 });
 
 export const breadcrumb = (trail) => ({
   '@type': 'BreadcrumbList',
   itemListElement: trail.map((t, i) => ({
-    '@type': 'ListItem',
-    position: i + 1,
-    name: t.name,
-    item: `${site.origin}${t.path}`,
+    '@type': 'ListItem', position: i + 1, name: t.name, item: abs(t.path),
   })),
 });
 
-export const faqNode = (list = faqs) => ({
+export const faqNode = (list, loc = 'en') => ({
   '@type': 'FAQPage',
-  '@id': `${site.origin}/faq/#faq`,
+  '@id': `${abs(ROUTES.faq[loc])}#faq`,
+  inLanguage: loc === 'es' ? 'es-US' : 'en-US',
   mainEntity: list.map((f) => ({
     '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.a },
+    name: L(f.q, loc),
+    acceptedAnswer: { '@type': 'Answer', text: L(f.a, loc) },
   })),
 });
 
-// EventSeries with an eventSchedule — the honest way to publish recurring
-// programming without inventing dates.
-export const seriesNodes = () =>
+// EventSeries with an eventSchedule states "first Saturday of every month"
+// truthfully. Inventing Event dates to look active is how sites earn manual
+// actions; dated events below are real, taken from published flyers.
+export const seriesNodes = (loc = 'en') =>
   site.series.map((s) => ({
     '@type': 'EventSeries',
-    '@id': `${site.origin}/events/#${s.slug}`,
-    name: s.name,
-    description: s.long,
+    '@id': `${abs(ROUTES.events[loc])}#${s.slug}`,
+    name: L(s.name, loc),
+    description: L(s.long, loc),
+    ...(s.image ? { image: abs(`/img/${s.image}.jpg`) } : {}),
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: { '@id': ID.org },
     organizer: { '@id': ID.org },
-    ...(s.age === '21+' ? { typicalAgeRange: '21-' } : {}),
+    ...(s.partner ? { performer: { '@type': 'Organization', name: s.partner.name, url: s.partner.url } } : {}),
+    ...(L(s.age, loc) === '21+' ? { typicalAgeRange: '21-' } : {}),
     eventSchedule: {
       '@type': 'Schedule',
       byDay: `https://schema.org/${s.byDay}`,
@@ -137,72 +124,85 @@ export const seriesNodes = () =>
     },
   }));
 
-export const datedEventNodes = () =>
+export const datedEventNodes = (loc = 'en') =>
   site.datedEvents.map((e) => {
     const s = site.series.find((x) => x.slug === e.seriesSlug) || {};
+    const start = e.start || s.startTime;
+    const end = e.end || s.endTime;
+    // Events ending after midnight land on the following calendar day.
+    const endDate = end < start ? nextDay(e.date) : e.date;
     return {
       '@type': 'Event',
-      '@id': `${site.origin}/events/#${e.seriesSlug}-${e.date}`,
-      name: e.name || s.name,
-      description: e.description || s.long,
-      startDate: `${e.date}T${e.start || s.startTime}:00-07:00`,
-      endDate: `${e.date}T${e.end || s.endTime}:00-07:00`,
+      '@id': `${abs(ROUTES.events[loc])}#${e.seriesSlug}-${e.date}`,
+      name: L(e.name, loc) || L(s.name, loc),
+      description: L(e.description, loc) || L(s.long, loc),
+      startDate: `${e.date}T${start}:00-07:00`,
+      endDate: `${endDate}T${end}:00-07:00`,
       eventStatus: 'https://schema.org/EventScheduled',
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      ...(e.image ? { image: abs(`/img/${e.image}.jpg`) } : {}),
       location: { '@id': ID.org },
       organizer: { '@id': ID.org },
-      superEvent: { '@id': `${site.origin}/events/#${e.seriesSlug}` },
+      superEvent: { '@id': `${abs(ROUTES.events[loc])}#${e.seriesSlug}` },
+      ...(L(s.age, loc) === '21+' ? { typicalAgeRange: '21-' } : {}),
+      ...(e.lineup ? { performer: e.lineup.split('·').map((n) => ({ '@type': 'PerformingGroup', name: n.trim() })) } : {}),
       offers: {
         '@type': 'Offer',
         price: e.price ?? '0',
         priceCurrency: 'USD',
         availability: 'https://schema.org/InStock',
-        url: e.ticketUrl || `${site.origin}/events/`,
+        url: e.ticketUrl || abs(ROUTES.events[loc]),
         validFrom: `${e.date}T00:00:00-07:00`,
       },
     };
   });
 
-export const menuNode = () => ({
+function nextDay(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + 1));
+  return dt.toISOString().slice(0, 10);
+}
+
+export const menuNode = (loc = 'en') => ({
   '@type': 'Menu',
-  '@id': `${site.origin}/menu/#menu`,
+  '@id': `${abs(ROUTES.menu[loc])}#menu`,
   name: `${site.name} Menu`,
-  inLanguage: 'en-US',
+  inLanguage: loc === 'es' ? 'es-US' : 'en-US',
   hasMenuSection: site.menu.map((sec) => ({
     '@type': 'MenuSection',
-    name: sec.section,
-    description: sec.note,
+    name: L(sec.section, loc),
+    description: L(sec.note, loc),
     hasMenuItem: sec.items.map((i) => ({
       '@type': 'MenuItem',
-      name: i.name,
-      description: i.desc,
-      ...(i.price ? { offers: { '@type': 'Offer', price: i.price, priceCurrency: 'USD' } } : {}),
+      name: L(i.name, loc),
+      description: L(i.desc, loc),
     })),
   })),
 });
 
-export const serviceNodes = () =>
+export const serviceNodes = (loc = 'en') =>
   site.privatePackages.map((p) => ({
     '@type': 'Service',
-    '@id': `${site.origin}/private-events/#${p.name.toLowerCase().replace(/\s+/g, '-')}`,
-    name: `${p.name} — private event at ${site.name}`,
-    serviceType: 'Private event venue hire',
-    description: `${p.capacity}. Suited to ${p.best.toLowerCase()}. Includes ${p.includes.join(', ').toLowerCase()}.`,
+    '@id': `${abs(ROUTES.private[loc])}#${p.slug}`,
+    name: `${L(p.name, loc)} — ${site.name}`,
+    serviceType: loc === 'es' ? 'Renta de salón para eventos privados' : 'Private event venue hire',
+    description: `${L(p.capacity, loc)}. ${L(p.best, loc)}.`,
     provider: { '@id': ID.org },
     areaServed: { '@type': 'AdministrativeArea', name: 'Sonoma County' },
+    availableLanguage: ['en', 'es'],
   }));
 
-export const webPageNode = ({ path, title, description, trail }) => ({
+export const webPageNode = ({ path, title, description, trail, loc }) => ({
   '@type': 'WebPage',
-  '@id': `${site.origin}${path}#webpage`,
-  url: `${site.origin}${path}`,
+  '@id': `${abs(path)}#webpage`,
+  url: abs(path),
   name: title,
   description,
   isPartOf: { '@id': ID.site },
   about: { '@id': ID.org },
-  primaryImageOfPage: `${site.origin}/og.jpg`,
+  primaryImageOfPage: abs('/img/patio-wide-1280.jpg'),
   breadcrumb: breadcrumb(trail),
-  inLanguage: 'en-US',
+  inLanguage: loc === 'es' ? 'es-US' : 'en-US',
 });
 
 export const graph = (nodes) =>

@@ -1,6 +1,6 @@
 # Mr. Chile Taproom
 
-Static site for Mr. Chile Taproom, 4357 Montgomery Dr, Santa Rosa, CA.
+Bilingual (English + Spanish) static site for Mr. Chile Taproom, 4357 Montgomery Dr Suite B, Santa Rosa, CA.
 
 No framework, no client-side rendering, no dependencies. Node reads a config
 file and writes HTML. Every crawler — Googlebot, GPTBot, ClaudeBot,
@@ -107,3 +107,57 @@ Contrast meets WCAG AA throughout.
 5. Add real photography — the patio and the crowd on a Cumbia Rosa night are
    the two shots worth having
 6. Claim the Google Business Profile, then submit the sitemap in Search Console
+
+---
+
+## Bilingual build
+
+Every page is generated twice from one builder, with localized URLs:
+
+| English | Español |
+|---|---|
+| `/` | `/es/` |
+| `/events/` | `/es/eventos/` |
+| `/menu/` | `/es/menu/` |
+| `/private-events/` | `/es/eventos-privados/` |
+| `/visit/` | `/es/visitanos/` |
+| `/faq/` | `/es/preguntas/` |
+
+Spanish pages get Spanish URLs on purpose — `/es/eventos/` ranks for Spanish
+queries in a way `/es/events/` does not. Each page declares reciprocal
+`hreflang` for both versions plus `x-default`, so the two never compete.
+
+Copy lives as `{ en, es }` pairs in `src/site.config.mjs` and `src/routes.mjs`.
+The `L(value, locale)` helper resolves them. To add a language, add its code to
+`LOCALES`, add slugs to `ROUTES`, and fill in the third key.
+
+## Images
+
+Photos are processed once into `static/img/` at 640/1280px in both WebP and
+JPEG, and served through a `<picture>` element with `sizes`, so a phone in the
+car park pulls 640px rather than a desktop-sized file. Only the hero image is
+`eager` with `fetchpriority="high"`; everything else is lazy.
+
+The logo ships in two variants — `logo.png` (original, for light backgrounds and
+print) and `logo-light.png` (wordmark recoloured for the dark site). The header
+uses `mark-light.png`, the chile artwork alone.
+
+Event flyers are published at full width on the events page and are also the
+`image` property on each Event node, which is what Google event rich results
+display.
+
+## Adding an event
+
+One entry in `site.datedEvents` produces the flyer card, the board on the home
+page, full `Event` JSON-LD with `Offer` and `performer`, and a line in
+`llms.txt` — in both languages:
+
+```js
+{ seriesSlug:'cumbia-rosa', date:'2026-10-03', start:'20:15', end:'02:00',
+  name:'Cumbia Rosa', lineup:'DJ Edge · Clase con Maria y Rogelio',
+  price:'15', priceNote:{en:'$15 advance / $20 door', es:'$15 preventa / $20 en la puerta'},
+  ticketUrl:'https://www.ritmoypasiondance.com', image:'flyer-cumbia-rosa' }
+```
+
+Past dates drop off the site automatically at the next build. Drop the flyer
+into `static/img/` as `flyer-<name>.jpg` and `.webp`.

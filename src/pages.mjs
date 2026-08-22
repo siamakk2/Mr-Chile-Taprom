@@ -1,86 +1,136 @@
-import { site, faqs, fullAddress, hoursSummary } from './site.config.mjs';
-import { esc, PICADO } from './layout.mjs';
+import { site, faqs, fullAddress, hoursSummary, L } from './site.config.mjs';
+import { ROUTES, UI, formatDate, shortDate, time12 } from './routes.mjs';
+import { esc, pic, flyer, PICADO } from './layout.mjs';
 import * as S from './schema.mjs';
 
 const g = S.graph;
-const base = (path, title, description, trail) => [
-  S.businessNode(),
-  S.websiteNode(),
-  S.webPageNode({ path, title, description, trail }),
+const t = (k, loc) => L(UI[k], loc);
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${site.lat},${site.lng}`;
+const tel = `tel:${site.phoneE164}`;
+
+const base = (path, title, description, trail, loc) => [
+  S.businessNode(loc), S.websiteNode(loc),
+  S.webPageNode({ path, title, description, trail, loc }),
 ];
-const HOME = { name: 'Home', path: '/' };
+const home = (loc) => ({ name: loc === 'es' ? 'Inicio' : 'Home', path: ROUTES.home[loc] });
 
-const statusStrip = `<p class="status" data-status>${esc(hoursSummary)}</p>`;
+const status = (loc) => `<p class="status" data-status>${esc(L(hoursSummary, loc))}</p>`;
 
-const hoursTable = () => `<table class="hours" data-hours-table>
-<caption class="vh">Opening hours</caption>
-<tbody>${site.hours
-  .map(
-    (h) =>
-      `<tr${h.open ? '' : ' data-closed="true"'}><th scope="row">${h.day}</th><td>${h.label}</td></tr>`
-  )
+const hoursTable = (loc) => `<table class="hours" data-hours-table>
+<caption class="vh">${esc(t('hours', loc))}</caption><tbody>${site.hours
+  .map((h) => `<tr${h.open ? '' : ' data-closed="true"'}><th scope="row">${esc(L(h.day, loc))}</th><td>${esc(L(h.label, loc))}</td></tr>`)
   .join('')}</tbody></table>`;
 
-const faqBlock = (list) => `<div class="faq">${list
-  .map(
-    (f) => `<details><summary>${esc(f.q)}</summary><div class="faq__a"><p>${esc(f.a)}</p></div></details>`
-  )
+const faqBlock = (list, loc) => `<div class="faq">${list
+  .map((f) => `<details><summary>${esc(L(f.q, loc))}</summary><div class="faq__a"><p>${esc(L(f.a, loc))}</p></div></details>`)
   .join('')}</div>`;
 
-const napBlock = () => `<dl class="specs">
-<div><dt>Address</dt><dd>${esc(fullAddress)} &middot; <a href="https://www.google.com/maps/search/?api=1&amp;query=${site.lat},${site.lng}">Directions</a></dd></div>
-<div><dt>Phone</dt><dd><a href="tel:${site.phoneE164}">${site.phone}</a></dd></div>
-<div><dt>Email</dt><dd><a href="mailto:${site.email}">${esc(site.email)}</a></dd></div>
-<div><dt>Cross street</dt><dd>${esc(site.crossStreet)}, east Santa Rosa</dd></div>
-<div><dt>Parking</dt><dd>Free open lot on site, no permit or validation</dd></div>
-<div><dt>Capacity</dt><dd>Up to 150 for a full buyout</dd></div>
-<div><dt>Languages</dt><dd>English and Spanish spoken</dd></div>
+const napBlock = (loc) => `<dl class="specs">
+<div><dt>${esc(t('address', loc))}</dt><dd>${esc(fullAddress)} &middot; <a href="${mapUrl}">${esc(t('directions', loc))}</a></dd></div>
+<div><dt>${esc(t('phone', loc))}</dt><dd><a href="${tel}">${site.phone}</a></dd></div>
+<div><dt>${esc(t('email', loc))}</dt><dd><a href="mailto:${site.email}">${esc(site.email)}</a></dd></div>
+<div><dt>${esc(t('crossSt', loc))}</dt><dd>${esc(site.crossStreet)}, ${esc(t('crossStVal', loc))}</dd></div>
+<div><dt>${esc(t('parking', loc))}</dt><dd>${esc(t('parkingVal', loc))}</dd></div>
+<div><dt>${esc(t('capacity', loc))}</dt><dd>${esc(t('capacityVal', loc))}</dd></div>
+<div><dt>${esc(t('languages', loc))}</dt><dd>${esc(t('langsVal', loc))}</dd></div>
 </dl>`;
+
+/** Upcoming dated events, soonest first, past dates dropped automatically. */
+const upcoming = () => {
+  const today = new Date().toISOString().slice(0, 10);
+  return site.datedEvents
+    .filter((e) => e.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map((e) => ({ ...e, series: site.series.find((s) => s.slug === e.seriesSlug) || {} }));
+};
+
+const COPY = {
+  heroKicker: { en: 'Santa Rosa, California · Montgomery & Mission', es: 'Santa Rosa, California · Montgomery y Mission' },
+  heroA: { en: "Sonoma County's First", es: 'El primer taproom' },
+  heroB: { en: 'Latino Taproom', es: 'latino de Sonoma' },
+  heroSub: { en: 'Beer &amp; culture · Cumbia, sonidero and live music · Creekside patio',
+             es: 'Cerveza y cultura · Cumbia, sonidero y música en vivo · Patio junto al arroyo' },
+  whatEyebrow: { en: 'What this place is', es: 'Qué es este lugar' },
+  whatH: { en: 'A taproom that runs like a venue', es: 'Un taproom que funciona como salón' },
+  whatP1: {
+    en: '<strong>Mr. Chile Taproom is a Latino-owned craft beer taproom and live event venue at 4357 Montgomery Dr, Suite B, in Santa Rosa, California.</strong> It pours a rotating list of Sonoma County beer, cider and wine, serves bar food built around baked wings and mac and cheese, and books cumbia nights, sonidero, live bands and community fundraisers.',
+    es: '<strong>Mr. Chile Taproom es un taproom de cerveza artesanal y salón de eventos de propiedad latina en 4357 Montgomery Dr, Suite B, Santa Rosa, California.</strong> Sirve una lista rotativa de cerveza, sidra y vino del condado de Sonoma, comida de bar con alitas horneadas y macarrones con queso, y organiza noches de cumbia, sonidero, bandas en vivo y eventos benéficos.',
+  },
+  whatP2: {
+    en: 'Out back, a patio runs along Santa Rosa Creek under mature oaks — string lights, heat lamps, picnic tables, yard games and a taco truck in the corner. Inside, flags of a dozen countries hang over the tap wall and the game goes up on the projector. Parking is free and on site.',
+    es: 'Atrás, el patio se extiende junto al arroyo de Santa Rosa bajo robles — luces colgantes, calentadores, mesas de picnic, juegos y un camión de tacos en la esquina. Adentro, banderas de una docena de países cuelgan sobre la barra y el partido va en el proyector. Estacionamiento gratis.',
+  },
+  whatP3: {
+    en: 'Most nights it is a neighborhood taproom. On the first Saturday of the month it is a dance floor until 2am.',
+    es: 'Casi todas las noches es un taproom de barrio. El primer sábado del mes es una pista de baile hasta las 2am.',
+  },
+  progEyebrow: { en: 'The programming', es: 'La programación' },
+  progH: { en: "What's on", es: 'Qué hay' },
+  progLede: { en: 'Four things run on repeat, plus dated shows as they are announced.',
+              es: 'Cuatro cosas se repiten cada mes, más fechas especiales conforme se anuncian.' },
+  privEyebrow: { en: 'Private events', es: 'Eventos privados' },
+  privH: { en: 'Book the room', es: 'Renta el salón' },
+  privLede: {
+    en: 'Quinceañeras, birthdays, company parties, rehearsal dinners, memorials, fundraisers and full-venue buyouts up to 150 guests. Patio, back room or the whole place.',
+    es: 'Quinceañeras, cumpleaños, fiestas de empresa, cenas de ensayo, memoriales, eventos benéficos y renta completa hasta 150 personas. Patio, salón trasero o todo el lugar.',
+  },
+  privCta: { en: 'See packages &amp; enquire', es: 'Ver paquetes y cotizar' },
+  roomEyebrow: { en: 'The room', es: 'El lugar' },
+  roomH: { en: 'Why people come back', es: 'Por qué la gente regresa' },
+  roomP: {
+    en: 'Reviewers keep naming the same four things: the patio, the wings, the staff, and the fact that you can bring the kids before the music starts.',
+    es: 'Las reseñas mencionan siempre lo mismo: el patio, las alitas, el personal, y que puedes traer a los niños antes de que empiece la música.',
+  },
+  faqEyebrow: { en: 'Common questions', es: 'Preguntas frecuentes' },
+  faqH: { en: 'Before you come', es: 'Antes de venir' },
+  visitEyebrow: { en: 'Visit', es: 'Visítanos' },
+};
+const c = (k, loc) => L(COPY[k], loc);
 
 // ============================================================================
 // HOME
 // ============================================================================
-const home = () => {
-  const title = "Mr. Chile Taproom | Sonoma County's First Latino Taproom — Santa Rosa, CA";
-  const description =
-    'Latino-owned craft beer taproom and event venue at 4357 Montgomery Dr, Santa Rosa. Rotating local taps, baked wings, a creekside patio, monthly Cumbia Rosa dance nights, comedy and live music. Open Tue–Sun.';
-  const boardRows = site.series.slice(0, 3);
+export const homePage = (loc) => {
+  const path = ROUTES.home[loc];
+  const title = loc === 'es'
+    ? 'Mr. Chile Taproom | El primer taproom latino del condado de Sonoma — Santa Rosa'
+    : "Mr. Chile Taproom | Sonoma County's First Latino Taproom — Santa Rosa, CA";
+  const description = loc === 'es'
+    ? 'Taproom latino y salón de eventos en 4357 Montgomery Dr, Santa Rosa. Cerveza artesanal local, alitas horneadas, patio junto al arroyo, Cumbia Rosa cada primer sábado y noches sonideras. Abierto de martes a domingo.'
+    : 'Latino-owned craft beer taproom and event venue at 4357 Montgomery Dr, Santa Rosa. Rotating local taps, baked wings, a creekside patio, Cumbia Rosa every first Saturday and sonidero nights. Open Tue–Sun.';
+  const next = upcoming().slice(0, 2);
+
   return {
-    path: '/',
-    title,
-    description,
-    esPath: '/es/',
-    jsonld: g([
-      ...base('/', title, description, [HOME]),
-      ...S.seriesNodes(),
-      ...S.datedEventNodes(),
-      S.faqNode(faqs.slice(0, 6)),
-    ]),
+    path, loc, altPath: ROUTES.home[loc === 'en' ? 'es' : 'en'], title, description,
+    jsonld: g([...base(path, title, description, [home(loc)], loc),
+      ...S.seriesNodes(loc), ...S.datedEventNodes(loc), S.faqNode(faqs.slice(0, 6), loc)]),
     body: `
 <section class="hero">
+${pic('patio-wide', loc === 'es'
+      ? 'El patio de Mr. Chile Taproom al anochecer, con luces colgantes entre los robles'
+      : 'The patio at Mr. Chile Taproom at dusk, string lights strung between the oaks',
+      { widths: [640, 1280], sizes: '100vw', cls: 'hero__bg', eager: true })}
 <div class="wrap hero__in">
-<span class="eyebrow">Santa Rosa, California &middot; Montgomery &amp; Mission</span>
-<h1>Sonoma County&rsquo;s First<em>Latino Taproom</em></h1>
-<p class="hero__sub">Beer &amp; culture &middot; Cumbia, comedy and live music &middot; Creekside patio</p>
-${statusStrip}
-<div class="board" style="margin-top:1.75rem">
+<span class="eyebrow">${esc(c('heroKicker', loc))}</span>
+<h1>${esc(c('heroA', loc))}<em>${esc(c('heroB', loc))}</em></h1>
+<p class="hero__sub">${c('heroSub', loc)}</p>
+${status(loc)}
+<div class="board">
   <div class="board__top">
-    <span class="board__label">On the board</span>
-    <span class="pill pill--gold">${esc(site.county)}</span>
+    <span class="board__label">${esc(t(next.length ? 'upNext' : 'onTheBoard', loc))}</span>
+    <span class="pill pill--gold">${esc(L(site.county, loc))}</span>
   </div>
   <div class="board__body">
-    ${boardRows
-      .map(
-        (s) => `<div class="board__row">
-      <span class="board__when">${esc(s.kicker)}</span>
-      <div class="board__what"><h3>${esc(s.name)}</h3><p>${esc(s.short)}</p></div>
-    </div>`
-      )
-      .join('')}
+${(next.length ? next : site.series.slice(0, 2).map((s) => ({ series: s }))).map((e) => `    <div class="board__row">
+      <span class="board__when">${esc(e.date ? shortDate(e.date, loc) : L(e.series.kicker, loc))}</span>
+      <div class="board__what"><h3>${esc(L(e.name, loc) || L(e.series.name, loc))}</h3>
+      <p>${esc(L(e.series.short, loc))}</p>
+      ${e.lineup ? `<p class="board__meta">${esc(e.lineup)}</p>` : ''}</div>
+    </div>`).join('\n')}
   </div>
   <div class="board__foot btn-row">
-    <a class="btn btn--gold" href="/events/">See the full calendar</a>
-    <a class="btn btn--ghost" href="https://www.google.com/maps/search/?api=1&amp;query=${site.lat},${site.lng}">Get directions</a>
+    <a class="btn btn--gold" href="${ROUTES.events[loc]}">${esc(t('fullCalendar', loc))}</a>
+    <a class="btn btn--ghost" href="${mapUrl}">${esc(t('directions', loc))}</a>
   </div>
 </div>
 </div>
@@ -91,49 +141,47 @@ ${PICADO}
 <section class="band band--alt">
 <div class="wrap grid grid--split">
 <div>
-<span class="eyebrow eyebrow--chile">What this place is</span>
-<h2>A taproom that runs like a venue</h2>
+<span class="eyebrow eyebrow--chile">${esc(c('whatEyebrow', loc))}</span>
+<h2>${esc(c('whatH', loc))}</h2>
+<figure class="fig" style="margin-top:1.75rem">
+${pic('taproom', loc === 'es' ? 'El interior del taproom con la barra de barriles y banderas de muchos países'
+  : 'Inside the taproom: the tap wall, high ceilings and flags of many countries',
+  { widths: [640, 1280], sizes: '(min-width:720px) 45vw, 100vw' })}
+</figure>
 </div>
 <div class="prose">
-<p><strong>Mr. Chile Taproom is a Latino-owned craft beer taproom and live event venue at 4357 Montgomery Dr in Santa Rosa, California.</strong> It pours a rotating list of Sonoma County beer, cider and wine, serves bar food built around baked wings and mac and cheese, and books cumbia dance nights, stand-up comedy, live bands and community fundraisers.</p>
-<p>The room seats groups large and small. Out back, a tree-shaded patio runs along Santa Rosa Creek under mature oaks, with yard games, room for kids, and a taco truck parked in the corner. Games go up on the projector. Parking is free and on site.</p>
-<p>Most nights it is a neighborhood taproom. On the first Saturday of the month it is a dance floor until 1am.</p>
+<p>${c('whatP1', loc)}</p>
+<p>${c('whatP2', loc)}</p>
+<p>${c('whatP3', loc)}</p>
 </div>
 </div>
 </section>
 
 <section class="band">
 <div class="wrap">
-<span class="eyebrow">The programming</span>
-<h2>What&rsquo;s on</h2>
-<p class="lede" style="margin-top:1rem">Four things run on repeat. Dated listings and ticket links live on the calendar.</p>
+<span class="eyebrow">${esc(c('progEyebrow', loc))}</span>
+<h2>${esc(c('progH', loc))}</h2>
+<p class="lede" style="margin-top:1rem">${esc(c('progLede', loc))}</p>
 <div class="grid grid--4" style="margin-top:2.5rem">
-${site.series
-  .map(
-    (s) => `<a class="card card--link" href="/events/#${s.slug}">
-<span class="card__kicker">${esc(s.kicker)}</span>
-<h3>${esc(s.name)}</h3>
-<p>${esc(s.short)}</p>
-<span class="card__tag">${esc(s.age)}</span>
-</a>`
-  )
-  .join('')}
+${site.series.map((s) => `<a class="card card--link" href="${ROUTES.events[loc]}#${s.slug}">
+<span class="card__kicker">${esc(L(s.kicker, loc))}</span>
+<h3>${esc(L(s.name, loc))}</h3>
+<p>${esc(L(s.short, loc))}</p>
+<span class="card__tag">${esc(L(s.age, loc))}</span>
+</a>`).join('')}
 </div>
-<div class="btn-row" style="margin-top:2rem"><a class="btn btn--primary" href="/events/">Full calendar</a></div>
+<div class="btn-row" style="margin-top:2rem"><a class="btn btn--primary" href="${ROUTES.events[loc]}">${esc(t('fullCalendar', loc))}</a></div>
 </div>
 </section>
 
 <section class="band band--chile">
 <div class="wrap grid grid--split">
+<div><span class="eyebrow">${esc(c('privEyebrow', loc))}</span><h2>${esc(c('privH', loc))}</h2></div>
 <div>
-<span class="eyebrow">Private events</span>
-<h2>Book the room</h2>
-</div>
-<div>
-<p class="lede">Quincea&ntilde;eras, birthdays, company parties, rehearsal dinners, memorials, fundraisers and full-venue buyouts up to 150 guests. Patio, back room or the whole place.</p>
+<p class="lede">${esc(c('privLede', loc))}</p>
 <div class="btn-row" style="margin-top:1.75rem">
-<a class="btn btn--gold" href="/private-events/">See packages &amp; enquire</a>
-<a class="btn btn--ghost" href="tel:${site.phoneE164}" style="border-color:rgba(255,255,255,.5)">Call ${site.phone}</a>
+<a class="btn btn--gold" href="${ROUTES.private[loc]}">${c('privCta', loc)}</a>
+<a class="btn btn--ghost btn--onred" href="${tel}">${esc(t('call', loc))} ${site.phone}</a>
 </div>
 </div>
 </div>
@@ -142,15 +190,17 @@ ${site.series
 <section class="band band--alt">
 <div class="wrap grid grid--split">
 <div>
-<span class="eyebrow">The room</span>
-<h2>Why people come back</h2>
-<p class="prose" style="margin-top:1.25rem">Reviewers keep naming the same things: the patio, the wings, the staff, and the fact that you can bring the kids before the music starts.</p>
+<span class="eyebrow">${esc(c('roomEyebrow', loc))}</span>
+<h2>${esc(c('roomH', loc))}</h2>
+<p class="prose" style="margin-top:1.25rem">${esc(c('roomP', loc))}</p>
+<figure class="fig" style="margin-top:1.75rem">
+${pic('tacos-beer', loc === 'es' ? 'Una canasta de tacos al pastor con limón y salsa verde junto a una cerveza'
+  : 'A basket of tacos al pastor with lime and salsa verde beside a cold beer',
+  { widths: [640], sizes: '(min-width:720px) 45vw, 100vw' })}
+</figure>
 </div>
 <div class="grid grid--2">
-${site.amenities
-  .slice(0, 6)
-  .map((a) => `<div class="card"><h4>${esc(a.name)}</h4><p>${esc(a.detail)}</p></div>`)
-  .join('')}
+${site.amenities.map((a) => `<div class="card"><h4>${esc(L(a.name, loc))}</h4><p>${esc(L(a.detail, loc))}</p></div>`).join('')}
 </div>
 </div>
 </section>
@@ -158,28 +208,28 @@ ${site.amenities
 <section class="band">
 <div class="wrap grid grid--split">
 <div>
-<span class="eyebrow">Common questions</span>
-<h2>Before you come</h2>
-<div class="btn-row" style="margin-top:1.5rem"><a class="btn btn--ghost" href="/faq/">All questions</a></div>
+<span class="eyebrow">${esc(c('faqEyebrow', loc))}</span>
+<h2>${esc(c('faqH', loc))}</h2>
+<div class="btn-row" style="margin-top:1.5rem"><a class="btn btn--ghost" href="${ROUTES.faq[loc]}">${esc(t('allQuestions', loc))}</a></div>
 </div>
-<div>${faqBlock(faqs.slice(0, 6))}</div>
+<div>${faqBlock(faqs.slice(0, 6), loc)}</div>
 </div>
 </section>
 
 <section class="band band--alt">
 <div class="wrap grid grid--split">
 <div>
-<span class="eyebrow">Visit</span>
+<span class="eyebrow">${esc(c('visitEyebrow', loc))}</span>
 <h2>4357 Montgomery Dr</h2>
-<div style="margin:1.25rem 0">${statusStrip}</div>
-<a class="tel" href="tel:${site.phoneE164}">${site.phone}</a>
-<div style="margin-top:1.5rem">${napBlock()}</div>
+<div style="margin:1.25rem 0">${status(loc)}</div>
+<a class="tel" href="${tel}">${site.phone}</a>
+<div style="margin-top:1.5rem">${napBlock(loc)}</div>
 </div>
 <div>
-<h4 style="margin-bottom:1rem">Hours</h4>
-${hoursTable()}
-<p class="form__note" style="margin-top:1rem">Event nights can run past posted closing. Call to confirm on holidays.</p>
-<div class="btn-row" style="margin-top:1.5rem"><a class="btn btn--primary" href="https://www.google.com/maps/search/?api=1&amp;query=${site.lat},${site.lng}">Open in Maps</a></div>
+<h4 style="margin-bottom:1rem">${esc(t('hours', loc))}</h4>
+${hoursTable(loc)}
+<p class="form__note" style="margin-top:1rem">${esc(t('eventNote', loc))}</p>
+<div class="btn-row" style="margin-top:1.5rem"><a class="btn btn--primary" href="${mapUrl}">${esc(t('openInMaps', loc))}</a></div>
 </div>
 </div>
 </section>`,
@@ -189,54 +239,89 @@ ${hoursTable()}
 // ============================================================================
 // EVENTS
 // ============================================================================
-const events = () => {
-  const title = 'Events at Mr. Chile Taproom | Cumbia, Comedy & Live Music in Santa Rosa';
-  const description =
-    "What's on at Mr. Chile Taproom, Santa Rosa: Cumbia Rosa dance night on first Saturdays with an 8:15pm beginner class, monthly comedy, live music most weekends and quarterly Drink For A Cause benefits.";
+export const eventsPage = (loc) => {
+  const path = ROUTES.events[loc];
+  const title = loc === 'es'
+    ? 'Eventos en Mr. Chile Taproom | Cumbia, sonidero y música en vivo en Santa Rosa'
+    : 'Events at Mr. Chile Taproom | Cumbia, Sonidero & Live Music in Santa Rosa';
+  const description = loc === 'es'
+    ? 'Qué hay en Mr. Chile Taproom, Santa Rosa: Cumbia Rosa cada primer sábado con clase a las 8:15pm y baile hasta las 2am, noches sonideras, música en vivo y eventos benéficos.'
+    : "What's on at Mr. Chile Taproom, Santa Rosa: Cumbia Rosa every first Saturday with an 8:15pm class and dancing until 2am, sonidero nights, live music and quarterly benefits.";
+  const next = upcoming();
+  const lede = loc === 'es'
+    ? '<strong>Mr. Chile Taproom organiza Cumbia Rosa cada primer sábado del mes, noches sonideras en sábados selectos, música en vivo casi todos los fines de semana y eventos benéficos trimestrales.</strong> Todo en 4357 Montgomery Dr, Suite B, Santa Rosa.'
+    : '<strong>Mr. Chile Taproom hosts Cumbia Rosa on the first Saturday of every month, sonidero nights on select Saturdays, live music most weekends and quarterly benefit nights.</strong> Everything happens at 4357 Montgomery Dr, Suite B, Santa Rosa.';
+
   return {
-    path: '/events/',
-    title,
-    description,
-    jsonld: g([
-      ...base('/events/', title, description, [HOME, { name: 'Events', path: '/events/' }]),
-      ...S.seriesNodes(),
-      ...S.datedEventNodes(),
-    ]),
+    path, loc, altPath: ROUTES.events[loc === 'en' ? 'es' : 'en'], title, description,
+    jsonld: g([...base(path, title, description, [home(loc), { name: L(UI.nav.events, loc), path }], loc),
+      ...S.seriesNodes(loc), ...S.datedEventNodes(loc)]),
     body: `
 <section class="band band--tight">
 <div class="wrap">
-<span class="eyebrow">Calendar</span>
-<h1 style="font-size:clamp(2.2rem,7vw,4.4rem)">What&rsquo;s on</h1>
-<p class="lede" style="margin-top:1.25rem"><strong>Mr. Chile Taproom hosts cumbia dance nights on the first Saturday of every month, live music most Fridays and Saturdays, monthly stand-up comedy, and quarterly benefit nights for Sonoma County nonprofits.</strong> All events are at 4357 Montgomery Dr, Santa Rosa.</p>
-${statusStrip}
+<span class="eyebrow">${loc === 'es' ? 'Calendario' : 'Calendar'}</span>
+<h1 class="h1--sm">${esc(L(COPY.progH, loc))}</h1>
+<p class="lede" style="margin-top:1.25rem">${lede}</p>
+${status(loc)}
 </div>
 </section>
 
 ${PICADO}
 
+${next.length ? `<section class="band band--alt">
+<div class="wrap">
+<span class="eyebrow eyebrow--chile">${esc(t('upNext', loc))}</span>
+<h2>${loc === 'es' ? 'Próximas fechas' : 'Coming up'}</h2>
+<div class="grid grid--2" style="margin-top:2.5rem">
+${next.map((e) => `<article class="flyer">
+<a href="/img/${e.image}.jpg" class="flyer__link">${flyer(e.image, `${L(e.name, loc) || L(e.series.name, loc)} — ${formatDate(e.date, loc)}`)}</a>
+<div class="flyer__body">
+<span class="card__kicker">${esc(formatDate(e.date, loc))} &middot; ${esc(L(e.series.age, loc))}</span>
+<h3>${esc(L(e.name, loc) || L(e.series.name, loc))}</h3>
+${e.lineup ? `<p class="flyer__lineup">${esc(e.lineup)}</p>` : ''}
+<p>${esc(L(e.series.short, loc))}</p>
+<p class="form__note">
+<span class="pill">${esc(time12(e.start || e.series.startTime))}</span>
+${e.priceNote ? `<span class="pill pill--gold">${esc(L(e.priceNote, loc))}</span>` : ''}
+${e.food ? `<span class="pill">${esc(e.food)}</span>` : ''}
+</p>
+${e.ticketUrl ? `<a class="btn btn--primary" href="${e.ticketUrl}" rel="noopener">${loc === 'es' ? 'Boletos' : 'Tickets'}</a>` : ''}
+</div>
+</article>`).join('')}
+</div>
+</div>
+</section>` : ''}
+
 <section class="band">
-<div class="wrap stack">
-${site.series
-  .map(
-    (s) => `<article id="${s.slug}" class="card" style="scroll-margin-top:90px">
-<span class="card__kicker">${esc(s.kicker)} &middot; ${esc(s.age)}</span>
-<h2 style="font-size:clamp(1.6rem,4vw,2.4rem)">${esc(s.name)}</h2>
-<p style="font-size:1.02rem">${esc(s.long)}</p>
-<p class="form__note"><span class="pill">${esc(s.genre)}</span> <span class="pill">Doors from ${s.startTime.replace(':00', '')}:00</span> <span class="pill">${esc(site.locality)}, ${site.region}</span></p>
-</article>`
-  )
-  .join('')}
+<div class="wrap">
+<span class="eyebrow">${loc === 'es' ? 'Cada mes' : 'Every month'}</span>
+<h2>${loc === 'es' ? 'Lo que se repite' : 'What runs on repeat'}</h2>
+<div class="stack" style="margin-top:2.5rem">
+${site.series.map((s) => `<article id="${s.slug}" class="card card--wide">
+<span class="card__kicker">${esc(L(s.kicker, loc))} &middot; ${esc(L(s.age, loc))}</span>
+<h3 class="h2--sm">${esc(L(s.name, loc))}</h3>
+<p style="font-size:1.02rem">${esc(L(s.long, loc))}</p>
+<p class="form__note">
+<span class="pill">${esc(L(s.genre, loc))}</span>
+<span class="pill">${esc(time12(s.startTime))}–${esc(time12(s.endTime))}</span>
+${s.partner ? `<a class="pill pill--gold" href="${s.partner.url}" rel="noopener">${esc(s.partner.name)}</a>` : ''}
+</p>
+</article>`).join('')}
+</div>
 </div>
 </section>
 
 <section class="band band--chile">
 <div class="wrap grid grid--split">
-<div><span class="eyebrow">Dates &amp; tickets</span><h2>Confirm before you drive</h2></div>
+<div><span class="eyebrow">${loc === 'es' ? 'Fechas y boletos' : 'Dates & tickets'}</span>
+<h2>${loc === 'es' ? 'Confirma antes de manejar' : 'Confirm before you drive'}</h2></div>
 <div>
-<p class="lede">Specific dates, lineups and ticket links post to Instagram and Facebook first. Call the taproom if you want it confirmed by a person.</p>
+<p class="lede">${loc === 'es'
+      ? 'Las fechas, carteles y boletos se publican primero en Instagram y Facebook. Llama al taproom si quieres confirmarlo con una persona.'
+      : 'Dates, lineups and ticket links post to Instagram and Facebook first. Call the taproom if you want it confirmed by a person.'}</p>
 <div class="btn-row" style="margin-top:1.75rem">
 <a class="btn btn--gold" href="https://www.instagram.com/mr.chiletaproom/" rel="noopener">Instagram</a>
-<a class="btn btn--ghost" href="tel:${site.phoneE164}" style="border-color:rgba(255,255,255,.5)">Call ${site.phone}</a>
+<a class="btn btn--ghost btn--onred" href="${tel}">${esc(t('call', loc))} ${site.phone}</a>
 </div>
 </div>
 </div>
@@ -244,9 +329,9 @@ ${site.series
 
 <section class="band band--alt">
 <div class="wrap grid grid--split">
-<div><span class="eyebrow">Want the room to yourself?</span><h2>Private bookings</h2></div>
-<div><p class="lede">The patio, the back room or the full venue are all bookable. Up to 150 guests.</p>
-<div class="btn-row" style="margin-top:1.5rem"><a class="btn btn--primary" href="/private-events/">Private events</a></div></div>
+<div><span class="eyebrow">${esc(c('privEyebrow', loc))}</span><h2>${esc(c('privH', loc))}</h2></div>
+<div><p class="lede">${esc(c('privLede', loc))}</p>
+<div class="btn-row" style="margin-top:1.5rem"><a class="btn btn--primary" href="${ROUTES.private[loc]}">${c('privCta', loc)}</a></div></div>
 </div>
 </section>`,
   };
@@ -255,122 +340,133 @@ ${site.series
 // ============================================================================
 // PRIVATE EVENTS
 // ============================================================================
-const privateEvents = () => {
-  const title = 'Private Event Venue in Santa Rosa | Book Mr. Chile Taproom';
-  const description =
-    'Book Mr. Chile Taproom in Santa Rosa for private events: quinceañeras, birthdays, company parties, rehearsal dinners and fundraisers. Patio buyout to 80, back room 25–45, full venue to 150. Call (707) 239-4188.';
+export const privatePage = (loc) => {
+  const path = ROUTES.private[loc];
+  const title = loc === 'es'
+    ? 'Salón para eventos privados en Santa Rosa | Mr. Chile Taproom'
+    : 'Private Event Venue in Santa Rosa | Book Mr. Chile Taproom';
+  const description = loc === 'es'
+    ? 'Renta Mr. Chile Taproom en Santa Rosa para eventos privados: quinceañeras, cumpleaños, fiestas de empresa y eventos benéficos. Patio hasta 80, salón 25–45, lugar completo hasta 150. (707) 239-4188.'
+    : 'Book Mr. Chile Taproom in Santa Rosa for private events: quinceañeras, birthdays, company parties, rehearsal dinners and fundraisers. Patio to 80, back room 25–45, full venue to 150. Call (707) 239-4188.';
+  const inc = {
+    en: [['Outside food', 'Yes for full buyouts and patio bookings — including cake and catering. Alcohol must come from the bar.'],
+      ['Taco truck', 'Freaking Tacos can be coordinated for your event. Ask when you enquire.'],
+      ['Sound', 'Stage, PA and projector on full buyouts. Bring your own DJ or we can suggest one.'],
+      ['Decor', 'Bring your own. Setup time is included in the booking window.'],
+      ['Minors', 'Welcome at daytime and early-evening events. Bar-service events after 8pm are 21+.'],
+      ['Deposit', 'A deposit holds the date and applies to your final bill.'],
+      ['Parking', 'Free on-site lot, no validation needed.'],
+      ['Languages', 'We plan events in English and Spanish.']],
+    es: [['Comida externa', 'Sí para renta completa y patio — incluyendo pastel y catering. El alcohol debe venir del bar.'],
+      ['Camión de tacos', 'Podemos coordinar Freaking Tacos para tu evento. Pregunta al cotizar.'],
+      ['Sonido', 'Escenario, sonido y proyector con renta completa. Trae tu DJ o te recomendamos uno.'],
+      ['Decoración', 'Trae la tuya. El tiempo de montaje está incluido.'],
+      ['Menores', 'Bienvenidos en eventos de día y temprano. Los eventos con bar después de las 8pm son 21+.'],
+      ['Depósito', 'Un depósito aparta la fecha y se aplica a la cuenta final.'],
+      ['Estacionamiento', 'Gratis en el lugar, sin validación.'],
+      ['Idiomas', 'Planeamos eventos en español e inglés.']],
+  }[loc];
+  const types = {
+    en: ['Birthday', 'Quinceañera', 'Graduation', 'Company party or offsite', 'Rehearsal dinner', 'Memorial', 'Nonprofit fundraiser', 'Live music or album release', 'Other'],
+    es: ['Cumpleaños', 'Quinceañera', 'Graduación', 'Fiesta de empresa', 'Cena de ensayo', 'Memorial', 'Evento benéfico', 'Música en vivo o lanzamiento', 'Otro'],
+  }[loc];
+  const F = {
+    en: { name: 'Your name', phone: 'Phone', email: 'Email', date: 'Preferred date', guests: 'Guest count', type: 'Type of event', space: 'Space', notes: 'Anything else', unsure: 'Not sure yet', send: 'Send enquiry', blank: 'Leave blank', ph: 'Food, music, timing, decor, budget range…', reply: 'You get a reply within one business day. We do not share your details.' },
+    es: { name: 'Tu nombre', phone: 'Teléfono', email: 'Correo', date: 'Fecha preferida', guests: 'Número de personas', type: 'Tipo de evento', space: 'Espacio', notes: 'Algo más', unsure: 'Todavía no sé', send: 'Enviar solicitud', blank: 'Dejar en blanco', ph: 'Comida, música, horario, decoración, presupuesto…', reply: 'Te respondemos en un día hábil. No compartimos tus datos.' },
+  }[loc];
+
   return {
-    path: '/private-events/',
-    title,
-    description,
-    jsonld: g([
-      ...base('/private-events/', title, description, [
-        HOME,
-        { name: 'Private Events', path: '/private-events/' },
-      ]),
-      ...S.serviceNodes(),
-      {
-        '@type': 'ItemList',
-        name: 'Private event packages at Mr. Chile Taproom',
-        itemListElement: site.privatePackages.map((p, i) => ({
-          '@type': 'ListItem',
-          position: i + 1,
-          name: p.name,
-          description: `${p.capacity}. ${p.best}.`,
-        })),
-      },
-    ]),
+    path, loc, altPath: ROUTES.private[loc === 'en' ? 'es' : 'en'], title, description,
+    jsonld: g([...base(path, title, description, [home(loc), { name: L(UI.nav.private, loc), path }], loc),
+      ...S.serviceNodes(loc),
+      { '@type': 'ItemList', name: title, itemListElement: site.privatePackages.map((p, i) => ({
+        '@type': 'ListItem', position: i + 1, name: L(p.name, loc), description: `${L(p.capacity, loc)}. ${L(p.best, loc)}.` })) }]),
     body: `
 <section class="band band--tight">
 <div class="wrap">
-<span class="eyebrow">Private events</span>
-<h1 style="font-size:clamp(2.2rem,7vw,4.4rem)">Book the room</h1>
-<p class="lede" style="margin-top:1.25rem"><strong>Mr. Chile Taproom books private events in Santa Rosa for up to 150 guests</strong> — quincea&ntilde;eras, birthdays, graduations, company parties, team offsites, rehearsal dinners, memorials, album releases and nonprofit fundraisers. Choose the creekside patio, the semi-private back room, or a full venue buyout.</p>
+<span class="eyebrow">${esc(c('privEyebrow', loc))}</span>
+<h1 class="h1--sm">${esc(c('privH', loc))}</h1>
+<p class="lede" style="margin-top:1.25rem">${loc === 'es'
+      ? '<strong>Mr. Chile Taproom renta para eventos privados de hasta 150 personas en Santa Rosa</strong> — quinceañeras, cumpleaños, graduaciones, fiestas de empresa, cenas de ensayo, memoriales y eventos benéficos. Elige el patio junto al arroyo, el salón trasero semiprivado, o todo el lugar.'
+      : '<strong>Mr. Chile Taproom books private events in Santa Rosa for up to 150 guests</strong> — quinceañeras, birthdays, graduations, company parties, team offsites, rehearsal dinners, memorials and nonprofit fundraisers. Choose the creekside patio, the semi-private back room, or a full venue buyout.'}</p>
 <div class="btn-row" style="margin-top:1.75rem">
-<a class="btn btn--primary" href="#enquire">Send an enquiry</a>
-<a class="btn btn--ghost" href="tel:${site.phoneE164}">Call ${site.phone}</a>
+<a class="btn btn--primary" href="#enquire">${loc === 'es' ? 'Pedir cotización' : 'Send an enquiry'}</a>
+<a class="btn btn--ghost" href="${tel}">${esc(t('call', loc))} ${site.phone}</a>
 </div>
 </div>
 </section>
 
-${PICADO}
+<figure class="banner">
+${pic('patio-dusk', loc === 'es' ? 'El corredor cubierto y las luces sobre el patio al atardecer'
+      : 'The covered walkway and string lights over the patio at dusk',
+      { widths: [640, 1280], sizes: '100vw' })}
+</figure>
 
 <section class="band">
 <div class="wrap">
-<span class="eyebrow">Three ways to book</span>
-<h2>Packages</h2>
+<span class="eyebrow">${loc === 'es' ? 'Tres formas de rentar' : 'Three ways to book'}</span>
+<h2>${loc === 'es' ? 'Paquetes' : 'Packages'}</h2>
 <div class="grid grid--3" style="margin-top:2.5rem">
-${site.privatePackages
-  .map(
-    (p) => `<div class="card">
-<span class="card__kicker">${esc(p.capacity)}</span>
-<h3>${esc(p.name)}</h3>
-<p><strong style="color:var(--masa)">Best for:</strong> ${esc(p.best)}</p>
-<ul class="mlist" style="margin-top:.25rem">${p.includes.map((x) => `<li><span>${esc(x)}</span></li>`).join('')}</ul>
-</div>`
-  )
-  .join('')}
+${site.privatePackages.map((p) => `<div class="card">
+<span class="card__kicker">${esc(L(p.capacity, loc))}</span>
+<h3>${esc(L(p.name, loc))}</h3>
+<p><strong class="hi">${loc === 'es' ? 'Ideal para:' : 'Best for:'}</strong> ${esc(L(p.best, loc))}</p>
+<ul class="mlist">${L(p.includes, loc).map((x) => `<li><span>${esc(x)}</span></li>`).join('')}</ul>
+</div>`).join('')}
 </div>
-<p class="form__note" style="margin-top:1.5rem">Pricing depends on date, guest count and whether you want a bar tab, drink tickets or a cash bar. Send the form below and you get a written quote back.</p>
+<p class="form__note" style="margin-top:1.5rem">${loc === 'es'
+      ? 'El precio depende de la fecha, el número de personas y si quieres cuenta abierta, boletos de bebida o bar de paga. Envía el formulario y te regresamos una cotización por escrito.'
+      : 'Pricing depends on date, guest count and whether you want a bar tab, drink tickets or a cash bar. Send the form below and you get a written quote back.'}</p>
 </div>
 </section>
 
 <section class="band band--alt">
 <div class="wrap grid grid--split">
-<div>
-<span class="eyebrow">Straight answers</span>
-<h2>What&rsquo;s included</h2>
+<div><span class="eyebrow">${loc === 'es' ? 'Respuestas directas' : 'Straight answers'}</span>
+<h2>${loc === 'es' ? 'Qué incluye' : "What's included"}</h2>
+<figure class="fig" style="margin-top:1.75rem">
+${pic('patio-tacos', loc === 'es' ? 'Sombrillas rojas sobre mesas de picnic con el camión de tacos atrás'
+      : 'Red umbrellas over picnic tables with the taco truck behind',
+      { widths: [640], sizes: '(min-width:720px) 45vw, 100vw' })}
+</figure>
 </div>
 <div>
-<dl class="specs">
-<div><dt>Outside food</dt><dd>Yes for full buyouts and patio bookings — including cake and catering. Alcohol must come from the bar.</dd></div>
-<div><dt>Taco truck</dt><dd>Freaking Tacos can be coordinated for your event. Ask when you enquire.</dd></div>
-<div><dt>Sound</dt><dd>Stage, PA and projector are available on full buyouts. Bring your own DJ or we can suggest one.</dd></div>
-<div><dt>Decor</dt><dd>Bring your own. Setup time is included in the booking window.</dd></div>
-<div><dt>Minors</dt><dd>Welcome at daytime and early-evening events. Bar-service events after 8pm are 21+.</dd></div>
-<div><dt>Deposit</dt><dd>A deposit holds the date and applies to your final bill.</dd></div>
-<div><dt>Parking</dt><dd>Free on-site lot, no validation needed.</dd></div>
-<div><dt>Languages</dt><dd>We plan events in English and Spanish.</dd></div>
-</dl>
-<p class="form__note" style="margin-top:1rem">Terms are confirmed in writing when you book.</p>
+<dl class="specs">${inc.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+<p class="form__note" style="margin-top:1rem">${loc === 'es' ? 'Los términos se confirman por escrito al reservar.' : 'Terms are confirmed in writing when you book.'}</p>
 </div>
 </div>
 </section>
 
-<section class="band" id="enquire" style="scroll-margin-top:80px">
+<section class="band" id="enquire">
 <div class="wrap grid grid--split">
 <div>
-<span class="eyebrow eyebrow--chile">Enquiry</span>
-<h2>Tell us about the night</h2>
-<p class="prose" style="margin-top:1.25rem">The more you put in, the tighter the quote comes back. If you would rather talk it through, call <a href="tel:${site.phoneE164}" style="color:var(--marigold)">${site.phone}</a>.</p>
+<span class="eyebrow eyebrow--chile">${loc === 'es' ? 'Cotización' : 'Enquiry'}</span>
+<h2>${loc === 'es' ? 'Cuéntanos de tu evento' : 'Tell us about the night'}</h2>
+<p class="prose" style="margin-top:1.25rem">${loc === 'es'
+      ? 'Entre más nos digas, más precisa la cotización. Si prefieres hablarlo, llama al'
+      : 'The more you put in, the tighter the quote comes back. If you would rather talk it through, call'} <a class="hi" href="${tel}">${site.phone}</a>.</p>
 </div>
 <div>
-<form class="form" name="private-event" method="POST" action="${site.formEndpoint}">
-<input type="hidden" name="_subject" value="Private event enquiry — mrchiletaproom.com">
-<p class="vh"><label>Leave blank<input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+<form class="form" method="POST" action="${site.formEndpoint}">
+<input type="hidden" name="_subject" value="Private event enquiry — ${loc}">
+<input type="hidden" name="_language" value="${loc}">
+<p class="vh"><label>${esc(F.blank)}<input name="_gotcha" tabindex="-1" autocomplete="off"></label></p>
 <div class="form__2">
-<div class="field"><label for="name">Your name</label><input id="name" name="name" required autocomplete="name"></div>
-<div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" required autocomplete="tel"></div>
+<div class="field"><label for="name">${esc(F.name)}</label><input id="name" name="name" required autocomplete="name"></div>
+<div class="field"><label for="phone">${esc(F.phone)}</label><input id="phone" name="phone" type="tel" required autocomplete="tel"></div>
 </div>
-<div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required autocomplete="email"></div>
+<div class="field"><label for="email">${esc(F.email)}</label><input id="email" name="email" type="email" required autocomplete="email"></div>
 <div class="form__2">
-<div class="field"><label for="date">Preferred date</label><input id="date" name="date" type="date"></div>
-<div class="field"><label for="guests">Guest count</label><input id="guests" name="guests" type="number" min="10" max="150" inputmode="numeric"></div>
+<div class="field"><label for="date">${esc(F.date)}</label><input id="date" name="date" type="date"></div>
+<div class="field"><label for="guests">${esc(F.guests)}</label><input id="guests" name="guests" type="number" min="10" max="150" inputmode="numeric"></div>
 </div>
-<div class="field"><label for="type">Type of event</label>
-<select id="type" name="type">
-<option>Birthday</option><option>Quincea&ntilde;era</option><option>Graduation</option>
-<option>Company party or offsite</option><option>Rehearsal dinner</option><option>Memorial</option>
-<option>Nonprofit fundraiser</option><option>Live music or album release</option><option>Other</option>
-</select></div>
-<div class="field"><label for="space">Space</label>
-<select id="space" name="space">
-${site.privatePackages.map((p) => `<option>${esc(p.name)} — ${esc(p.capacity)}</option>`).join('')}
-<option>Not sure yet</option>
-</select></div>
-<div class="field"><label for="notes">Anything else</label><textarea id="notes" name="notes" placeholder="Food, music, timing, decor, budget range&hellip;"></textarea></div>
-<button class="btn btn--primary" type="submit">Send enquiry</button>
-<p class="form__note">You get a reply within one business day. We do not share your details.</p>
+<div class="field"><label for="type">${esc(F.type)}</label><select id="type" name="type">${types.map((x) => `<option>${esc(x)}</option>`).join('')}</select></div>
+<div class="field"><label for="space">${esc(F.space)}</label><select id="space" name="space">
+${site.privatePackages.map((p) => `<option>${esc(L(p.name, loc))} — ${esc(L(p.capacity, loc))}</option>`).join('')}
+<option>${esc(F.unsure)}</option></select></div>
+<div class="field"><label for="notes">${esc(F.notes)}</label><textarea id="notes" name="notes" placeholder="${esc(F.ph)}"></textarea></div>
+<button class="btn btn--primary" type="submit">${esc(F.send)}</button>
+<p class="form__note">${esc(F.reply)}</p>
 </form>
 </div>
 </div>
@@ -381,59 +477,64 @@ ${site.privatePackages.map((p) => `<option>${esc(p.name)} — ${esc(p.capacity)}
 // ============================================================================
 // MENU
 // ============================================================================
-const menu = () => {
-  const title = 'Beer, Wine & Food Menu | Mr. Chile Taproom, Santa Rosa';
-  const description =
-    'What Mr. Chile Taproom pours and serves: a rotating list of Sonoma County craft beer, cider and wine, baked Ed Hops Wings, Louie The Mac, chips and salsa, non-alcoholic options and al pastor from the Freaking Tacos truck out back.';
+export const menuPage = (loc) => {
+  const path = ROUTES.menu[loc];
+  const title = loc === 'es'
+    ? 'Cerveza, vino y comida | Mr. Chile Taproom, Santa Rosa'
+    : 'Beer, Wine & Food Menu | Mr. Chile Taproom, Santa Rosa';
+  const description = loc === 'es'
+    ? 'Lo que sirve Mr. Chile Taproom: cerveza artesanal, sidra y vino del condado de Sonoma, alitas Ed Hops horneadas, Louie The Mac, totopos con salsa, opciones sin alcohol y tacos al pastor del camión Freaking Tacos.'
+    : 'What Mr. Chile Taproom pours and serves: rotating Sonoma County craft beer, cider and wine, baked Ed Hops Wings, Louie The Mac, chips and salsa, non-alcoholic options and al pastor from the Freaking Tacos truck.';
+  const diet = {
+    en: [['Vegetarian', 'Vegetarian options are on the kitchen menu.'], ['Vegan', 'Limited. Call ahead if this matters for your group.'],
+      ['Non-alcoholic', "Mexican Coke, Martinelli's, sodas and sparkling water."], ['Kids', 'Families welcome in the taproom and on the patio before 8pm.'],
+      ['Large groups', 'The room handles large parties.']],
+    es: [['Vegetariano', 'Hay opciones vegetarianas en la cocina.'], ['Vegano', 'Limitado. Llama antes si es importante para tu grupo.'],
+      ['Sin alcohol', "Mexican Coke, Martinelli's, refrescos y agua mineral."], ['Niños', 'Las familias son bienvenidas antes de las 8pm.'],
+      ['Grupos grandes', 'El salón recibe grupos grandes.']],
+  }[loc];
+
   return {
-    path: '/menu/',
-    title,
-    description,
-    jsonld: g([
-      ...base('/menu/', title, description, [HOME, { name: 'Beer & Food', path: '/menu/' }]),
-      S.menuNode(),
-    ]),
+    path, loc, altPath: ROUTES.menu[loc === 'en' ? 'es' : 'en'], title, description,
+    jsonld: g([...base(path, title, description, [home(loc), { name: L(UI.nav.menu, loc), path }], loc), S.menuNode(loc)]),
     body: `
 <section class="band band--tight">
 <div class="wrap">
-<span class="eyebrow">Beer &amp; food</span>
-<h1 style="font-size:clamp(2.2rem,7vw,4.4rem)">What we pour</h1>
-<p class="lede" style="margin-top:1.25rem"><strong>Mr. Chile Taproom serves a rotating list of Sonoma County and North Bay craft beer, cider and wine alongside a bar-food kitchen.</strong> The signature items are the baked Ed Hops Wings and Louie The Mac. An independent taco truck, Freaking Tacos, parks in the back.</p>
-${statusStrip}
+<span class="eyebrow">${esc(L(UI.nav.menu, loc))}</span>
+<h1 class="h1--sm">${loc === 'es' ? 'Lo que servimos' : 'What we pour'}</h1>
+<p class="lede" style="margin-top:1.25rem">${loc === 'es'
+      ? '<strong>Mr. Chile Taproom sirve una lista rotativa de cerveza artesanal, sidra y vino del condado de Sonoma y el North Bay, junto con cocina de bar.</strong> Los platillos insignia son las alitas Ed Hops horneadas y Louie The Mac. Un camión independiente, Freaking Tacos, se estaciona en el patio.'
+      : '<strong>Mr. Chile Taproom serves a rotating list of Sonoma County and North Bay craft beer, cider and wine alongside a bar-food kitchen.</strong> The signature items are the baked Ed Hops Wings and Louie The Mac. An independent taco truck, Freaking Tacos, parks on the patio.'}</p>
+${status(loc)}
 </div>
 </section>
 
-${PICADO}
+<figure class="banner">
+${pic('tacos-beer', loc === 'es' ? 'Tacos al pastor y una cerveza fría en la barra' : 'Tacos al pastor and a cold beer on the bar',
+      { widths: [640], sizes: '100vw' })}
+</figure>
 
 <section class="band">
 <div class="wrap grid grid--2">
-${site.menu
-  .map(
-    (sec) => `<section class="card">
-<h2 style="font-size:clamp(1.5rem,3.5vw,2rem)">${esc(sec.section)}</h2>
-<p class="form__note">${esc(sec.note)}</p>
-<ul class="mlist">${sec.items
-      .map((i) => `<li><strong>${esc(i.name)}</strong><span>${esc(i.desc)}</span></li>`)
-      .join('')}</ul>
-</section>`
-  )
-  .join('')}
+${site.menu.map((sec) => `<section class="card">
+<h2 class="h2--sm">${esc(L(sec.section, loc))}</h2>
+<p class="form__note">${esc(L(sec.note, loc))}</p>
+<ul class="mlist">${sec.items.map((i) => `<li><strong>${esc(L(i.name, loc))}</strong><span>${esc(L(i.desc, loc))}</span></li>`).join('')}</ul>
+</section>`).join('')}
 </div>
 <div class="wrap" style="margin-top:2.5rem">
-<p class="form__note">The tap list changes constantly and is not published here on purpose &mdash; a stale list is worse than no list. Call <a href="tel:${site.phoneE164}" style="color:var(--marigold)">${site.phone}</a> or check Instagram for what is on right now.</p>
+<p class="form__note">${loc === 'es'
+      ? 'La lista de barriles cambia constantemente y no se publica aquí a propósito — una lista vieja es peor que ninguna. Llama al'
+      : 'The tap list changes constantly and is not published here on purpose — a stale list is worse than no list. Call'}
+<a class="hi" href="${tel}">${site.phone}</a> ${loc === 'es' ? 'o revisa Instagram para ver qué hay hoy.' : 'or check Instagram for what is on right now.'}</p>
 </div>
 </section>
 
 <section class="band band--alt">
 <div class="wrap grid grid--split">
-<div><span class="eyebrow">Dietary</span><h2>Good to know</h2></div>
-<div><dl class="specs">
-<div><dt>Vegetarian</dt><dd>Vegetarian options are on the kitchen menu.</dd></div>
-<div><dt>Vegan</dt><dd>Limited. Call ahead if this matters for your group.</dd></div>
-<div><dt>Non-alcoholic</dt><dd>Mexican Coke, Martinelli&rsquo;s, sodas and sparkling water.</dd></div>
-<div><dt>Kids</dt><dd>Families welcome in the taproom and on the patio before 8pm.</dd></div>
-<div><dt>Large groups</dt><dd>The room handles large parties. For 25+ see <a href="/private-events/">private events</a>.</dd></div>
-</dl></div>
+<div><span class="eyebrow">${loc === 'es' ? 'Dietas' : 'Dietary'}</span><h2>${loc === 'es' ? 'Bueno saber' : 'Good to know'}</h2></div>
+<div><dl class="specs">${diet.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+<div class="btn-row" style="margin-top:1.5rem"><a class="btn btn--ghost" href="${ROUTES.private[loc]}">${esc(L(UI.nav.private, loc))}</a></div></div>
 </div>
 </section>`,
   };
@@ -442,67 +543,85 @@ ${site.menu
 // ============================================================================
 // VISIT
 // ============================================================================
-const visit = () => {
-  const title = 'Visit Mr. Chile Taproom | Hours, Directions & Parking, Santa Rosa CA';
-  const description =
-    'Mr. Chile Taproom is at 4357 Montgomery Dr, Santa Rosa, CA 95405. Closed Monday, 4–9pm Tue–Thu, 3–11pm Fri–Sat, 12–9pm Sunday. Free on-site parking, creekside patio, family-friendly before 8pm.';
+export const visitPage = (loc) => {
+  const path = ROUTES.visit[loc];
+  const title = loc === 'es'
+    ? 'Visita Mr. Chile Taproom | Horario, cómo llegar y estacionamiento, Santa Rosa'
+    : 'Visit Mr. Chile Taproom | Hours, Directions & Parking, Santa Rosa CA';
+  const description = loc === 'es'
+    ? 'Mr. Chile Taproom está en 4357 Montgomery Dr, Suite B, Santa Rosa, CA 95405. Lunes cerrado, 4–9pm mar–jue, 3–11pm vie–sáb, 12–9pm domingo. Estacionamiento gratis y patio junto al arroyo.'
+    : 'Mr. Chile Taproom is at 4357 Montgomery Dr, Suite B, Santa Rosa, CA 95405. Closed Monday, 4–9pm Tue–Thu, 3–11pm Fri–Sat, 12–9pm Sunday. Free on-site parking and a creekside patio.';
+  const dirs = {
+    en: [['From downtown Santa Rosa', 'Head east on 4th Street, which becomes Montgomery Drive. Stay on Montgomery about three miles. The taproom is on the right near Mission Boulevard, set back from the road.'],
+      ['From Highway 101', 'Exit at 4th Street or College Avenue, head east through downtown and continue onto Montgomery Drive.'],
+      ['From Sonoma or Kenwood', 'Take Highway 12 west into Santa Rosa and turn onto Montgomery Drive. The taproom is on the left.'],
+      ['Parking', 'The shared surface lot is free and open, and usually has space even on event nights. No permit, no validation.']],
+    es: [['Desde el centro de Santa Rosa', 'Toma la 4th Street hacia el este, que se convierte en Montgomery Drive. Sigue unas tres millas. El taproom queda a la derecha cerca de Mission Boulevard, retirado de la calle.'],
+      ['Desde la Highway 101', 'Sal en 4th Street o College Avenue, cruza el centro hacia el este y continúa por Montgomery Drive.'],
+      ['Desde Sonoma o Kenwood', 'Toma la Highway 12 al oeste hacia Santa Rosa y dobla en Montgomery Drive. El taproom queda a la izquierda.'],
+      ['Estacionamiento', 'El lote compartido es gratis y abierto, y casi siempre hay lugar incluso en noches de evento. Sin permiso ni validación.']],
+  }[loc];
+
   return {
-    path: '/visit/',
-    title,
-    description,
-    jsonld: g([
-      ...base('/visit/', title, description, [HOME, { name: 'Visit', path: '/visit/' }]),
-      S.faqNode(faqs.filter((f) => /hours|located|parking|kid/i.test(f.q))),
-    ]),
+    path, loc, altPath: ROUTES.visit[loc === 'en' ? 'es' : 'en'], title, description,
+    jsonld: g([...base(path, title, description, [home(loc), { name: L(UI.nav.visit, loc), path }], loc),
+      S.faqNode(faqs.filter((f) => /hours|horario|where|dónde|parking|estacionamiento|kid|niños/i.test(L(f.q, loc))), loc)]),
     body: `
 <section class="band band--tight">
 <div class="wrap">
-<span class="eyebrow">Visit</span>
-<h1 style="font-size:clamp(2.2rem,7vw,4.4rem)">4357 Montgomery Dr</h1>
-<p class="lede" style="margin-top:1.25rem"><strong>Mr. Chile Taproom is at 4357 Montgomery Dr, Santa Rosa, CA 95405, on Montgomery Drive near Mission Boulevard in east Santa Rosa.</strong> Parking is free in the on-site lot. It is about ten minutes from downtown Santa Rosa and roughly an hour and fifteen minutes from San Francisco.</p>
-${statusStrip}
+<span class="eyebrow">${esc(L(UI.nav.visit, loc))}</span>
+<h1 class="h1--sm">4357 Montgomery Dr</h1>
+<p class="lede" style="margin-top:1.25rem">${loc === 'es'
+      ? '<strong>Mr. Chile Taproom está en 4357 Montgomery Dr, Suite B, Santa Rosa, CA 95405, sobre Montgomery Drive cerca de Mission Boulevard.</strong> El estacionamiento es gratis. Queda a unos diez minutos del centro de Santa Rosa y a una hora y cuarto de San Francisco.'
+      : '<strong>Mr. Chile Taproom is at 4357 Montgomery Dr, Suite B, Santa Rosa, CA 95405, on Montgomery Drive near Mission Boulevard in east Santa Rosa.</strong> Parking is free in the on-site lot. It is about ten minutes from downtown Santa Rosa and roughly an hour and fifteen minutes from San Francisco.'}</p>
+${status(loc)}
 <div class="btn-row" style="margin-top:1.5rem">
-<a class="btn btn--primary" href="https://www.google.com/maps/search/?api=1&amp;query=${site.lat},${site.lng}">Get directions</a>
-<a class="btn btn--ghost" href="tel:${site.phoneE164}">Call ${site.phone}</a>
+<a class="btn btn--primary" href="${mapUrl}">${esc(t('directions', loc))}</a>
+<a class="btn btn--ghost" href="${tel}">${esc(t('call', loc))} ${site.phone}</a>
 </div>
 </div>
 </section>
 
-${PICADO}
+<figure class="banner">
+${pic('patio-wide', loc === 'es' ? 'El patio con mesas de picnic y calentadores bajo los robles al anochecer'
+      : 'The patio with picnic tables and heat lamps under the oaks at dusk',
+      { widths: [640, 1280], sizes: '100vw' })}
+</figure>
 
 <section class="band">
 <div class="wrap grid grid--split">
 <div>
-<h2>Hours</h2>
-<div style="margin-top:1.25rem">${hoursTable()}</div>
-<p class="form__note" style="margin-top:1rem">Event nights can run past posted closing. Cumbia Rosa runs to 1am. Holidays vary &mdash; call to confirm.</p>
+<h2>${esc(t('hours', loc))}</h2>
+<div style="margin-top:1.25rem">${hoursTable(loc)}</div>
+<p class="form__note" style="margin-top:1rem">${esc(t('eventNote', loc))} ${loc === 'es' ? 'Cumbia Rosa va hasta las 2am.' : 'Cumbia Rosa runs to 2am.'}</p>
 </div>
 <div>
-<h2>Details</h2>
-<div style="margin-top:1.25rem">${napBlock()}</div>
+<h2>${loc === 'es' ? 'Detalles' : 'Details'}</h2>
+<div style="margin-top:1.25rem">${napBlock(loc)}</div>
 </div>
 </div>
 </section>
 
 <section class="band band--alt">
 <div class="wrap">
-<span class="eyebrow">On arrival</span>
-<h2>What to expect</h2>
-<div class="grid grid--4" style="margin-top:2.5rem">
-${site.amenities.map((a) => `<div class="card"><h4>${esc(a.name)}</h4><p>${esc(a.detail)}</p></div>`).join('')}
+<span class="eyebrow">${loc === 'es' ? 'Al llegar' : 'On arrival'}</span>
+<h2>${loc === 'es' ? 'Qué vas a encontrar' : 'What to expect'}</h2>
+<div class="grid grid--3" style="margin-top:2.5rem">
+${site.amenities.map((a) => `<div class="card"><h4>${esc(L(a.name, loc))}</h4><p>${esc(L(a.detail, loc))}</p></div>`).join('')}
 </div>
 </div>
 </section>
 
 <section class="band">
 <div class="wrap grid grid--split">
-<div><span class="eyebrow">Getting here</span><h2>Directions</h2></div>
-<div class="prose">
-<p><strong>From downtown Santa Rosa:</strong> head east on 4th Street, which becomes Montgomery Drive. Stay on Montgomery for about three miles. The taproom is on the right near Mission Boulevard, in the shopping center set back from the road.</p>
-<p><strong>From Highway 101:</strong> exit at 4th Street or College Avenue, head east through downtown and continue onto Montgomery Drive.</p>
-<p><strong>From Sonoma or Kenwood:</strong> take Highway 12 west into Santa Rosa and turn onto Montgomery Drive. The taproom is on the left.</p>
-<p><strong>Parking:</strong> the shared surface lot is free, open and usually has space even on event nights. No permit or validation.</p>
+<div><span class="eyebrow">${loc === 'es' ? 'Cómo llegar' : 'Getting here'}</span>
+<h2>${loc === 'es' ? 'Indicaciones' : 'Directions'}</h2>
+<figure class="fig" style="margin-top:1.75rem">
+${pic('taproom', loc === 'es' ? 'El interior del taproom con la barra iluminada' : 'The lit bar inside the taproom',
+      { widths: [640], sizes: '(min-width:720px) 45vw, 100vw' })}
+</figure>
 </div>
+<div class="prose">${dirs.map(([k, v]) => `<p><strong>${esc(k)}:</strong> ${esc(v)}</p>`).join('')}</div>
 </div>
 </section>`,
   };
@@ -511,140 +630,63 @@ ${site.amenities.map((a) => `<div class="card"><h4>${esc(a.name)}</h4><p>${esc(a
 // ============================================================================
 // FAQ
 // ============================================================================
-const faqPage = () => {
-  const title = 'Mr. Chile Taproom FAQ | Hours, Events, Parking & Private Bookings';
-  const description =
-    'Answers about Mr. Chile Taproom in Santa Rosa: opening hours, location and parking, whether it is kid-friendly, what Cumbia Rosa is, food and drink, live music and how to book a private event.';
+export const faqPage = (loc) => {
+  const path = ROUTES.faq[loc];
+  const title = loc === 'es'
+    ? 'Preguntas frecuentes | Mr. Chile Taproom, Santa Rosa'
+    : 'Mr. Chile Taproom FAQ | Hours, Events, Parking & Private Bookings';
+  const description = loc === 'es'
+    ? 'Respuestas sobre Mr. Chile Taproom en Santa Rosa: horario, ubicación y estacionamiento, si pueden ir niños, qué es Cumbia Rosa, comida y bebida, música en vivo y cómo rentar para eventos privados.'
+    : 'Answers about Mr. Chile Taproom in Santa Rosa: opening hours, location and parking, whether it is kid-friendly, what Cumbia Rosa is, food and drink, live music and how to book a private event.';
   return {
-    path: '/faq/',
-    title,
-    description,
-    jsonld: g([
-      ...base('/faq/', title, description, [HOME, { name: 'FAQ', path: '/faq/' }]),
-      S.faqNode(),
-    ]),
+    path, loc, altPath: ROUTES.faq[loc === 'en' ? 'es' : 'en'], title, description,
+    jsonld: g([...base(path, title, description, [home(loc), { name: L(UI.nav.faq, loc), path }], loc), S.faqNode(faqs, loc)]),
     body: `
 <section class="band band--tight">
 <div class="wrap">
-<span class="eyebrow">FAQ</span>
-<h1 style="font-size:clamp(2.2rem,7vw,4.4rem)">Questions, answered</h1>
-<p class="lede" style="margin-top:1.25rem">Everything people ask before they come. If it is not here, call ${site.phone}.</p>
+<span class="eyebrow">${esc(L(UI.nav.faq, loc))}</span>
+<h1 class="h1--sm">${loc === 'es' ? 'Preguntas, respondidas' : 'Questions, answered'}</h1>
+<p class="lede" style="margin-top:1.25rem">${loc === 'es'
+      ? `Todo lo que la gente pregunta antes de venir. Si no está aquí, llama al ${site.phone}.`
+      : `Everything people ask before they come. If it is not here, call ${site.phone}.`}</p>
 </div>
 </section>
 
 ${PICADO}
 
 <section class="band">
-<div class="wrap" style="max-width:900px">${faqBlock(faqs)}</div>
+<div class="wrap wrap--narrow">${faqBlock(faqs, loc)}</div>
 </section>
 
 <section class="band band--chile">
 <div class="wrap grid grid--split">
-<div><span class="eyebrow">Still deciding?</span><h2>Come by</h2></div>
-<div><p class="lede">${esc(hoursSummary)}. ${esc(fullAddress)}.</p>
+<div><span class="eyebrow">${loc === 'es' ? '¿Todavía lo piensas?' : 'Still deciding?'}</span>
+<h2>${loc === 'es' ? 'Ven un rato' : 'Come by'}</h2></div>
+<div><p class="lede">${esc(L(hoursSummary, loc))}. ${esc(fullAddress)}.</p>
 <div class="btn-row" style="margin-top:1.75rem">
-<a class="btn btn--gold" href="https://www.google.com/maps/search/?api=1&amp;query=${site.lat},${site.lng}">Directions</a>
-<a class="btn btn--ghost" href="tel:${site.phoneE164}" style="border-color:rgba(255,255,255,.5)">Call ${site.phone}</a>
+<a class="btn btn--gold" href="${mapUrl}">${esc(t('directions', loc))}</a>
+<a class="btn btn--ghost btn--onred" href="${tel}">${esc(t('call', loc))} ${site.phone}</a>
 </div></div>
 </div>
 </section>`,
   };
 };
 
-// ============================================================================
-// ESPAÑOL
-// ============================================================================
-const espanol = () => {
-  const title = 'Mr. Chile Taproom | El primer taproom latino del condado de Sonoma';
-  const description =
-    'Taproom latino en Santa Rosa, California. Cerveza artesanal local, comida, patio junto al arroyo y noches de cumbia. 4357 Montgomery Dr. Abierto de martes a domingo. Eventos privados hasta 150 personas.';
-  return {
-    path: '/es/',
-    lang: 'es',
-    title,
-    description,
-    jsonld: g([S.businessNode(), S.websiteNode(), ...S.seriesNodes()]),
-    body: `
-<section class="hero">
-<div class="wrap hero__in">
-<span class="eyebrow">Santa Rosa, California &middot; Montgomery y Mission</span>
-<h1>El primer taproom<em>latino de Sonoma</em></h1>
-<p class="hero__sub">Cerveza y cultura &middot; Cumbia, comedia y m&uacute;sica en vivo &middot; Patio junto al arroyo</p>
-${statusStrip}
-<div class="board" style="margin-top:1.75rem">
-<div class="board__top"><span class="board__label">En cartelera</span><span class="pill pill--gold">Condado de Sonoma</span></div>
-<div class="board__body">
-${site.series
-  .slice(0, 3)
-  .map(
-    (s) => `<div class="board__row"><span class="board__when">${esc(s.kicker)}</span>
-<div class="board__what"><h3>${esc(s.name)}</h3><p>${esc(s.esShort)}</p></div></div>`
-  )
-  .join('')}
-</div>
-<div class="board__foot btn-row">
-<a class="btn btn--gold" href="tel:${site.phoneE164}">Llamar ${site.phone}</a>
-<a class="btn btn--ghost" href="https://www.google.com/maps/search/?api=1&amp;query=${site.lat},${site.lng}">C&oacute;mo llegar</a>
-</div>
-</div>
-</div>
-</section>
-
-${PICADO}
-
-<section class="band band--alt">
-<div class="wrap grid grid--split">
-<div><span class="eyebrow eyebrow--chile">Qu&eacute; es este lugar</span><h2>Un taproom que funciona como sal&oacute;n de eventos</h2></div>
-<div class="prose">
-<p><strong>Mr. Chile Taproom es un taproom latino de cerveza artesanal y sal&oacute;n de eventos ubicado en 4357 Montgomery Dr, Santa Rosa, California.</strong> Servimos cerveza, sidra y vino local del condado de Sonoma, comida de bar, y organizamos noches de cumbia, comedia, m&uacute;sica en vivo y eventos ben&eacute;ficos.</p>
-<p>Atr&aacute;s hay un patio con &aacute;rboles junto al arroyo de Santa Rosa, con juegos, espacio para ni&ntilde;os y un camión de tacos. Estacionamiento gratis. Se habla espa&ntilde;ol.</p>
-</div>
-</div>
-</section>
-
-<section class="band">
-<div class="wrap grid grid--split">
-<div>
-<span class="eyebrow">Horario</span><h2>Vis&iacute;tanos</h2>
-<a class="tel" href="tel:${site.phoneE164}" style="margin-top:1rem;display:inline-block">${site.phone}</a>
-<p style="margin-top:1rem;color:var(--masa-dim)">${esc(fullAddress)}</p>
-<div class="btn-row" style="margin-top:1.5rem"><a class="btn btn--primary" href="/">English site</a></div>
-</div>
-<div>${hoursTable()}
-<p class="form__note" style="margin-top:1rem">Las noches de evento pueden extenderse. Cumbia Rosa va hasta la 1am.</p>
-</div>
-</div>
-</section>
-
-<section class="band band--chile">
-<div class="wrap grid grid--split">
-<div><span class="eyebrow">Eventos privados</span><h2>Renta el sal&oacute;n</h2></div>
-<div><p class="lede">Quincea&ntilde;eras, cumplea&ntilde;os, fiestas de empresa, cenas de ensayo y eventos ben&eacute;ficos. Hasta 150 personas. Patio, sal&oacute;n trasero o el lugar completo.</p>
-<div class="btn-row" style="margin-top:1.75rem">
-<a class="btn btn--gold" href="/private-events/">Ver paquetes</a>
-<a class="btn btn--ghost" href="tel:${site.phoneE164}" style="border-color:rgba(255,255,255,.5)">Llamar</a>
-</div></div>
-</div>
-</section>`,
-  };
-};
-
-// ============================================================================
-const notFound = () => ({
-  path: '/404.html',
-  raw: true,
+export const notFoundPage = () => ({
+  path: '/404.html', loc: 'en', altPath: '/es/', raw: true,
   title: 'Page not found | Mr. Chile Taproom',
   description: 'That page does not exist.',
   robots: 'noindex,follow',
-  jsonld: g([S.businessNode()]),
+  jsonld: g([S.businessNode('en')]),
   body: `<section class="band"><div class="wrap">
 <span class="eyebrow eyebrow--chile">404</span>
-<h1 style="font-size:clamp(2.2rem,7vw,4.4rem)">That page moved on</h1>
-<p class="lede" style="margin-top:1.25rem">The link is broken, but the taproom is not. Try the calendar, or call ${site.phone}.</p>
+<h1 class="h1--sm">That page moved on</h1>
+<p class="lede" style="margin-top:1.25rem">The link is broken, but the taproom is not. Try the calendar, or call ${site.phone}.<br><span lang="es">El enlace no sirve, pero el taproom sí. Visita el calendario o llama.</span></p>
 <div class="btn-row" style="margin-top:1.75rem">
 <a class="btn btn--primary" href="/">Home</a>
 <a class="btn btn--ghost" href="/events/">What&rsquo;s on</a>
+<a class="btn btn--ghost" href="/es/" lang="es">Español</a>
 </div></div></section>`,
 });
 
-export const pages = [home, events, privateEvents, menu, visit, faqPage, espanol, notFound].map((f) => f());
+export const PAGE_BUILDERS = [homePage, eventsPage, privatePage, menuPage, visitPage, faqPage];
