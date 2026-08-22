@@ -87,9 +87,10 @@ function header(path, loc, altPath) {
   }).join('');
   return `<header class="hdr">
 <div class="wrap hdr__in">
-<a class="brand" href="${ROUTES.home[loc]}" aria-label="${esc(site.name)}">
-<img class="brand__mark" src="/img/mark-light.png" width="120" height="74" alt="" aria-hidden="true">
-<span class="brand__txt">Mr. Chile<small>Taproom &middot; ${esc(site.tagline)}</small></span></a>
+<a class="brand" href="${ROUTES.home[loc]}" aria-label="${esc(site.name)} \u2014 ${esc(site.tagline)}">
+<img class="brand__lockup" src="/img/logo-horizontal.png" width="670" height="114" alt="" aria-hidden="true">
+<img class="brand__mark" src="/img/mark-light.png" width="464" height="216" alt="" aria-hidden="true">
+</a>
 <nav class="nav" aria-label="${loc === 'es' ? 'Principal' : 'Primary'}">${nav}</nav>
 <a class="lang" href="${altPath}" hreflang="${other}" lang="${other}" title="${esc(t('langLabel', loc))}">${esc(t('langSwitch', loc))}</a>
 <a class="btn btn--primary hdr__cta" href="tel:${site.phoneE164}">${esc(t('call', loc))} ${site.phone}</a>

@@ -147,12 +147,6 @@ p { text-wrap: pretty; }
 }
 .hdr__in { display: flex; align-items: center; gap: 1rem; min-height: 68px; }
 .brand { display: flex; align-items: center; gap: .6rem; text-decoration: none; margin-right: auto; }
-.brand__mark { width: 30px; height: 30px; flex: none; }
-.brand__txt {
-  font-family: var(--display); font-weight: 800; font-stretch: 112%;
-  text-transform: uppercase; font-size: 1.02rem; letter-spacing: -.01em; line-height: 1;
-}
-.brand__txt small { display: block; font-family: var(--mono); font-size: .58rem; letter-spacing: .22em; color: var(--marigold); font-weight: 400; margin-top: 3px; text-transform: uppercase; }
 
 .nav { display: none; gap: 1.6rem; }
 .nav a {
@@ -162,7 +156,7 @@ p { text-wrap: pretty; }
 .nav a:hover, .nav a[aria-current="page"] { color: var(--masa); border-bottom-color: var(--chile); }
 .hdr .btn { padding: .7rem 1.05rem; font-size: .82rem; }
 @media (min-width: 940px) { .nav { display: flex; } .hdr__in { gap: 2rem; } }
-@media (max-width: 939px) { .hdr__cta { display: none; } }
+@media (max-width: 1079px) { .hdr__cta { display: none; } }
 
 /* mobile drawer */
 .menu-btn {
@@ -349,7 +343,6 @@ p { text-wrap: pretty; }
 strong.hi { color: var(--masa); }
 
 /* --- brand ---------------------------------------------------------------- */
-.brand__mark { width: 44px; height: auto; flex: none; }
 .ftr__logo { width: 220px; height: auto; margin-bottom: 1.1rem; }
 .ftr__social { display: flex; gap: 1.25rem; margin-top: 1rem; font-size: .93rem; }
 
@@ -412,3 +405,17 @@ a.pill:hover { border-color: var(--marigold); color: var(--marigold); }
 /* Ghost buttons sitting on the chile-red band need a lighter border. */
 .btn--onred { border-color: rgba(255,255,255,.55); }
 .btn--onred:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+
+/* --- brand lockup ---------------------------------------------------------
+   The supplied logo is a stacked lockup, unreadable at header height, so the
+   header uses a horizontal lockup composed from the same artwork. Narrow
+   screens fall back to the chile mark alone, which stays legible at any size. */
+.brand { gap: 0; }
+.brand__lockup { display: none; height: 38px; width: auto; }
+.brand__mark   { display: block; height: 30px; width: auto; }
+@media (min-width: 560px) {
+  .brand__lockup { display: block; }
+  .brand__mark   { display: none; }
+}
+@media (min-width: 940px) { .brand__lockup { height: 42px; } }
+.brand:hover { opacity: .85; }

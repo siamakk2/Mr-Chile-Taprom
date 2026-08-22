@@ -45,3 +45,55 @@ for name, f in FLYERS.items():
 
 json.dump(manifest, open(f'{OUT}/manifest.json', 'w'), indent=2, sort_keys=True)
 print(json.dumps(manifest, indent=2, sort_keys=True))
+
+# --- logo lockups -------------------------------------------------------------
+# The supplied logo is a stacked lockup (chile above, wordmark below) with a
+# ~1.6:1 ratio. At header height that makes the wordmark unreadable, so we also
+# compose a horizontal lockup from the same artwork: chile left, wordmark right.
+def build_logos():
+    src = Image.open(f'{SRC}/logo-source.png').convert('RGBA')
+    px = src.load()
+    w, h = src.size
+    for y in range(h):                      # key out the near-white background
+        for x in range(w):
+            r, g, b, a = px[x, y]
+            lo, hi = min(r, g, b), max(r, g, b)
+            if lo > 228 and hi - lo < 18:
+                px[x, y] = (r, g, b, 0)
+            elif lo > 200 and hi - lo < 22:
+                px[x, y] = (r, g, b, int((228 - lo) * 255 / 28))
+    src = src.crop(src.getbbox())
+    src = src.resize((560, round(src.height * 560 / src.width)), Image.LANCZOS)
+    src.save(f'{OUT}/logo.png', optimize=True)
+
+    split = int(src.height * 0.66)          # chile art above, wordmark below
+    light = src.copy(); lp = light.load()
+    for y in range(split, light.height):    # black wordmark -> masa cream
+        for x in range(light.width):
+            r, g, b, a = lp[x, y]
+            if a and max(r, g, b) < 110:
+                lp[x, y] = (242, 233, 216, a)
+    light.save(f'{OUT}/logo-light.png', optimize=True)
+
+    chile = light.crop((0, 0, light.width, int(light.height * 0.63)))
+    chile = chile.crop(chile.getbbox())
+    chile.resize((240, round(240 * chile.height / chile.width)), Image.LANCZOS) \
+         .save(f'{OUT}/mark-light.png', optimize=True)
+
+    word = light.crop((0, split, light.width, light.height))
+    word = word.crop(word.getbbox())
+
+    # Horizontal lockup at 3x for retina; CSS renders it around 38px tall.
+    WH = 114                                 # lockup height
+    ch = round(WH * 0.86)
+    c2 = chile.resize((round(chile.width * ch / chile.height), ch), Image.LANCZOS)
+    ww = round(word.width * (WH * 0.80) / word.height)
+    w2 = word.resize((ww, round(WH * 0.80)), Image.LANCZOS)
+    gap = 22
+    lock = Image.new('RGBA', (c2.width + gap + w2.width, WH), (0, 0, 0, 0))
+    lock.paste(c2, (0, (WH - c2.height) // 2), c2)
+    lock.paste(w2, (c2.width + gap, (WH - w2.height) // 2), w2)
+    lock.save(f'{OUT}/logo-horizontal.png', optimize=True)
+    print('logo-horizontal', lock.size, ' mark', chile.size, ' stacked', src.size)
+
+build_logos()
