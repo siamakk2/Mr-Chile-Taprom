@@ -131,3 +131,45 @@ published material or the flyers.
 6. Exact sonido names on the Sonidero flyer (§3)
 7. Whether Freaking Tacos is permanent or week-to-week
 8. Dogs on the patio — currently not claimed either way
+
+---
+
+## §8 — Menu data exists, but only from scrapers
+
+A full menu and a Hoppy Hour turned up in aggregator listings — items, sections
+and prices. Two things are worth separating.
+
+**The item names are safe and now published.** Ceviche Tostadas, Meat Lovers
+Sandwich, fish tacos, tacos de cabeza, the Licuachela, pupusas on event nights.
+These corroborate across sources and match the reviews. They are on the menu
+page and in the `Menu` structured data.
+
+**The prices are not safe.** They came from third-party aggregators, not the
+taproom, and one of them gives the set away: a margarita at **$10.91**. No bar
+prices a drink at ninety-one cents; that is a tax-inclusive total or a POS
+export, scraped and relabelled as a menu price. If one number in the set is an
+artifact, the rest are suspect too.
+
+Publishing a wrong price on the canonical source is worse than publishing none.
+A customer who reads $8.99 wings here and is charged $11.99 has been misled by
+the business's own website — and it undoes the exact authority this whole build
+is meant to establish.
+
+So prices sit in `site.config.mjs` behind `pricesConfirmed: false`. They are in
+the code, hidden from the page and withheld from the structured data. Read them
+off the actual board once, flip the flag to `true`, and every price appears on
+the page and in the `Offer` markup in both languages at the next build.
+
+`llms.txt` states plainly that prices are unconfirmed and that figures found
+elsewhere online may be wrong — which is itself a correction being fed back to
+the engines that scraped them.
+
+**Hoppy Hour is the real find.** Tuesday to Friday, 4–6pm, with a 15% food
+discount on two or more drinks. No directory lists it. "Happy hour near me" is
+one of the highest-intent local searches there is, and nobody in east Santa Rosa
+is competing for it with structured data. It now has its own section on the menu
+page, an FAQ entry, a line in `llms.txt`, and a real `Offer` node with
+`hoursAvailable` for all four days.
+
+⚠ Confirm with the owner: the individual prices, and whether Hoppy Hour still
+runs those days and hours.

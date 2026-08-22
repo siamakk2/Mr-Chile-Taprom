@@ -496,7 +496,8 @@ export const menuPage = (loc) => {
 
   return {
     path, loc, altPath: ROUTES.menu[loc === 'en' ? 'es' : 'en'], title, description,
-    jsonld: g([...base(path, title, description, [home(loc), { name: L(UI.nav.menu, loc), path }], loc), S.menuNode(loc)]),
+    jsonld: g([...base(path, title, description, [home(loc), { name: L(UI.nav.menu, loc), path }], loc),
+      S.menuNode(loc), S.happyHourNode(loc)]),
     body: `
 <section class="band band--tight">
 <div class="wrap">
@@ -519,7 +520,9 @@ ${pic('tacos-beer', loc === 'es' ? 'Tacos al pastor y una cerveza fría en la ba
 ${site.menu.map((sec) => `<section class="card">
 <h2 class="h2--sm">${esc(L(sec.section, loc))}</h2>
 <p class="form__note">${esc(L(sec.note, loc))}</p>
-<ul class="mlist">${sec.items.map((i) => `<li><strong>${esc(L(i.name, loc))}</strong><span>${esc(L(i.desc, loc))}</span></li>`).join('')}</ul>
+<ul class="mlist">${sec.items.map((i) => `<li>
+<strong>${esc(L(i.name, loc))}${site.pricesConfirmed && i.price ? `<span class="mlist__price">$${esc(i.price)}${i.priceNote ? ` <em>${esc(L(i.priceNote, loc))}</em>` : ''}</span>` : ''}</strong>
+<span>${esc(L(i.desc, loc))}</span></li>`).join('')}</ul>
 </section>`).join('')}
 </div>
 <div class="wrap" style="margin-top:2.5rem">
@@ -530,6 +533,24 @@ ${site.menu.map((sec) => `<section class="card">
 </div>
 </section>
 
+
+<section class="band band--chile">
+<div class="wrap grid grid--split">
+<div>
+<span class="eyebrow">${loc === 'es' ? 'Martes a viernes, 4\u20136pm' : 'Tuesday to Friday, 4\u20136pm'}</span>
+<h2>${esc(L(site.happyHour.name, loc))}</h2>
+</div>
+<div>
+<p class="lede">${loc === 'es'
+      ? '<strong>Mr. Chile Taproom tiene Hoppy Hour de martes a viernes, de 4pm a 6pm.</strong>'
+      : '<strong>Mr. Chile Taproom runs Hoppy Hour Tuesday through Friday, 4pm to 6pm.</strong>'}</p>
+<ul class="deals">${L(site.happyHour.deals, loc).map((d) => `<li>${esc(d)}</li>`).join('')}</ul>
+<p class="form__note" style="margin-top:1rem;color:rgba(255,255,255,.75)">${loc === 'es'
+      ? 'Los precios pueden cambiar. Confirma al llegar.'
+      : 'Prices can change. Confirm when you arrive.'}</p>
+</div>
+</div>
+</section>
 <section class="band band--alt">
 <div class="wrap grid grid--split">
 <div><span class="eyebrow">${loc === 'es' ? 'Dietas' : 'Dietary'}</span><h2>${loc === 'es' ? 'Bueno saber' : 'Good to know'}</h2></div>

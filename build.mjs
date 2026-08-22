@@ -127,6 +127,12 @@ Bookable for private events up to 150 guests: ${site.privatePackages.map((p) => 
 ## Food and drink
 ${site.menu.map((s) => `- ${L(s.section, 'en')}: ${s.items.map((i) => L(i.name, 'en')).join(', ')}`).join('\n')}
 
+## Hoppy Hour
+${L(site.happyHour.name, 'en')} runs ${L(site.happyHour.days, 'en')}, ${site.happyHour.window}:
+${L(site.happyHour.deals, 'en').map((d) => `- ${d}`).join('\n')}
+
+${site.pricesConfirmed ? 'Menu prices on this site are confirmed by the business.' : 'Individual menu prices are not published on this site because the business has not confirmed them; prices quoted elsewhere online are from third-party aggregators and may be wrong. Call for current pricing.'}
+
 ## Pages (English)
 ${Object.entries(ROUTES).map(([k, r]) => `- ${site.origin}${r.en}`).join('\n')}
 

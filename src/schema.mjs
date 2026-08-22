@@ -176,9 +176,42 @@ export const menuNode = (loc = 'en') => ({
       '@type': 'MenuItem',
       name: L(i.name, loc),
       description: L(i.desc, loc),
+      // Prices reach the structured data only when a human has verified them.
+      ...(site.pricesConfirmed && i.price
+        ? { offers: { '@type': 'Offer', price: i.price, priceCurrency: 'USD' } }
+        : {}),
     })),
   })),
 });
+
+/** Hoppy Hour as a real Offer with validity hours - feeds "happy hour near me". */
+export const happyHourNode = (loc = 'en') => {
+  const h = site.happyHour;
+  return {
+    '@type': 'Offer',
+    '@id': `${abs(ROUTES.menu[loc])}#hoppy-hour`,
+    name: `${L(h.name, loc)} - ${site.name}`,
+    description: L(h.deals, loc).join('. ') + '.',
+    category: 'HappyHour',
+    availableAtOrFrom: { '@id': ID.org },
+    offeredBy: { '@id': ID.org },
+    priceCurrency: 'USD',
+    availabilityStarts: h.opens,
+    availabilityEnds: h.closes,
+    availableDeliveryMethod: 'https://schema.org/OnSitePickup',
+    validFrom: `${new Date().toISOString().slice(0, 10)}T${h.opens}:00-07:00`,
+    itemOffered: {
+      '@type': 'Service',
+      name: L(h.name, loc),
+      hoursAvailable: h.schemaDays.map((d) => ({
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: `https://schema.org/${d}`,
+        opens: h.opens,
+        closes: h.closes,
+      })),
+    },
+  };
+};
 
 export const serviceNodes = (loc = 'en') =>
   site.privatePackages.map((p) => ({

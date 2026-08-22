@@ -259,7 +259,34 @@ export const site = {
     },
   ],
 
-  // No prices are published anywhere public, so none are invented here.
+  // --- Pricing ---------------------------------------------------------------
+  // Prices below came from third-party aggregators, not from the taproom. They
+  // are plausible but unverified, and one of them ("$10.91") is clearly a
+  // tax-inclusive or POS-export artifact rather than a menu price. Publishing a
+  // wrong price on the canonical source is worse than publishing none, so they
+  // stay hidden until someone reads them off the actual board.
+  //
+  // Flip this to true once confirmed and every price appears on the page AND in
+  // the Menu/Offer structured data automatically.
+  pricesConfirmed: false,
+
+  // Hoppy Hour is the highest-value thing in this data set: "happy hour near me"
+  // is a high-intent search and no listing anywhere mentions theirs.
+  happyHour: {
+    name: { en: 'Hoppy Hour', es: 'Hoppy Hour' },
+    days: { en: 'Tuesday to Friday', es: 'Martes a viernes' },
+    schemaDays: ['Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    opens: '16:00',
+    closes: '18:00',
+    window: '4pm – 6pm',
+    deals: {
+      en: ['Bottled beer $4.99', 'Draft beer $5.99', 'Cocktails $6.99',
+           'Buy two or more drinks and get 15% off your Freaking Tacos order'],
+      es: ['Cerveza en botella $4.99', 'Cerveza de barril $5.99', 'Cócteles $6.99',
+           'Con dos bebidas o más, 15% de descuento en tu orden de Freaking Tacos'],
+    },
+  },
+
   menu: [
     {
       section: { en: 'On Tap', es: 'De Barril' },
@@ -270,22 +297,38 @@ export const site = {
       items: [
         { name: { en: 'Local craft beer', es: 'Cerveza artesanal local' }, desc: { en: 'A rotating lineup weighted toward Sonoma County and North Bay breweries — IPAs, lagers, stouts and sours.', es: 'Selección rotativa de cervecerías del condado de Sonoma y el North Bay — IPAs, lagers, stouts y sours.' } },
         { name: { en: 'Cider', es: 'Sidra' }, desc: { en: 'Dry and semi-dry ciders from California producers.', es: 'Sidras secas y semisecas de productores de California.' } },
-        { name: { en: 'Wine', es: 'Vino' }, desc: { en: 'Sonoma County reds and whites by the glass.', es: 'Tintos y blancos del condado de Sonoma por copa.' } },
-        { name: { en: 'Micheladas', es: 'Micheladas' }, desc: { en: 'Build one on any beer on the list.', es: 'Con cualquier cerveza de la lista.' } },
+        { name: { en: 'Wine', es: 'Vino' }, desc: { en: 'Reds and whites by the glass.', es: 'Tintos y blancos por copa.' } },
+      ],
+    },
+    {
+      section: { en: 'Cocktails', es: 'Cócteles' },
+      note: {
+        en: 'House cocktails alongside the taps — the michelada list is the reason to come.',
+        es: 'Cócteles de la casa junto a los barriles — la lista de micheladas vale la pena.',
+      },
+      items: [
+        { name: { en: 'House Michelada', es: 'Michelada de la casa' }, price: '10.00', desc: { en: 'Built in house on any beer from the list.', es: 'Preparada en casa con cualquier cerveza de la lista.' } },
+        { name: 'Licuachela', price: '17.99', desc: { en: 'The big one — a loaded michelada built to share, or not.', es: 'La grande — michelada cargada para compartir, o no.' } },
+        { name: { en: 'Margarita', es: 'Margarita' }, desc: { en: 'Traditional, strawberry or passion fruit.', es: 'Tradicional, fresa o maracuyá.' } },
+        { name: { en: 'Espresso Martini', es: 'Espresso Martini' }, price: '12.99', desc: { en: 'On the regular cocktail list.', es: 'En la lista regular de cócteles.' } },
+        { name: { en: 'Old Fashioned', es: 'Old Fashioned' }, price: '12.99', desc: { en: 'Made to order.', es: 'Preparado al momento.' } },
+        { name: { en: 'Spiked Lemonade', es: 'Limonada preparada' }, price: '12.49', desc: { en: 'Easy drinking, good on the patio.', es: 'Ligera y fresca, ideal para el patio.' } },
       ],
     },
     {
       section: { en: 'Kitchen', es: 'Cocina' },
       note: {
-        en: 'Bar food built to go with beer. Vegetarian options available.',
-        es: 'Comida de bar para acompañar la cerveza. Hay opciones vegetarianas.',
+        en: 'Bar comfort food and Mexican-inspired plates, built to go with beer. Vegetarian options available.',
+        es: 'Comida de bar y platillos de inspiración mexicana para acompañar la cerveza. Hay opciones vegetarianas.',
       },
       items: [
-        { name: 'Ed Hops Wings', desc: { en: 'Baked, not fried — the item regulars come back for.', es: 'Horneadas, no fritas — el platillo por el que la gente regresa.' } },
+        { name: 'Ed Hops Wings', price: '8.99', priceNote: { en: '6 pc · 12 pc $13.99', es: '6 pzas · 12 pzas $13.99' }, desc: { en: 'Baked, not fried, seasoned and served with a choice of sauces. The item regulars come back for.', es: 'Horneadas, no fritas, sazonadas y con salsa a elegir. El platillo por el que la gente regresa.' } },
+        { name: 'Yo Adrin', desc: { en: 'Cheese garlic bread, baked fresh and loaded.', es: 'Pan de ajo horneado y cargado de queso.' } },
+        { name: { en: 'Meat Lovers Sandwich', es: 'Sándwich Meat Lovers' }, desc: { en: 'The heaviest thing on the board.', es: 'Lo más contundente del menú.' } },
         { name: 'Louie The Mac', desc: { en: 'Baked mac and cheese.', es: 'Macarrones con queso al horno.' } },
-        { name: 'Yo Adrin', desc: { en: 'Cheese garlic bread.', es: 'Pan de ajo con queso.' } },
-        { name: { en: 'Chips & Salsa', es: 'Totopos y Salsa' }, desc: { en: 'House salsa.', es: 'Salsa de la casa.' } },
-        { name: { en: 'Sandwiches', es: 'Sándwiches' }, desc: { en: 'Rotating sandwich board.', es: 'Menú de sándwiches rotativo.' } },
+        { name: { en: 'Fish Tacos', es: 'Tacos de pescado' }, desc: { en: 'Fresh, off the regular menu.', es: 'Frescos, del menú regular.' } },
+        { name: { en: 'Ceviche Tostadas', es: 'Tostadas de ceviche' }, price: '4.99', desc: { en: 'Cold, sharp and cheap.', es: 'Frescas, ácidas y económicas.' } },
+        { name: { en: 'Chips & Salsa', es: 'Totopos y Salsa' }, desc: { en: 'Homemade salsa.', es: 'Salsa hecha en casa.' } },
       ],
     },
     {
@@ -303,12 +346,14 @@ export const site = {
     {
       section: 'Freaking Tacos',
       note: {
-        en: 'An independent taco truck parked on the patio. Its hours can differ from the taproom.',
-        es: 'Un camión de tacos independiente en el patio. Su horario puede variar del taproom.',
+        en: 'An independent taco truck on the patio, run in collaboration with the taproom. Its hours can differ from the bar.',
+        es: 'Un camión de tacos independiente en el patio, en colaboración con el taproom. Su horario puede variar del bar.',
       },
       items: [
         { name: 'Tacos al pastor', desc: { en: 'The order to place. Named again and again in reviews.', es: 'Lo que hay que pedir. Mencionados una y otra vez en las reseñas.' } },
+        { name: 'Tacos de cabeza', desc: { en: 'Served at the bar as part of the collaboration.', es: 'Se sirven en la barra como parte de la colaboración.' } },
         { name: { en: 'Full taqueria menu', es: 'Menú completo de taquería' }, desc: { en: 'Ordered at the truck, eaten on the patio.', es: 'Se pide en el camión y se come en el patio.' } },
+        { name: { en: 'Pupusas on event nights', es: 'Pupusas en noches de evento' }, desc: { en: 'Made fresh, on special event days only.', es: 'Hechas al momento, solo en días de evento especial.' } },
       ],
     },
   ],
@@ -358,6 +403,13 @@ export const faqs = [
     a: {
       en: 'Yes. Mr. Chile Taproom books private events for up to 150 guests, including birthdays, quinceañeras, company parties, rehearsal dinners, nonprofit fundraisers and full-venue buyouts. Options are a patio buyout for up to 80 guests, a semi-private back room for 25 to 45, and a full venue buyout with stage, PA and projector. Enquire at (707) 239-4188 or through the booking form on this site.',
       es: 'Sí. Mr. Chile Taproom renta para eventos privados de hasta 150 personas, incluyendo cumpleaños, quinceañeras, fiestas de empresa, cenas de ensayo, eventos benéficos y renta del lugar completo. Las opciones son el patio hasta 80 personas, el salón trasero semiprivado de 25 a 45, y el lugar completo con escenario, sonido y proyector. Llama al (707) 239-4188 o usa el formulario de este sitio.',
+    },
+  },
+  {
+    q: { en: 'Is there a happy hour?', es: '¿Tienen happy hour?' },
+    a: {
+      en: 'Yes. Mr. Chile Taproom runs Hoppy Hour Tuesday through Friday from 4pm to 6pm, with discounted bottled beer, draft beer and cocktails. Buy two or more drinks during Hoppy Hour and you also get 15 percent off a food order from the Freaking Tacos truck on the patio.',
+      es: 'Sí. Mr. Chile Taproom tiene Hoppy Hour de martes a viernes de 4pm a 6pm, con descuentos en cerveza de botella, cerveza de barril y cócteles. Con dos bebidas o más durante el Hoppy Hour también recibes 15 por ciento de descuento en tu orden del camión Freaking Tacos.',
     },
   },
   {
