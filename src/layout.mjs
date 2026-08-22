@@ -1,4 +1,9 @@
+import { readFileSync } from 'node:fs';
 import { site, hoursSummary, fullAddress, L } from './site.config.mjs';
+
+// Widths actually produced by scripts/build-images.py. Markup is generated from
+// this, so a <img src> can never point at a size that was never rendered.
+const IMG = JSON.parse(readFileSync('static/img/manifest.json', 'utf8'));
 import { ROUTES, NAV_KEYS, UI, time12 } from './routes.mjs';
 
 export const esc = (s) =>
@@ -10,21 +15,29 @@ const t = (key, loc) => L(UI[key], loc);
  * Responsive <picture>. Serves WebP with a JPEG fallback and lets the browser
  * pick a width — a phone on the patio car park pulls 640px, not 1920px.
  */
-export function pic(name, alt, { widths = [640, 1280], sizes = '100vw', cls = '', eager = false, ratio = '' } = {}) {
-  const set = (ext) => widths.map((w) => `/img/${name}-${w}.${ext} ${w}w`).join(', ');
-  const fallback = `/img/${name}-${widths[widths.length - 1]}.jpg`;
+export function pic(name, alt, { sizes = '100vw', cls = '', eager = false } = {}) {
+  const meta = IMG[name];
+  if (!meta) throw new Error(`pic(): no image "${name}" in manifest — run scripts/build-images.py`);
+  const { widths, w, h } = meta;
+  const set = (ext) => widths.map((x) => `/img/${name}-${x}.${ext} ${x}w`).join(', ');
+  const largest = widths[widths.length - 1];
   return `<picture class="${cls}">
 <source type="image/webp" srcset="${set('webp')}" sizes="${sizes}">
-<img src="${fallback}" srcset="${set('jpg')}" sizes="${sizes}" alt="${esc(alt)}"
- ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async"${ratio ? ` style="aspect-ratio:${ratio}"` : ''}>
+<img src="/img/${name}-${largest}.jpg" srcset="${set('jpg')}" sizes="${sizes}"
+ width="${w}" height="${h}" alt="${esc(alt)}"
+ ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async">
 </picture>`;
 }
 
 /** Flyers are single-width portrait artwork, not responsive photography. */
-export const flyer = (name, alt) => `<picture>
+export const flyer = (name, alt) => {
+  const m = IMG[name] || {};
+  return `<picture>
 <source type="image/webp" srcset="/img/${name}.webp">
-<img src="/img/${name}.jpg" alt="${esc(alt)}" loading="lazy" decoding="async" class="flyer__img">
+<img src="/img/${name}.jpg" alt="${esc(alt)}"${m.w ? ` width="${m.w}" height="${m.h}"` : ''}
+ loading="lazy" decoding="async" class="flyer__img">
 </picture>`;
+};
 
 export const PICADO = `<svg class="picado" viewBox="0 0 120 26" preserveAspectRatio="none" aria-hidden="true">
 <defs><pattern id="pp" width="20" height="26" patternUnits="userSpaceOnUse">

@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync, copyFileSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { mkdirSync, writeFileSync, copyFileSync, readdirSync, rmSync, statSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { site, faqs, hoursSummary, fullAddress, L, LOCALES } from './src/site.config.mjs';
 import { ROUTES, formatDate } from './src/routes.mjs';
@@ -147,3 +147,32 @@ writeFileSync(join(OUT, 'favicon.svg'),
 `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="#16100E"/><path d="M20.5 4.2c1.4-1.6 3.6-1.9 4.6-.6.9 1.2.2 3-1.3 3.9" stroke="#2F6B3F" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M21.8 7.4C21.8 16 17.4 24.6 9.6 28.4c-2.4 1.2-4.6-.9-3.6-3.3C9.2 17.6 14 11 21.8 7.4Z" fill="#C1272D"/></svg>`);
 
 console.log(`\nBuilt ${urls.length} pages (${LOCALES.join('/')}) + sitemap, robots.txt, llms.txt`);
+
+// --- guard: every referenced asset must exist --------------------------------
+// A 404 hero is invisible in a build log and obvious to a visitor. Fail here.
+import { existsSync } from 'node:fs';
+const refs = new Set();
+for (const f of listHtml(OUT)) {
+  const html = readFileSync(f, 'utf8');
+  for (const m of html.matchAll(/(?:src|srcset|href)="([^"]+)"/g)) {
+    for (const part of m[1].split(',')) {
+      const u = part.trim().split(/\s+/)[0];
+      if (/^\/(img|)[^/].*\.(jpg|webp|png|svg|css)$/.test(u)) refs.add(u);
+    }
+  }
+}
+const missing = [...refs].filter((u) => !existsSync(join(OUT, u)));
+if (missing.length) {
+  console.error('\nMISSING ASSETS:\n' + missing.map((m) => '  ' + m).join('\n'));
+  process.exit(1);
+}
+console.log(`Verified ${refs.size} asset references, all present.`);
+
+function listHtml(dir) {
+  const out = [];
+  for (const f of readdirSync(dir)) {
+    const p = join(dir, f);
+    statSync(p).isDirectory() ? out.push(...listHtml(p)) : f.endsWith('.html') && out.push(p);
+  }
+  return out;
+}

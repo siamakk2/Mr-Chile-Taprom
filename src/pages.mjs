@@ -109,7 +109,7 @@ export const homePage = (loc) => {
 ${pic('patio-wide', loc === 'es'
       ? 'El patio de Mr. Chile Taproom al anochecer, con luces colgantes entre los robles'
       : 'The patio at Mr. Chile Taproom at dusk, string lights strung between the oaks',
-      { widths: [640, 1280], sizes: '100vw', cls: 'hero__bg', eager: true })}
+      { sizes: '100vw', cls: 'hero__bg', eager: true })}
 <div class="wrap hero__in">
 <span class="eyebrow">${esc(c('heroKicker', loc))}</span>
 <h1>${esc(c('heroA', loc))}<em>${esc(c('heroB', loc))}</em></h1>
@@ -146,7 +146,7 @@ ${PICADO}
 <figure class="fig" style="margin-top:1.75rem">
 ${pic('taproom', loc === 'es' ? 'El interior del taproom con la barra de barriles y banderas de muchos países'
   : 'Inside the taproom: the tap wall, high ceilings and flags of many countries',
-  { widths: [640, 1280], sizes: '(min-width:720px) 45vw, 100vw' })}
+  { sizes: '(min-width:720px) 45vw, 100vw' })}
 </figure>
 </div>
 <div class="prose">
@@ -196,7 +196,7 @@ ${site.series.map((s) => `<a class="card card--link" href="${ROUTES.events[loc]}
 <figure class="fig" style="margin-top:1.75rem">
 ${pic('tacos-beer', loc === 'es' ? 'Una canasta de tacos al pastor con limón y salsa verde junto a una cerveza'
   : 'A basket of tacos al pastor with lime and salsa verde beside a cold beer',
-  { widths: [640], sizes: '(min-width:720px) 45vw, 100vw' })}
+  { sizes: '(min-width:720px) 45vw, 100vw' })}
 </figure>
 </div>
 <div class="grid grid--2">
@@ -399,7 +399,7 @@ export const privatePage = (loc) => {
 <figure class="banner">
 ${pic('patio-dusk', loc === 'es' ? 'El corredor cubierto y las luces sobre el patio al atardecer'
       : 'The covered walkway and string lights over the patio at dusk',
-      { widths: [640, 1280], sizes: '100vw' })}
+      { sizes: '100vw' })}
 </figure>
 
 <section class="band">
@@ -427,7 +427,7 @@ ${site.privatePackages.map((p) => `<div class="card">
 <figure class="fig" style="margin-top:1.75rem">
 ${pic('patio-tacos', loc === 'es' ? 'Sombrillas rojas sobre mesas de picnic con el camión de tacos atrás'
       : 'Red umbrellas over picnic tables with the taco truck behind',
-      { widths: [640], sizes: '(min-width:720px) 45vw, 100vw' })}
+      { sizes: '(min-width:720px) 45vw, 100vw' })}
 </figure>
 </div>
 <div>
@@ -511,7 +511,7 @@ ${status(loc)}
 
 <figure class="banner">
 ${pic('tacos-beer', loc === 'es' ? 'Tacos al pastor y una cerveza fría en la barra' : 'Tacos al pastor and a cold beer on the bar',
-      { widths: [640], sizes: '100vw' })}
+      { sizes: '100vw' })}
 </figure>
 
 <section class="band">
@@ -585,7 +585,7 @@ ${status(loc)}
 <figure class="banner">
 ${pic('patio-wide', loc === 'es' ? 'El patio con mesas de picnic y calentadores bajo los robles al anochecer'
       : 'The patio with picnic tables and heat lamps under the oaks at dusk',
-      { widths: [640, 1280], sizes: '100vw' })}
+      { sizes: '100vw' })}
 </figure>
 
 <section class="band">
@@ -618,7 +618,7 @@ ${site.amenities.map((a) => `<div class="card"><h4>${esc(L(a.name, loc))}</h4><p
 <h2>${loc === 'es' ? 'Indicaciones' : 'Directions'}</h2>
 <figure class="fig" style="margin-top:1.75rem">
 ${pic('taproom', loc === 'es' ? 'El interior del taproom con la barra iluminada' : 'The lit bar inside the taproom',
-      { widths: [640], sizes: '(min-width:720px) 45vw, 100vw' })}
+      { sizes: '(min-width:720px) 45vw, 100vw' })}
 </figure>
 </div>
 <div class="prose">${dirs.map(([k, v]) => `<p><strong>${esc(k)}:</strong> ${esc(v)}</p>`).join('')}</div>

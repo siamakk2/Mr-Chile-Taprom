@@ -2,11 +2,15 @@
   "name": "mr-chile-taproom",
   "version": "1.0.0",
   "private": true,
-  "description": "Mr. Chile Taproom — Santa Rosa, CA. Static site with entity-first structured data.",
+  "description": "Mr. Chile Taproom \u2014 Santa Rosa, CA. Static site with entity-first structured data.",
   "type": "module",
   "scripts": {
+    "prebuild": "node scripts/fetch-assets.mjs",
     "build": "node build.mjs",
+    "images": "python3 scripts/build-images.py",
     "dev": "node build.mjs && npx --yes serve public -l 3000"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }

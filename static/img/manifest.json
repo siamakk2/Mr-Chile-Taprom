@@ -1,0 +1,61 @@
+{
+  "flyer-cumbia-giveaway": {
+    "h": 1245,
+    "w": 900,
+    "widths": [
+      900
+    ]
+  },
+  "flyer-cumbia-rosa": {
+    "h": 908,
+    "w": 900,
+    "widths": [
+      900
+    ]
+  },
+  "flyer-sonidero": {
+    "h": 973,
+    "w": 721,
+    "widths": [
+      721
+    ]
+  },
+  "patio-dusk": {
+    "h": 557,
+    "w": 1000,
+    "widths": [
+      640,
+      1000
+    ]
+  },
+  "patio-tacos": {
+    "h": 1000,
+    "w": 750,
+    "widths": [
+      640
+    ]
+  },
+  "patio-wide": {
+    "h": 519,
+    "w": 1000,
+    "widths": [
+      640,
+      1000
+    ]
+  },
+  "tacos-beer": {
+    "h": 1000,
+    "w": 750,
+    "widths": [
+      640
+    ]
+  },
+  "taproom": {
+    "h": 750,
+    "w": 1000,
+    "widths": [
+      640,
+      1000
+    ]
+  }
+}
