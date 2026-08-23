@@ -173,3 +173,27 @@ page, an FAQ entry, a line in `llms.txt`, and a real `Offer` node with
 
 ⚠ Confirm with the owner: the individual prices, and whether Hoppy Hour still
 runs those days and hours.
+
+---
+
+## §9 — Why the site looked broken: immutable caching on a fixed filename
+
+The stylesheet was served with `Cache-Control: public, max-age=31536000,
+immutable` at the fixed path `/styles.css`. Every deploy shipped new HTML while
+returning visitors kept last week's CSS for a year.
+
+That is worse than a stale page. New markup against old rules renders as a
+*broken* page: the header showed both logo variants at once, the nav wrapped,
+and the hero photograph dropped out of its absolute position and sat in the
+document flow with the headline stranded underneath it. A first-time visitor
+saw the site correctly; anyone who had loaded it before saw wreckage.
+
+The stylesheet is now fingerprinted — `/styles.<sha1>.css` — so every change is
+a new URL and the immutable header becomes correct rather than dangerous. If
+any other asset ever changes content under a fixed name, it needs the same
+treatment.
+
+**The wider lesson for this build:** every visual bug in §9 was invisible in the
+build logs, which reported success throughout. They only surfaced once the
+pages were actually rendered in a browser and inspected. Build output confirms
+that files were produced; it says nothing about whether they look right.

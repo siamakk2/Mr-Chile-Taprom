@@ -676,7 +676,7 @@ export const faqPage = (loc) => {
 ${PICADO}
 
 <section class="band">
-<div class="wrap wrap--narrow">${faqBlock(faqs, loc)}</div>
+<div class="wrap">${faqBlock(faqs, loc)}</div>
 </section>
 
 <section class="band band--chile">

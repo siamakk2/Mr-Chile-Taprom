@@ -142,7 +142,7 @@ ${site.hours.map((h) => `<tr${h.open ? '' : ' data-closed="true"'}><th scope="ro
 </footer>`;
 }
 
-export function layout({ path, altPath, loc = 'en', title, description, jsonld, body, robots = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' }) {
+export function layout({ path, altPath, loc = 'en', title, description, jsonld, body, cssHref = '/styles.css', robots = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' }) {
   const url = `${site.origin}${path}`;
   const enPath = loc === 'en' ? path : altPath;
   const esPath = loc === 'es' ? path : altPath;
@@ -183,7 +183,7 @@ export function layout({ path, altPath, loc = 'en', title, description, jsonld, 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400..700&display=swap">
-<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="${cssHref}">
 <script type="application/ld+json">${jsonld}<\/script>
 </head>
 <body>

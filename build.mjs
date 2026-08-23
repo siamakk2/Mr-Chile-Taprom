@@ -1,4 +1,5 @@
 import { mkdirSync, writeFileSync, copyFileSync, readdirSync, rmSync, statSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { site, faqs, hoursSummary, fullAddress, L, LOCALES } from './src/site.config.mjs';
 import { ROUTES, formatDate } from './src/routes.mjs';
@@ -9,12 +10,19 @@ const OUT = 'public';
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
+// Fingerprint the stylesheet. It is served immutable for a year, so a fixed
+// filename means a returning visitor keeps last month's CSS against this
+// month's HTML - which renders as a broken page, not a stale one. The hash in
+// the filename makes every change a new URL.
+const cssRaw = readFileSync('static/styles.css', 'utf8');
+const CSS_HREF = `/styles.${createHash('sha1').update(cssRaw).digest('hex').slice(0, 8)}.css`;
+
 // --- pages: every builder runs once per locale -------------------------------
 const urls = [];
 for (const build of PAGE_BUILDERS) {
   for (const loc of LOCALES) {
     const p = build(loc);
-    const html = layout(p);
+    const html = layout({ ...p, cssHref: CSS_HREF });
     const file = join(OUT, p.path === '/' ? 'index.html' : `${p.path}index.html`);
     mkdirSync(join(file, '..'), { recursive: true });
     writeFileSync(file, html);
@@ -23,7 +31,7 @@ for (const build of PAGE_BUILDERS) {
   }
 }
 const nf = notFoundPage();
-writeFileSync(join(OUT, '404.html'), layout(nf));
+writeFileSync(join(OUT, '404.html'), layout({ ...nf, cssHref: CSS_HREF }));
 
 // --- static ------------------------------------------------------------------
 const copyTree = (src, dst) => {
@@ -34,6 +42,9 @@ const copyTree = (src, dst) => {
   }
 };
 copyTree('static', OUT);
+writeFileSync(join(OUT, CSS_HREF.slice(1)), cssRaw);
+rmSync(join(OUT, 'styles.css'), { force: true });
+console.log(`  stylesheet -> ${CSS_HREF}`);
 
 // --- sitemap: each URL declares both language versions -----------------------
 const today = new Date().toISOString().slice(0, 10);

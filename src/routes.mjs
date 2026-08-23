@@ -16,8 +16,8 @@ export const NAV_KEYS = ['events', 'menu', 'private', 'visit', 'faq'];
 export const UI = {
   nav: {
     events:  { en: "What's On",     es: 'Eventos' },
-    menu:    { en: 'Beer & Food',   es: 'Cerveza y Comida' },
-    private: { en: 'Book The Room', es: 'Renta el Salón' },
+    menu:    { en: 'Beer & Food',   es: 'Menú' },
+    private: { en: 'Book The Room', es: 'Renta el Salón' }, // longest label; nav is nowrap
     visit:   { en: 'Visit',         es: 'Visítanos' },
     faq:     { en: 'FAQ',           es: 'Preguntas' },
   },

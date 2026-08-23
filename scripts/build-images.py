@@ -17,7 +17,7 @@ TARGET_WIDTHS = [640, 1000, 1280, 1920]
 # right edge and the foreground off the wide patio shot, which removes a wheelie
 # bin and a stretch of gravel and leaves the string lights, tables and oaks.
 CROPS = {
-    'hero-patio': ('patio-wide.png', (0, 0, 742, 452)),
+    'hero-patio': ('patio-wide.png', (0, 0, 1000, 392)),
 }
 
 PHOTOS = {
