@@ -106,9 +106,9 @@ export const homePage = (loc) => {
       ...S.seriesNodes(loc), ...S.datedEventNodes(loc), S.faqNode(faqs.slice(0, 6), loc)]),
     body: `
 <section class="hero">
-${pic('patio-wide', loc === 'es'
-      ? 'El patio de Mr. Chile Taproom al anochecer, con luces colgantes entre los robles'
-      : 'The patio at Mr. Chile Taproom at dusk, string lights strung between the oaks',
+${pic('hero-patio', loc === 'es'
+      ? 'El patio de Mr. Chile Taproom a la hora azul, con luces colgantes entre los robles y mesas de picnic'
+      : 'The patio at Mr. Chile Taproom at blue hour, string lights strung between the oaks over picnic tables',
       { sizes: '100vw', cls: 'hero__bg', eager: true })}
 <div class="wrap hero__in">
 <span class="eyebrow">${esc(c('heroKicker', loc))}</span>

@@ -25,7 +25,7 @@
   --gut: clamp(1.25rem, 4vw, 3.5rem);
   --band-y: clamp(3.5rem, 8vw, 7rem);
   --max: 1180px;
-  --r: 3px;
+  --r: 8px;
 }
 
 /* --- reset --------------------------------------------------------------- */
@@ -278,19 +278,28 @@ p { text-wrap: pretty; }
 /* --- FAQ ----------------------------------------------------------------- */
 .faq { border-top: 1px solid var(--line); }
 .faq details { border-bottom: 1px solid var(--line); }
+/* Questions are set in the body face at sentence case, not the uppercase
+   display face. Two reasons: Spanish questions run roughly 25% longer than
+   their English counterparts and uppercase amplifies that, and an opening
+   inverted mark at heavy uppercase weight reads as a stray glyph instead of
+   punctuation. Sentence case also just sounds like a person asking. */
 .faq summary {
-  cursor: pointer; list-style: none; padding: 1.15rem 2.5rem 1.15rem 0; position: relative;
-  font-family: var(--display); font-weight: 800; font-stretch: 106%; text-transform: uppercase;
-  font-size: clamp(1rem, 2.1vw, 1.2rem); letter-spacing: -.005em; line-height: 1.2;
+  cursor: pointer; list-style: none; padding: 1.25rem 3rem 1.25rem 0; position: relative;
+  font-family: var(--body); font-weight: 600; text-transform: none;
+  font-size: clamp(1.02rem, 1.7vw, 1.18rem); letter-spacing: -.004em; line-height: 1.4;
+  color: var(--masa); transition: color .15s ease; overflow-wrap: break-word;
 }
+.faq summary:hover { color: var(--marigold); }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary::after {
-  content: '+'; position: absolute; right: 0; top: 50%; transform: translateY(-50%);
-  font-family: var(--mono); font-size: 1.4rem; color: var(--chile-lit); line-height: 1;
+  content: '+'; position: absolute; right: .25rem; top: 1.3rem;
+  font-family: var(--mono); font-size: 1.35rem; color: var(--chile-lit); line-height: 1;
+  transition: transform .18s ease, color .18s ease;
 }
-.faq details[open] summary::after { content: '\2013'; }
+.faq summary:hover::after { color: var(--marigold); }
+.faq details[open] summary::after { content: '\2013'; transform: none; }
 .faq details[open] summary { color: var(--marigold); }
-.faq__a { padding: 0 0 1.35rem; color: var(--masa-dim); max-width: 72ch; }
+.faq__a { padding: 0 3rem 1.45rem 0; color: var(--masa-dim); max-width: 70ch; line-height: 1.7; }
 
 /* --- form ---------------------------------------------------------------- */
 .form { display: grid; gap: 1rem; }
@@ -358,18 +367,30 @@ strong.hi { color: var(--masa); }
 /* --- hero with a real photograph behind it -------------------------------- */
 /* The patio at dusk is the most persuasive asset this business has, so it goes
    behind the headline rather than into a gallery further down the page. */
-.hero { isolation: isolate; }
+.hero { isolation: isolate; display: flex; align-items: center; min-height: min(76vh, 700px); }
+.hero__in { width: 100%; }
+.hero h1, .hero__sub, .hero .eyebrow { text-shadow: 0 2px 18px rgba(12,8,7,.55); }
 .hero__bg { position: absolute; inset: 0; z-index: -2; display: block; }
-.hero__bg img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; }
+.hero__bg img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 58%; }
+/* The scrim is anchored to the text column and falls away fast, so the right
+   two-thirds of the photograph reads as a photograph. A soft bottom fade hands
+   off to the section below instead of ending on a hard edge. */
 .hero::before {
   content: ''; position: absolute; inset: 0; z-index: -1;
   background:
-    linear-gradient(100deg, rgba(22,16,14,.96) 0%, rgba(22,16,14,.9) 42%, rgba(22,16,14,.58) 72%, rgba(22,16,14,.5) 100%),
-    radial-gradient(760px 420px at 8% 0%, rgba(193,39,45,.42), transparent 66%);
+    linear-gradient(103deg, rgba(20,14,12,.94) 0%, rgba(20,14,12,.80) 30%,
+                            rgba(20,14,12,.42) 58%, rgba(20,14,12,.14) 82%, rgba(20,14,12,.08) 100%),
+    linear-gradient(180deg, rgba(20,14,12,.34) 0%, transparent 26%,
+                            transparent 64%, rgba(22,16,14,.88) 100%),
+    radial-gradient(680px 400px at 4% 2%, rgba(193,39,45,.24), transparent 70%);
 }
 @media (max-width: 719px) {
-  .hero::before { background: linear-gradient(180deg, rgba(22,16,14,.82) 0%, rgba(22,16,14,.93) 46%, rgba(22,16,14,.98) 100%); }
-  .hero__bg img { object-position: 50% 40%; }
+  .hero { min-height: min(88vh, 720px); }
+  .hero::before {
+    background: linear-gradient(180deg, rgba(20,14,12,.42) 0%, rgba(20,14,12,.72) 38%,
+                                        rgba(22,16,14,.92) 72%, rgba(22,16,14,.97) 100%);
+  }
+  .hero__bg img { object-position: 50% 38%; }
 }
 
 /* --- figures & banners ---------------------------------------------------- */

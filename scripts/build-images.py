@@ -13,6 +13,13 @@ SRC, OUT = 'scripts/originals', 'static/img'
 os.makedirs(OUT, exist_ok=True)
 TARGET_WIDTHS = [640, 1000, 1280, 1920]
 
+# Some frames need a crop before they earn a place. 'hero-patio' trims the
+# right edge and the foreground off the wide patio shot, which removes a wheelie
+# bin and a stretch of gravel and leaves the string lights, tables and oaks.
+CROPS = {
+    'hero-patio': ('patio-wide.png', (0, 0, 742, 452)),
+}
+
 PHOTOS = {
     'patio-wide':  'patio-wide.png',
     'patio-dusk':  'patio-dusk.png',
@@ -25,8 +32,11 @@ FLYERS = {'cumbia-rosa': 'flyer-cumbia-rosa.png',
           'cumbia-giveaway': 'flyer-cumbia-giveaway.png'}
 
 manifest = {}
-for name, f in PHOTOS.items():
-    im = Image.open(os.path.join(SRC, f)).convert('RGB')
+sources = {n: Image.open(os.path.join(SRC, f)).convert('RGB') for n, f in PHOTOS.items()}
+for n, (f, box) in CROPS.items():
+    sources[n] = Image.open(os.path.join(SRC, f)).convert('RGB').crop(box)
+
+for name, im in sources.items():
     # Never upscale: a 1000px original stays 1000px.
     widths = [w for w in TARGET_WIDTHS if w <= im.width] or [im.width]
     for w in widths:
@@ -34,6 +44,7 @@ for name, f in PHOTOS.items():
         r.save(f'{OUT}/{name}-{w}.jpg', 'JPEG', quality=76, optimize=True, progressive=True)
         r.save(f'{OUT}/{name}-{w}.webp', 'WEBP', quality=72, method=6)
     manifest[name] = {'widths': widths, 'w': im.width, 'h': im.height}
+
 
 for name, f in FLYERS.items():
     im = Image.open(os.path.join(SRC, f)).convert('RGB')
