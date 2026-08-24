@@ -480,3 +480,39 @@ a.pill:hover { border-color: var(--marigold); color: var(--marigold); }
    every band. Tightened, with the gap carried by the content instead. */
 :root { --band-y: clamp(3rem, 5.4vw, 5rem); }
 .band--tight { padding-block: clamp(2.25rem, 4vw, 3.25rem); }
+
+/* --- header: the logo is the loudest thing in it ---------------------------
+   On a 390px phone the horizontal lockup could not fit beside a word-labelled
+   language link and a word-labelled menu button, so it was falling back to the
+   chile mark alone and reading as a small icon. Shrinking the two controls -
+   "ES" instead of "Español", a hamburger instead of "MENU" - buys back roughly
+   110px, which is enough to run the full lockup on every phone. */
+.hdr__in { min-height: 78px; }
+.brand__lockup { display: block; height: 40px; }
+.brand__mark { display: none; }
+
+.lang__short { display: inline; }
+.lang__long  { display: none; }
+.lang { padding: .5rem .7rem; font-size: .78rem; letter-spacing: .1em; }
+
+.menu-btn { padding: .6rem .65rem; }
+.menu-btn svg { width: 20px; height: 14px; display: block; }
+
+@media (min-width: 420px) { .brand__lockup { height: 44px; } }
+@media (min-width: 560px) {
+  .lang__short { display: none; }
+  .lang__long  { display: inline; }
+  .lang { padding: .5rem .95rem; }
+}
+@media (min-width: 940px) {
+  .hdr__in { min-height: 92px; }
+  .brand__lockup { height: 54px; }
+}
+@media (min-width: 1240px) { .brand__lockup { height: 58px; } }
+
+/* Very narrow phones only: fall back to the mark so nothing collides. */
+@media (max-width: 359px) {
+  .brand__lockup { display: none; }
+  .brand__mark { display: block; height: 34px; width: auto; }
+}
+.hdr__cta { white-space: nowrap; }

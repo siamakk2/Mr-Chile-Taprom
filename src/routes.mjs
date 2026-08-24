@@ -36,6 +36,7 @@ export const UI = {
   directions:    { en: 'Get directions',    es: 'Cómo llegar' },
   openInMaps:    { en: 'Open in Maps',      es: 'Abrir en Maps' },
   langSwitch:    { en: 'Español',           es: 'English' },
+  langShort:     { en: 'ES',                es: 'EN' },
   langLabel:     { en: 'Ver en español',    es: 'View in English' },
   drink:         { en: 'Drink responsibly · 21+ after 8pm on event nights',
                    es: 'Bebe responsablemente · 21+ después de las 8pm en noches de evento' },

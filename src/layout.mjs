@@ -92,9 +92,10 @@ function header(path, loc, altPath) {
 <img class="brand__mark" src="/img/mark-light.png" width="464" height="216" alt="" aria-hidden="true">
 </a>
 <nav class="nav" aria-label="${loc === 'es' ? 'Principal' : 'Primary'}">${nav}</nav>
-<a class="lang" href="${altPath}" hreflang="${other}" lang="${other}" title="${esc(t('langLabel', loc))}">${esc(t('langSwitch', loc))}</a>
+<a class="lang" href="${altPath}" hreflang="${other}" lang="${other}" title="${esc(t('langLabel', loc))}"><span class="lang__long">${esc(t('langSwitch', loc))}</span><span class="lang__short" aria-hidden="true">${esc(t('langShort', loc))}</span></a>
 <a class="btn btn--primary hdr__cta" href="tel:${site.phoneE164}">${esc(t('call', loc))} ${site.phone}</a>
-<button class="menu-btn" type="button" data-menu-btn aria-expanded="false" aria-controls="drawer">${esc(t('menuBtn', loc))}</button>
+<button class="menu-btn" type="button" data-menu-btn aria-expanded="false" aria-controls="drawer" aria-label="${esc(t('menuBtn', loc))}">
+<svg viewBox="0 0 20 14" aria-hidden="true" focusable="false"><path d="M0 1h20M0 7h20M0 13h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
 </div>
 <div class="drawer" id="drawer" data-drawer data-open="false"><div class="wrap">
 ${NAV_KEYS.map((k) => `<a href="${ROUTES[k][loc]}">${esc(L(UI.nav[k], loc))}</a>`).join('')}
