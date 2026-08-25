@@ -569,3 +569,17 @@ a.pill:hover { border-color: var(--marigold); color: var(--marigold); }
   }
   .hero__bg img { object-position: 34% 50%; }
 }
+
+/* --- new logo, sized up ----------------------------------------------------
+   The redrawn lockup is squarer than the one it replaces (its wordmark stacks
+   "MR. CHILE" over "TAPROOM"), so the same width buys more height and it can
+   run larger everywhere without crowding the controls. */
+.hdr__in { min-height: 92px; }
+.brand__lockup { height: 58px; }
+@media (min-width: 420px) { .brand__lockup { height: 62px; } .hdr__in { min-height: 98px; } }
+@media (min-width: 560px) { .brand__lockup { height: 64px; } }
+@media (min-width: 940px) { .hdr__in { min-height: 112px; } .brand__lockup { height: 68px; } }
+@media (min-width: 1240px) { .brand__lockup { height: 76px; } }
+@media (max-width: 359px) { .brand__mark { height: 52px; } }
+
+.ftr__logo { width: 260px; }
