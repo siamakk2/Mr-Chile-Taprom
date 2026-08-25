@@ -18,6 +18,9 @@ TARGET_WIDTHS = [640, 1000, 1280, 1920]
 # bin and a stretch of gravel and leaves the string lights, tables and oaks.
 CROPS = {
     'hero-patio': ('patio-wide.png', (0, 0, 1000, 392)),
+    # The interior is the warmer, more inviting frame and now leads the page.
+    # Cropped to a hero band: flags and the red wall up top, bar and tables below.
+    'hero-taproom': ('taproom.png', (0, 120, 1000, 585)),
 }
 
 PHOTOS = {

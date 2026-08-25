@@ -106,14 +106,13 @@ export const homePage = (loc) => {
       ...S.seriesNodes(loc), ...S.datedEventNodes(loc), S.faqNode(faqs.slice(0, 6), loc)]),
     body: `
 <section class="hero">
-${pic('hero-patio', loc === 'es'
-      ? 'El patio de Mr. Chile Taproom a la hora azul, con luces colgantes entre los robles y mesas de picnic'
-      : 'The patio at Mr. Chile Taproom at blue hour, string lights strung between the oaks over picnic tables',
+${pic('hero-taproom', loc === 'es'
+      ? 'El interior de Mr. Chile Taproom: la barra, las paredes rojas y amarillas y banderas de una docena de países'
+      : 'Inside Mr. Chile Taproom: the tap wall, red and yellow walls and flags of a dozen countries',
       { sizes: '100vw', cls: 'hero__bg', eager: true })}
 <div class="wrap hero__in">
 <span class="eyebrow">${esc(c('heroKicker', loc))}</span>
 <h1>${esc(c('heroA', loc))}<em>${esc(c('heroB', loc))}</em></h1>
-<p class="hero__sub">${c('heroSub', loc)}</p>
 ${status(loc)}
 <div class="board">
   <div class="board__top">
@@ -144,8 +143,8 @@ ${PICADO}
 <span class="eyebrow eyebrow--chile">${esc(c('whatEyebrow', loc))}</span>
 <h2>${esc(c('whatH', loc))}</h2>
 <figure class="fig" style="margin-top:1.75rem">
-${pic('taproom', loc === 'es' ? 'El interior del taproom con la barra de barriles y banderas de muchos países'
-  : 'Inside the taproom: the tap wall, high ceilings and flags of many countries',
+${pic('patio-wide', loc === 'es' ? 'El patio junto al arroyo al anochecer, con luces colgantes entre los robles'
+  : 'The creekside patio at dusk, string lights strung between the oaks',
   { sizes: '(min-width:720px) 45vw, 100vw' })}
 </figure>
 </div>

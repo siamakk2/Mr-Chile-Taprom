@@ -546,3 +546,26 @@ a.pill:hover { border-color: var(--marigold); color: var(--marigold); }
   .nav a { font-size: .78rem; letter-spacing: .1em; }
 }
 @media (max-width: 359px) { .brand__mark { height: 44px; } }
+
+
+/* --- hero over the interior shot ------------------------------------------
+   The interior is brighter and busier than the patio was, so the text column
+   carries a heavier scrim and the headline sits over the darker left half of
+   the room rather than the lit yellow wall. */
+.hero::before {
+  background:
+    linear-gradient(103deg, rgba(18,12,10,.95) 0%, rgba(18,12,10,.86) 32%,
+                            rgba(18,12,10,.52) 60%, rgba(18,12,10,.22) 84%, rgba(18,12,10,.14) 100%),
+    linear-gradient(180deg, rgba(18,12,10,.40) 0%, transparent 24%,
+                            transparent 60%, rgba(22,16,14,.90) 100%),
+    radial-gradient(640px 380px at 3% 2%, rgba(193,39,45,.22), transparent 70%);
+}
+.hero__bg img { object-position: 30% 52%; }
+.hero h1 { margin-block: 1.1rem 1.6rem; }
+@media (max-width: 719px) {
+  .hero::before {
+    background: linear-gradient(180deg, rgba(18,12,10,.52) 0%, rgba(18,12,10,.80) 34%,
+                                        rgba(22,16,14,.94) 70%, rgba(22,16,14,.97) 100%);
+  }
+  .hero__bg img { object-position: 34% 50%; }
+}
