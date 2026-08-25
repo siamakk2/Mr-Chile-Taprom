@@ -48,8 +48,8 @@ const COPY = {
   heroKicker: { en: 'Santa Rosa, California · Montgomery & Mission', es: 'Santa Rosa, California · Montgomery y Mission' },
   heroA: { en: "Sonoma County's First", es: 'El primer taproom' },
   heroB: { en: 'Latino Taproom', es: 'latino de Sonoma' },
-  heroSub: { en: 'Beer &amp; culture · Cumbia, sonidero and live music · Creekside patio',
-             es: 'Cerveza y cultura · Cumbia, sonidero y música en vivo · Patio junto al arroyo' },
+  heroSub: { en: 'Beer &amp; culture · Live music · Creekside patio',
+             es: 'Cerveza y cultura · Música en vivo · Patio junto al arroyo' },
   whatEyebrow: { en: 'What this place is', es: 'Qué es este lugar' },
   whatH: { en: 'A taproom that runs like a venue', es: 'Un taproom que funciona como salón' },
   whatP1: {
@@ -113,6 +113,7 @@ ${pic('hero-taproom', loc === 'es'
 <div class="wrap hero__in">
 <span class="eyebrow">${esc(c('heroKicker', loc))}</span>
 <h1>${esc(c('heroA', loc))}<em>${esc(c('heroB', loc))}</em></h1>
+<p class="hero__sub">${c('heroSub', loc)}</p>
 ${status(loc)}
 <div class="board">
   <div class="board__top">

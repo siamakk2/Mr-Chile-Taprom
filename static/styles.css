@@ -561,7 +561,7 @@ a.pill:hover { border-color: var(--marigold); color: var(--marigold); }
     radial-gradient(640px 380px at 3% 2%, rgba(193,39,45,.22), transparent 70%);
 }
 .hero__bg img { object-position: 30% 52%; }
-.hero h1 { margin-block: 1.1rem 1.6rem; }
+.hero h1 { margin-block: 1.1rem .5rem; }
 @media (max-width: 719px) {
   .hero::before {
     background: linear-gradient(180deg, rgba(18,12,10,.52) 0%, rgba(18,12,10,.80) 34%,
