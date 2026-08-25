@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { asset } from './assets.mjs';
 import { site, hoursSummary, fullAddress, L } from './site.config.mjs';
 
 // Widths actually produced by scripts/build-images.py. Markup is generated from
@@ -19,11 +20,11 @@ export function pic(name, alt, { sizes = '100vw', cls = '', eager = false } = {}
   const meta = IMG[name];
   if (!meta) throw new Error(`pic(): no image "${name}" in manifest — run scripts/build-images.py`);
   const { widths, w, h } = meta;
-  const set = (ext) => widths.map((x) => `/img/${name}-${x}.${ext} ${x}w`).join(', ');
+  const set = (ext) => widths.map((x) => `${asset(`/img/${name}-${x}.${ext}`)} ${x}w`).join(', ');
   const largest = widths[widths.length - 1];
   return `<picture class="${cls}">
 <source type="image/webp" srcset="${set('webp')}" sizes="${sizes}">
-<img src="/img/${name}-${largest}.jpg" srcset="${set('jpg')}" sizes="${sizes}"
+<img src="${asset(`/img/${name}-${largest}.jpg`)}" srcset="${set('jpg')}" sizes="${sizes}"
  width="${w}" height="${h}" alt="${esc(alt)}"
  ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async">
 </picture>`;
@@ -33,8 +34,8 @@ export function pic(name, alt, { sizes = '100vw', cls = '', eager = false } = {}
 export const flyer = (name, alt) => {
   const m = IMG[name] || {};
   return `<picture>
-<source type="image/webp" srcset="/img/${name}.webp">
-<img src="/img/${name}.jpg" alt="${esc(alt)}"${m.w ? ` width="${m.w}" height="${m.h}"` : ''}
+<source type="image/webp" srcset="${asset(`/img/${name}.webp`)}">
+<img src="${asset(`/img/${name}.jpg`)}" alt="${esc(alt)}"${m.w ? ` width="${m.w}" height="${m.h}"` : ''}
  loading="lazy" decoding="async" class="flyer__img">
 </picture>`;
 };
@@ -88,8 +89,8 @@ function header(path, loc, altPath) {
   return `<header class="hdr">
 <div class="wrap hdr__in">
 <a class="brand" href="${ROUTES.home[loc]}" aria-label="${esc(site.name)} \u2014 ${esc(site.tagline)}">
-<img class="brand__lockup" src="/img/logo-horizontal.png" width="670" height="114" alt="" aria-hidden="true">
-<img class="brand__mark" src="/img/mark-light.png" width="464" height="216" alt="" aria-hidden="true">
+<img class="brand__lockup" src="${asset('/img/logo-horizontal.png')}" width="670" height="114" alt="" aria-hidden="true">
+<img class="brand__mark" src="${asset('/img/mark-light.png')}" width="464" height="216" alt="" aria-hidden="true">
 </a>
 <nav class="nav" aria-label="${loc === 'es' ? 'Principal' : 'Primary'}">${nav}</nav>
 <a class="lang" href="${altPath}" hreflang="${other}" lang="${other}" title="${esc(t('langLabel', loc))}"><span class="lang__long">${esc(t('langSwitch', loc))}</span><span class="lang__short" aria-hidden="true">${esc(t('langShort', loc))}</span></a>
@@ -111,7 +112,7 @@ function footer(loc, altPath) {
 <div class="wrap band band--tight">
 <div class="ftr__grid">
 <div>
-<img class="ftr__logo" src="/img/logo-light.png" width="240" height="147" alt="${esc(site.name)}" loading="lazy">
+<img class="ftr__logo" src="${asset('/img/logo-light.png')}" width="240" height="147" alt="${esc(site.name)}" loading="lazy">
 <address>
 ${esc(site.street)}<br>${esc(site.locality)}, ${site.region} ${site.postal}<br>
 <a href="tel:${site.phoneE164}">${site.phone}</a><br>
@@ -171,16 +172,16 @@ export function layout({ path, altPath, loc = 'en', title, description, jsonld, 
 <meta property="og:url" content="${url}">
 <meta property="og:locale" content="${loc === 'es' ? 'es_US' : 'en_US'}">
 <meta property="og:locale:alternate" content="${loc === 'es' ? 'en_US' : 'es_US'}">
-<meta property="og:image" content="${site.origin}/og.jpg">
+<meta property="og:image" content="${site.origin}${asset('/og.jpg')}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${esc(site.name)} — ${esc(site.tagline)}, ${esc(site.locality)}, ${site.region}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(description)}">
-<meta name="twitter:image" content="${site.origin}/og.jpg">
+<meta name="twitter:image" content="${site.origin}${asset('/og.jpg')}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/img/mark-light.png">
+<link rel="apple-touch-icon" href="${site.origin}${asset('/img/mark-light.png')}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400..700&display=swap">

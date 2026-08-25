@@ -1,3 +1,4 @@
+import { asset } from './assets.mjs';
 import { site, faqs, fullAddress, L } from './site.config.mjs';
 import { ROUTES } from './routes.mjs';
 
@@ -23,8 +24,8 @@ export const businessNode = (loc = 'en') => ({
   description: L(site.entityClaim, loc),
   slogan: site.tagline,
   url: `${O}/`,
-  logo: abs('/img/logo.png'),
-  image: [abs('/img/patio-wide-1280.jpg'), abs('/img/taproom-1280.jpg'), abs('/img/tacos-beer-640.jpg')],
+  logo: abs(asset('/img/logo.png')),
+  image: [abs(asset('/img/hero-taproom-1000.jpg')), abs(asset('/img/patio-wide-1000.jpg')), abs(asset('/img/tacos-beer-640.jpg'))],
   telephone: site.phoneE164,
   email: site.email,
   address: {
@@ -107,7 +108,7 @@ export const seriesNodes = (loc = 'en') =>
     '@id': `${abs(ROUTES.events[loc])}#${s.slug}`,
     name: L(s.name, loc),
     description: L(s.long, loc),
-    ...(s.image ? { image: abs(`/img/${s.image}.jpg`) } : {}),
+    ...(s.image ? { image: abs(asset(`/img/${s.image}.jpg`)) } : {}),
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: { '@id': ID.org },
     organizer: { '@id': ID.org },
@@ -140,7 +141,7 @@ export const datedEventNodes = (loc = 'en') =>
       endDate: `${endDate}T${end}:00-07:00`,
       eventStatus: 'https://schema.org/EventScheduled',
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-      ...(e.image ? { image: abs(`/img/${e.image}.jpg`) } : {}),
+      ...(e.image ? { image: abs(asset(`/img/${e.image}.jpg`)) } : {}),
       location: { '@id': ID.org },
       organizer: { '@id': ID.org },
       superEvent: { '@id': `${abs(ROUTES.events[loc])}#${e.seriesSlug}` },
@@ -233,7 +234,7 @@ export const webPageNode = ({ path, title, description, trail, loc }) => ({
   description,
   isPartOf: { '@id': ID.site },
   about: { '@id': ID.org },
-  primaryImageOfPage: abs('/img/patio-wide-1280.jpg'),
+  primaryImageOfPage: abs(asset('/og.jpg')),
   breadcrumb: breadcrumb(trail),
   inLanguage: loc === 'es' ? 'es-US' : 'en-US',
 });

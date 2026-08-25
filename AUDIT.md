@@ -197,3 +197,22 @@ treatment.
 build logs, which reported success throughout. They only surfaced once the
 pages were actually rendered in a browser and inspected. Build output confirms
 that files were produced; it says nothing about whether they look right.
+
+---
+
+## §10 — The same cache trap, one layer down
+
+§9 fixed the stylesheet. It did not fix the images, and replacing the logo
+exposed that: `/img/*` was also served immutable at fixed filenames, so a
+returning visitor kept the previous logo.
+
+Every asset under `/img` and the social card are now content-addressed —
+`logo-horizontal.<sha1>.png` — via `src/assets.mjs`, which hashes each file at
+build start and rewrites every reference in markup, JSON-LD and meta tags. A
+changed file is a new URL, so the immutable header is now correct rather than a
+trap, and no future asset swap can go stale.
+
+Separately: `vercel.json` in the repo had drifted from the version being
+deployed, and the file-upload payload did not include it at all, so none of the
+cache or security headers were actually being applied. It is now correct in the
+repo and shipped with every deploy.

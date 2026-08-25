@@ -5,6 +5,7 @@ import { site, faqs, hoursSummary, fullAddress, L, LOCALES } from './src/site.co
 import { ROUTES, formatDate } from './src/routes.mjs';
 import { layout } from './src/layout.mjs';
 import { PAGE_BUILDERS, notFoundPage } from './src/pages.mjs';
+import { assetMap } from './src/assets.mjs';
 
 const OUT = 'public';
 rmSync(OUT, { recursive: true, force: true });
@@ -34,14 +35,16 @@ const nf = notFoundPage();
 writeFileSync(join(OUT, '404.html'), layout({ ...nf, cssHref: CSS_HREF }));
 
 // --- static ------------------------------------------------------------------
-const copyTree = (src, dst) => {
-  mkdirSync(dst, { recursive: true });
-  for (const f of readdirSync(src)) {
-    const s = join(src, f), d = join(dst, f);
-    statSync(s).isDirectory() ? copyTree(s, d) : copyFileSync(s, d);
-  }
-};
-copyTree('static', OUT);
+// Copy every static file to its content-hashed name (see src/assets.mjs).
+let hashedCount = 0;
+for (const [src, out] of assetMap()) {
+  const from = join('static', src.slice(1));
+  const to = join(OUT, out.slice(1));
+  mkdirSync(join(to, '..'), { recursive: true });
+  copyFileSync(from, to);
+  if (src !== out) hashedCount++;
+}
+console.log(`  ${hashedCount} assets content-hashed`);
 writeFileSync(join(OUT, CSS_HREF.slice(1)), cssRaw);
 rmSync(join(OUT, 'styles.css'), { force: true });
 console.log(`  stylesheet -> ${CSS_HREF}`);

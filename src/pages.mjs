@@ -1,5 +1,6 @@
 import { site, faqs, fullAddress, hoursSummary, L } from './site.config.mjs';
 import { ROUTES, UI, formatDate, shortDate, time12 } from './routes.mjs';
+import { asset } from './assets.mjs';
 import { esc, pic, flyer, PICADO } from './layout.mjs';
 import * as S from './schema.mjs';
 
@@ -274,7 +275,7 @@ ${next.length ? `<section class="band band--alt">
 <h2>${loc === 'es' ? 'Próximas fechas' : 'Coming up'}</h2>
 <div class="grid grid--2" style="margin-top:2.5rem">
 ${next.map((e) => `<article class="flyer">
-<a href="/img/${e.image}.jpg" class="flyer__link">${flyer(e.image, `${L(e.name, loc) || L(e.series.name, loc)} — ${formatDate(e.date, loc)}`)}</a>
+<a href="${asset(`/img/${e.image}.jpg`)}" class="flyer__link">${flyer(e.image, `${L(e.name, loc) || L(e.series.name, loc)} — ${formatDate(e.date, loc)}`)}</a>
 <div class="flyer__body">
 <span class="card__kicker">${esc(formatDate(e.date, loc))} &middot; ${esc(L(e.series.age, loc))}</span>
 <h3>${esc(L(e.name, loc) || L(e.series.name, loc))}</h3>
