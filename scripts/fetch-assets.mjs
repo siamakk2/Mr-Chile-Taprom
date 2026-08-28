@@ -29,7 +29,7 @@ mkdirSync(IMG, { recursive: true });
 const manifest = await get(`${IMG}/manifest.json`);
 writeFileSync(join(IMG, 'manifest.json'), manifest);
 
-const files = ['logo.png', 'logo-light.png', 'mark-light.png'];
+const files = ['logo.png', 'logo-horizontal.png', 'logo-light.png', 'mark-light.png'];
 for (const [name, m] of Object.entries(JSON.parse(manifest.toString()))) {
   if (name.startsWith('flyer-')) files.push(`${name}.jpg`, `${name}.webp`);
   else for (const w of m.widths) files.push(`${name}-${w}.jpg`, `${name}-${w}.webp`);
