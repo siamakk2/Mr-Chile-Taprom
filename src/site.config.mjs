@@ -37,6 +37,11 @@ export const site = {
   formEndpoint: 'https://formspree.io/f/REPLACE_WITH_FORM_ID',
   origin: 'https://mrchiletaproom.com',
 
+  // Google Search Console, URL-prefix property. Rendered into every page head.
+  // Set to null once the property is verified by DNS instead, or leave it —
+  // Google re-checks periodically and removing it can un-verify the property.
+  googleSiteVerification: 'ss7t2cU0e-wcAZS7GURrnYLvUm4QFVErcGdN8g43Ru4',
+
   profiles: [
     'https://www.instagram.com/mr.chiletaproom/',
     'https://www.facebook.com/confluencetaproom/',

@@ -156,7 +156,8 @@ export function layout({ path, altPath, loc = 'en', title, description, jsonld, 
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${url}">
-<meta name="robots" content="${robots}">
+<meta name="robots" content="${robots}">${site.googleSiteVerification ? `
+<meta name="google-site-verification" content="${esc(site.googleSiteVerification)}">` : ''}
 <meta name="theme-color" content="#16100E">
 <meta name="geo.region" content="US-CA">
 <meta name="geo.placename" content="Santa Rosa, California">
