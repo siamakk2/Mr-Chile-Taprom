@@ -283,7 +283,9 @@ export const site = {
   //
   // Flip this to true once confirmed and every price appears on the page AND in
   // the Menu/Offer structured data automatically.
-  pricesConfirmed: false,
+  // Food prices come from the Freaking Tacos published menu. Set false to hide
+  // every price at once if they drift, rather than deleting them one by one.
+  pricesConfirmed: true,
 
   // Hoppy Hour is the highest-value thing in this data set: "happy hour near me"
   // is a high-intent search and no listing anywhere mentions theirs.
@@ -333,19 +335,57 @@ export const site = {
     {
       section: { en: 'Food — Freaking Tacos', es: 'Comida — Freaking Tacos' },
       note: {
-        en: 'The kitchen is Freaking Tacos, serving their full menu here on Montgomery Drive — tacos, burritos, tortas, quesadillas and plates, made to order.',
-        es: 'La cocina es Freaking Tacos, con su menú completo aquí en Montgomery Drive — tacos, burritos, tortas, quesadillas y platillos, hechos al momento.',
+        en: 'The kitchen is Freaking Tacos and the full menu is served here. Every plate comes with a choice of meat. Prices are theirs and can change.',
+        es: 'La cocina es Freaking Tacos y aquí se sirve el menú completo. Cada platillo lleva carne a elegir. Los precios son de ellos y pueden cambiar.',
       },
       items: [
-        { name: { en: 'Tacos', es: 'Tacos' }, desc: { en: 'Choice of meat, red salsa, onions and cilantro. The whole taco menu is served here.', es: 'Carne a elegir, salsa roja, cebolla y cilantro. Todo el menú de tacos se sirve aquí.' } },
-        { name: 'Torpedo Burrito', desc: { en: 'Flour tortilla, choice of meat, rice, whole pinto beans, mozzarella, sour cream and green salsa. Their best seller.', es: 'Tortilla de harina, carne a elegir, arroz, frijoles enteros, mozzarella, crema y salsa verde. Su más vendido.' } },
-        { name: 'Wet-Rito', desc: { en: 'Flour tortilla, rice, refried beans, mozzarella and sour cream, topped with green enchilada sauce and cilantro.', es: 'Tortilla de harina, arroz, frijoles refritos, mozzarella y crema, bañado en salsa verde de enchilada con cilantro.' } },
-        { name: { en: 'Torta', es: 'Torta' }, desc: { en: 'Mexican white bread, choice of meat, refried beans, lettuce, tomato, onion, melted cheese and avocado. Jalapeños on the side on request.', es: 'Pan blanco mexicano, carne a elegir, frijoles refritos, lechuga, jitomate, cebolla, queso derretido y aguacate. Jalapeños aparte si los pides.' } },
-        { name: { en: 'Quesadilla', es: 'Quesadilla' }, desc: { en: 'Flour tortilla, melted mozzarella, green salsa and sour cream.', es: 'Tortilla de harina, mozzarella derretido, salsa verde y crema.' } },
-        { name: 'Mexi-Salad', desc: { en: 'Choice of meat, lettuce, pico de gallo, rice, whole pinto beans, green salsa and cotija.', es: 'Carne a elegir, lechuga, pico de gallo, arroz, frijoles enteros, salsa verde y cotija.' } },
-        { name: { en: 'Combo #1 — Two Tacos', es: 'Combo #1 — Dos Tacos' }, desc: { en: 'Two tacos with choice of meat, red salsa, onions and cilantro, plus chips and salsa and a fountain drink.', es: 'Dos tacos con carne a elegir, salsa roja, cebolla y cilantro, más totopos con salsa y un refresco.' } },
-        { name: { en: 'Sopes, esquites, nachos & fajita plates', es: 'Sopes, esquites, nachos y platillos de fajitas' }, desc: { en: 'Also on the Freaking Tacos menu, alongside sides like guacamole and chips, and rice and beans.', es: 'También en el menú de Freaking Tacos, junto con guarniciones como guacamole con totopos, y arroz con frijoles.' } },
-        { name: { en: 'Horchata & Jarritos', es: 'Horchata y Jarritos' }, desc: { en: 'From the Freaking Tacos drinks list.', es: 'De la lista de bebidas de Freaking Tacos.' } },
+        { name: 'Taco', price: '3.50', desc: { en: 'Corn tortilla, choice of meat, cilantro, onions and red salsa.', es: 'Tortilla de maíz, carne a elegir, cilantro, cebolla y salsa roja.' } },
+        { name: 'Sopes', price: '5.75', desc: { en: 'Homemade thick crispy tortilla, refried beans, lettuce, sour cream and cotija cheese.', es: 'Tortilla gruesa y crujiente hecha a mano, frijoles refritos, lechuga, crema y queso cotija.' } },
+        { name: 'Torpedo Burrito', price: '14.50', desc: { en: 'Flour tortilla, choice of meat, rice, whole pinto beans, mozzarella, sour cream and green salsa. Their best seller.', es: 'Tortilla de harina, carne a elegir, arroz, frijoles enteros, mozzarella, crema y salsa verde. Su más vendido.' } },
+        { name: { en: 'Bean & Cheese Burrito', es: 'Burrito de frijol y queso' }, price: '9.50', desc: { en: 'Refried pinto beans and cheese only.', es: 'Sólo frijoles refritos y queso.' } },
+        { name: { en: 'Mini Burrito', es: 'Mini burrito' }, price: '8.99', desc: { en: 'Rice, whole beans, cheese and a choice of meat.', es: 'Arroz, frijoles enteros, queso y carne a elegir.' } },
+        { name: { en: 'Quesadilla', es: 'Quesadilla' }, price: '14.50', desc: { en: 'Flour tortilla, melted mozzarella, green salsa and sour cream.', es: 'Tortilla de harina, mozzarella derretido, salsa verde y crema.' } },
+        { name: { en: 'Cheese Only Quesadilla', es: 'Quesadilla sólo de queso' }, price: '8.99', desc: { en: 'Cheese only.', es: 'Sólo queso.' } },
+        { name: { en: 'Mini Quesadilla', es: 'Mini quesadilla' }, price: '8.50', desc: { en: 'Choice of meat and cheese only.', es: 'Carne a elegir y queso.' } },
+        { name: { en: 'Torta', es: 'Torta' }, price: '16.99', desc: { en: 'Fresh Mexican white bread, choice of meat, mayonnaise, refried beans, lettuce, tomato, onion, melted cheese and avocado.', es: 'Pan blanco mexicano fresco, carne a elegir, mayonesa, frijoles refritos, lechuga, jitomate, cebolla, queso derretido y aguacate.' } },
+        { name: 'Wet-Rito', price: '16.99', desc: { en: 'Flour tortilla, rice, refried beans, mozzarella and sour cream, topped with green enchilada sauce.', es: 'Tortilla de harina, arroz, frijoles refritos, mozzarella y crema, bañado en salsa verde de enchilada.' } },
+        { name: 'Mexi-Salad', price: '14.50', desc: { en: 'Choice of meat, lettuce, pico de gallo, rice, whole pinto beans, green salsa and cotija.', es: 'Carne a elegir, lechuga, pico de gallo, arroz, frijoles enteros, salsa verde y cotija.' } },
+        { name: { en: 'Fajitas Plate', es: 'Plato de fajitas' }, price: '18.99', desc: { en: 'Choice of protein with rice, beans, four corn tortillas, mozzarella and peppers.', es: 'Proteína a elegir con arroz, frijoles, cuatro tortillas de maíz, mozzarella y pimientos.' } },
+        { name: { en: 'Nachos', es: 'Nachos' }, price: '18.99', desc: { en: 'Choice of meat, mozzarella, refried beans, pico de gallo and guacamole.', es: 'Carne a elegir, mozzarella, frijoles refritos, pico de gallo y guacamole.' } },
+        { name: 'Esquites', price: '5.99', desc: { en: 'Corn, mayonnaise, Valentina, Tajín, lime and cheese.', es: 'Elote, mayonesa, Valentina, Tajín, limón y queso.' } },
+      ],
+    },
+    {
+      section: { en: 'Combos', es: 'Combos' },
+      note: {
+        en: 'Each combo includes rice, refried beans, chips and a fountain drink.',
+        es: 'Cada combo incluye arroz, frijoles refritos, totopos y un refresco.',
+      },
+      items: [
+        { name: { en: 'Combo #1 — Two Tacos', es: 'Combo #1 — Dos tacos' }, price: '16.50', desc: { en: 'Two tacos with choice of meat, red salsa, onions and cilantro.', es: 'Dos tacos con carne a elegir, salsa roja, cebolla y cilantro.' } },
+        { name: { en: 'Combo #2 — One Sope', es: 'Combo #2 — Un sope' }, price: '16.25', desc: { en: 'One sope, thick homemade crispy tortilla topped with refried beans.', es: 'Un sope, tortilla gruesa y crujiente hecha a mano con frijoles refritos.' } },
+        { name: { en: 'Combo #3 — One Quesadilla', es: 'Combo #3 — Una quesadilla' }, price: '19.99', desc: { en: 'Quesadilla with choice of meat, mozzarella, green salsa and sour cream.', es: 'Quesadilla con carne a elegir, mozzarella, salsa verde y crema.' } },
+      ],
+    },
+    {
+      section: { en: 'Sides', es: 'Guarniciones' },
+      note: {
+        en: 'Add to anything, or graze on the patio.',
+        es: 'Para acompañar cualquier cosa, o para picar en el patio.',
+      },
+      items: [
+        { name: { en: 'Chips & Salsa', es: 'Totopos y salsa' }, price: '0.99', desc: { en: 'Crispy tortilla chips with a zesty tomato salsa.', es: 'Totopos crujientes con salsa de jitomate.' } },
+        { name: { en: 'Guacamole & Chips', es: 'Guacamole y totopos' }, price: '6.99', desc: { en: 'Mashed avocado with lime, cilantro and onion, served with chips.', es: 'Aguacate machacado con limón, cilantro y cebolla, con totopos.' } },
+        { name: 'Guac Poppers', price: '7.99', desc: { en: 'Fresh guacamole with their special chips.', es: 'Guacamole fresco con sus totopos especiales.' } },
+        { name: { en: 'Side of Guacamole', es: 'Guacamole' }, price: '4.95', desc: { en: 'Creamy avocado dip, good for sharing.', es: 'Dip cremoso de aguacate, bueno para compartir.' } },
+        { name: { en: 'Side of Avocado', es: 'Aguacate' }, price: '4.75', desc: { en: 'Freshly diced avocado.', es: 'Aguacate fresco picado.' } },
+        { name: { en: 'Rice & Beans', es: 'Arroz y frijoles' }, price: '7.25', desc: { en: 'Hispanic rice and refried pinto beans.', es: 'Arroz y frijoles pintos refritos.' } },
+        { name: { en: 'Side of Rice', es: 'Arroz' }, price: '4.25', desc: { en: 'Hispanic rice.', es: 'Arroz.' } },
+        { name: { en: 'Side of Refried Beans', es: 'Frijoles refritos' }, price: '4.25', desc: { en: 'Creamy mashed beans, lightly seasoned.', es: 'Frijoles machacados y cremosos, ligeramente sazonados.' } },
+        { name: { en: 'Pico de Gallo', es: 'Pico de gallo' }, price: '3.50', desc: { en: 'Fresh salsa.', es: 'Salsa fresca.' } },
+        { name: { en: 'Grilled Onions & Jalapeños', es: 'Cebollas y jalapeños asados' }, price: '3.50', desc: { en: 'Grilled and seasoned.', es: 'Asados y sazonados.' } },
+        { name: { en: 'Side of Crema', es: 'Crema' }, price: '0.75', desc: { en: 'Mexican crema, small or large.', es: 'Crema mexicana, chica o grande.' } },
+        { name: { en: 'Side of Salsa', es: 'Salsa' }, price: '0.50', desc: { en: 'Red, green or spicy Diablo. 2oz, 12oz or 16oz.', es: 'Roja, verde o Diablo picante. 2oz, 12oz o 16oz.' } },
       ],
     },
     {
@@ -358,7 +398,11 @@ export const site = {
         { name: { en: 'Non-alcoholic Corona', es: 'Corona sin alcohol' }, desc: { en: 'A cold one without the alcohol, same as everyone else is drinking.', es: 'Una fría sin alcohol, igual que la de todos.' } },
         { name: { en: 'Lagunitas non-alcoholic IPA', es: 'IPA sin alcohol de Lagunitas' }, desc: { en: 'Hoppy and alcohol-free, brewed down the road in Petaluma.', es: 'Con lúpulo y sin alcohol, de Petaluma, aquí cerca.' } },
         { name: 'Mexican Coke', desc: { en: 'Cane sugar, glass bottle.', es: 'Azúcar de caña, botella de vidrio.' } },
-        { name: { en: 'Fountain drinks', es: 'Refrescos de máquina' }, desc: { en: 'The usual lineup, refilled at the bar.', es: 'Los de siempre, servidos en la barra.' } },
+        { name: { en: 'Fountain drinks', es: 'Refrescos de máquina' }, price: '3.25', desc: { en: 'Pepsi, Pepsi Zero, Starry, lemonade, Tropicana and more.', es: 'Pepsi, Pepsi Zero, Starry, limonada, Tropicana y más.' } },
+        { name: 'Horchata', price: '4.99', desc: { en: 'Sweet rice milk with cinnamon and vanilla.', es: 'Agua de arroz con canela y vainilla.' } },
+        { name: { en: 'Jamaica agua fresca', es: 'Agua de jamaica' }, price: '4.50', desc: { en: 'Steeped hibiscus flowers, tart and cold.', es: 'Flor de jamaica, ácida y bien fría.' } },
+        { name: 'Jarritos', price: '4.00', desc: { en: 'Mandarin, tamarind, pineapple, sidral mundet or sangria.', es: 'Mandarina, tamarindo, piña, sidral mundet o sangría.' } },
+        { name: { en: 'Bottled & sparkling water', es: 'Agua embotellada y mineral' }, price: '1.99', desc: { en: 'Still, or sparkling with lime, lemon, berry or orange.', es: 'Natural, o mineral con limón, lima, frutos rojos o naranja.' } },
       ],
     },
   ],
