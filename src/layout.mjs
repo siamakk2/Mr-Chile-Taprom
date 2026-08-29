@@ -96,6 +96,19 @@ const consentBanner = (loc) => !site.ga4Id ? '' : `<div class="cc" data-cc hidde
 </div>
 </div>`;
 
+/**
+ * Loads the on-site editor, and only for an editor.
+ *
+ * The check is a readable marker cookie set at login, not a network call:
+ * every visitor loads this page, and none of them should pay a request to
+ * discover they are not staff. The marker carries no authority — the API
+ * verifies the real session cookie, which is HttpOnly and unreadable here.
+ */
+const EDITOR_LOADER = `<script>(function(){
+if(!/(^|;\\s*)mct_editor=1/.test(document.cookie))return;
+var s=document.createElement('script');s.src='/edit.js';s.defer=true;
+document.head.appendChild(s);})();<\/script>`;
+
 const CONSENT_JS = `<script>(function(){var K='mrc-consent',el=document.querySelector('[data-cc]');if(!el)return;
 var v=null;try{v=localStorage.getItem(K);}catch(e){}
 if(!v)el.hidden=false;
@@ -243,6 +256,7 @@ ${consentBanner(loc)}
 ${statusScript(loc)}
 ${MENU_JS}
 ${CONSENT_JS}
+${EDITOR_LOADER}
 </body>
 </html>`;
 }

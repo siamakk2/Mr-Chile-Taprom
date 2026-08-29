@@ -5,6 +5,19 @@ import { asset } from './assets.mjs';
 import { esc, pic, flyer, PICADO } from './layout.mjs';
 import * as S from './schema.mjs';
 
+/**
+ * Stamp a rendered value with where it came from, so the on-site editor knows
+ * which key in which file to write back to. Bilingual values resolve to the
+ * locale being rendered; plain strings get no locale suffix.
+ *
+ * A few bytes per value, and it is what makes editing on the page possible at
+ * all — nothing else in the build knows that this text is menu[2].items[1].
+ */
+const cms = (file, path, value, loc) => {
+  const isPair = value && typeof value === 'object' && !Array.isArray(value);
+  return ` data-cms="${file}:${path}${isPair ? `.${loc}` : ''}"`;
+};
+
 const g = S.graph;
 const t = (k, loc) => L(UI[k], loc);
 const mapUrl = `https://www.google.com/maps/search/?api=1&query=${site.lat},${site.lng}`;
@@ -547,12 +560,12 @@ ${pic('tacos-beer', loc === 'es' ? 'Tacos al pastor y una cerveza fría en la ba
 
 <section class="band">
 <div class="wrap grid grid--2">
-${site.menu.map((sec) => `<section class="card">
-<h2 class="h2--sm">${esc(L(sec.section, loc))}</h2>
-<p class="form__note">${esc(L(sec.note, loc))}</p>
-<ul class="mlist">${sec.items.map((i) => `<li>
-<strong>${esc(L(i.name, loc))}${site.pricesConfirmed && i.price ? `<span class="mlist__price">$${esc(i.price)}${i.priceNote ? ` <em>${esc(L(i.priceNote, loc))}</em>` : ''}</span>` : ''}</strong>
-<span>${esc(L(i.desc, loc))}</span></li>`).join('')}</ul>
+${site.menu.map((sec, si) => `<section class="card">
+<h2 class="h2--sm"${cms('menu.json', `menu[${si}].section`, sec.section, loc)}>${esc(L(sec.section, loc))}</h2>
+<p class="form__note"${cms('menu.json', `menu[${si}].note`, sec.note, loc)}>${esc(L(sec.note, loc))}</p>
+<ul class="mlist">${sec.items.map((i, ii) => `<li>
+<strong><span${cms('menu.json', `menu[${si}].items[${ii}].name`, i.name, loc)}>${esc(L(i.name, loc))}</span>${site.pricesConfirmed && i.price ? `<span class="mlist__price">$<span${cms('menu.json', `menu[${si}].items[${ii}].price`, i.price, loc)}>${esc(i.price)}</span>${i.priceNote ? ` <em>${esc(L(i.priceNote, loc))}</em>` : ''}</span>` : ''}</strong>
+<span${cms('menu.json', `menu[${si}].items[${ii}].desc`, i.desc, loc)}>${esc(L(i.desc, loc))}</span></li>`).join('')}</ul>
 </section>`).join('')}
 </div>
 <div class="wrap" style="margin-top:2.5rem">

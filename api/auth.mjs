@@ -12,7 +12,7 @@
 import { json, readRaw, ORIGIN } from './_lib.mjs';
 import { installationToken } from './_github.mjs';
 import {
-  verifyPassword, createSession, sessionCookie, currentEditor, sitesFor,
+  verifyPassword, createSession, sessionCookie, editorMarker, currentEditor, sitesFor,
   audit, isLocked, noteFailure, noteSuccess, LOCK_MINUTES,
 } from './_auth.mjs';
 import { db } from './_lib.mjs';
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
     const { token: ghToken } = await installationToken();
     await audit('login', { editorId: editor.id, email, detail: sites.map((s) => s.slug).join(','), req });
 
-    res.setHeader('set-cookie', sessionCookie(sessionToken, expires));
+    res.setHeader('set-cookie', [sessionCookie(sessionToken, expires), editorMarker(expires)]);
     return json(res, 200, { ok: true, name: editor.name || editor.email, token: ghToken });
   } catch (e) {
     await audit('login_error', { email, detail: e.message, req });

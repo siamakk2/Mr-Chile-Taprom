@@ -91,6 +91,17 @@ export async function sitesFor(editorId) {
 export const isOwner = (sites) => sites.some((s) => s.role === 'owner');
 
 // --- cookies -----------------------------------------------------------------
+/**
+ * A second, readable cookie saying "this browser belongs to an editor".
+ *
+ * It grants nothing — the session cookie is HttpOnly and is what the API
+ * checks. This one exists so a page can decide whether to load the editing
+ * script without asking the server, which keeps the cost at zero for the
+ * visitors who are not staff.
+ */
+export const editorMarker = (expires) =>
+  `mct_editor=1; Path=/; Secure; SameSite=Lax; Expires=${expires.toUTCString()}`;
+
 export function sessionCookie(token, expires) {
   return [
     `${SESSION_COOKIE}=${token}`,
@@ -102,8 +113,10 @@ export function sessionCookie(token, expires) {
   ].join('; ');
 }
 
-export const clearCookie = () =>
-  `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
+export const clearCookie = () => [
+  `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`,
+  'mct_editor=; Path=/; Secure; SameSite=Lax; Max-Age=0',
+];
 
 export function readCookie(req, name) {
   const raw = String(req.headers.cookie || '');
