@@ -10,6 +10,14 @@
 # because a half-translated site is worse than an untranslated one.
 # =============================================================================
 
+# --- branding ---------------------------------------------------------------
+app_title: Mr. Chile Taproom
+site_url: https://www.mrchiletaproom.com
+logout_redirect_url: https://www.mrchiletaproom.com
+logo:
+  src: /admin/logo.png
+  show_in_header: true
+
 backend:
   name: github
   repo: siamakk2/Mr-Chile-Taprom
@@ -18,6 +26,13 @@ backend:
   auth_endpoint: api/auth/
 
 publish_mode: simple
+
+# Commit messages the taproom's edits leave in the history. Readable, so the
+# log stays useful to whoever picks this up next.
+backend_commit_messages:
+  update: 'Update {{collection}} via the site editor'
+  uploadMedia: 'Upload {{path}} via the site editor'
+  deleteMedia: 'Delete {{path}} via the site editor'
 media_folder: static/img
 public_folder: /img
 locale: en

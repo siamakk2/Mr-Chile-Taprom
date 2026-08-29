@@ -43,6 +43,12 @@ writeFileSync(join(OUT, '404.html'), layout({ ...nf, cssHref: CSS_HREF }));
 mkdirSync(join(OUT, 'door'), { recursive: true });
 writeFileSync(join(OUT, 'door', 'index.html'), doorPage());
 
+// The admin logo is copied unhashed on purpose: config.yml is a static file
+// and cannot know this build's content hash, so it needs a path that holds
+// still. Not cached long, since it is fetched once per login.
+mkdirSync(join(OUT, 'admin'), { recursive: true });
+copyFileSync(join('static', 'img', 'logo-horizontal.png'), join(OUT, 'admin', 'logo.png'));
+
 // --- static ------------------------------------------------------------------
 // Copy every static file to its content-hashed name (see src/assets.mjs).
 let hashedCount = 0;
