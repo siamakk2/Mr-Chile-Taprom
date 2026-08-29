@@ -1,5 +1,6 @@
 import { site, faqs, fullAddress, hoursSummary, L } from './site.config.mjs';
 import { ROUTES, UI, formatDate, shortDate, time12, firstSaturdays } from './routes.mjs';
+import { GUIDES } from './guides.content.mjs';
 import { asset } from './assets.mjs';
 import { esc, pic, flyer, PICADO } from './layout.mjs';
 import * as S from './schema.mjs';
@@ -966,6 +967,129 @@ function nextIso(iso) {
   return new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10);
 }
 
+// ============================================================================
+// Guides — the index, and one page per piece
+// ============================================================================
+const guidePath = (guide, loc) => `${ROUTES.guides[loc]}${guide.slug[loc]}/`;
+
+export const guidesIndexPage = (loc) => {
+  const path = ROUTES.guides[loc];
+  const es = loc === 'es';
+  const title = es
+    ? 'Guías | Mr. Chile Taproom, Santa Rosa'
+    : 'Guides | Mr. Chile Taproom, Santa Rosa';
+  const description = es
+    ? 'Cómo aprender cumbia, planear una quinceañera en Santa Rosa, qué es un sonidero, y qué preguntar antes de rentar un salón.'
+    : 'How to learn cumbia, planning a quinceañera in Santa Rosa, what a sonidero is, and what to ask before booking an event venue.';
+
+  return {
+    path, loc, altPath: ROUTES.guides[es ? 'en' : 'es'], title, description,
+    jsonld: g([
+      ...base(path, title, description, [home(loc), { name: L(UI.guidesLabel, loc), path }], loc),
+      {
+        '@type': 'ItemList',
+        '@id': `${site.origin}${path}#list`,
+        itemListElement: GUIDES.map((gd, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: `${site.origin}${guidePath(gd, loc)}`,
+          name: L(gd.title, loc),
+        })),
+      },
+    ]),
+    body: `
+<section class="band band--tight">
+<div class="wrap">
+<span class="eyebrow">${esc(t('guidesLabel', loc))}</span>
+<h1 class="h1--sm">${esc(t('guidesH', loc))}</h1>
+<p class="lede" style="margin-top:1.25rem">${esc(t('guidesLede', loc))}</p>
+</div>
+</section>
+
+${PICADO}
+
+<section class="band">
+<div class="wrap">
+<div class="grid grid--cards">
+${GUIDES.map((gd) => `<a class="card card--link" href="${guidePath(gd, loc)}">
+<span class="card__k">${esc(t('guidesLabel', loc))}</span>
+<h2>${esc(L(gd.title, loc))}</h2>
+<p>${esc(L(gd.lede, loc))}</p>
+<span class="card__cta">${esc(t('readGuide', loc))}</span>
+</a>`).join('')}
+</div>
+</div>
+</section>`,
+  };
+};
+
+const guideArticlePage = (guide) => (loc) => {
+  const path = guidePath(guide, loc);
+  const es = loc === 'es';
+  const title = L(guide.metaTitle, loc);
+  const description = L(guide.description, loc);
+  const faqObjs = guide.faq.map((f) => ({ q: L(f.q, loc), a: L(f.a, loc) }));
+
+  return {
+    path, loc, altPath: guidePath(guide, es ? 'en' : 'es'), title, description,
+    jsonld: g([
+      ...base(path, title, description,
+        [home(loc), { name: L(UI.guidesLabel, loc), path: ROUTES.guides[loc] }, { name: L(guide.title, loc), path }], loc),
+      {
+        '@type': 'Article',
+        '@id': `${site.origin}${path}#article`,
+        headline: L(guide.title, loc),
+        description,
+        inLanguage: es ? 'es-US' : 'en-US',
+        datePublished: guide.date,
+        dateModified: guide.date,
+        author: { '@id': `${site.origin}/#business` },
+        publisher: { '@id': `${site.origin}/#business` },
+        mainEntityOfPage: { '@id': `${site.origin}${path}#webpage` },
+        about: { '@id': `${site.origin}/#business` },
+      },
+      S.faqNode(faqObjs, loc),
+    ]),
+    body: `
+<section class="band band--tight">
+<div class="wrap prose--doc">
+<span class="eyebrow">${esc(t('guidesLabel', loc))}</span>
+<h1 class="h1--sm">${esc(L(guide.title, loc))}</h1>
+<p class="lede" style="margin-top:1.25rem">${esc(L(guide.lede, loc))}</p>
+</div>
+</section>
+
+${PICADO}
+
+<section class="band">
+<div class="wrap prose prose--doc">
+${guide.sections.map((s) => `<h2>${esc(L(s.h, loc))}</h2>
+${L(s.p, loc).map((par) => `<p>${esc(par)}</p>`).join('')}`).join('')}
+</div>
+</section>
+
+<section class="band band--alt">
+<div class="wrap grid grid--split">
+<div><span class="eyebrow">${esc(t('allQuestions', loc))}</span>
+<h2>${es ? 'Preguntas rápidas' : 'Quick answers'}</h2></div>
+<div>${faqBlock(faqObjs, loc)}</div>
+</div>
+</section>
+
+<section class="band">
+<div class="wrap">
+<span class="eyebrow">${esc(t('relatedPages', loc))}</span>
+<ul class="dates" style="margin-top:1.5rem">
+${guide.links.map((k) => `<li><a href="${ROUTES[k][loc]}"><span class="dates__d">${esc(k === 'cumbia' ? 'Cumbia Rosa' : L(UI.nav[k] || UI.guidesLabel, loc))}</span></a></li>`).join('')}
+<li><a href="${ROUTES.guides[loc]}"><span class="dates__d">${esc(t('guidesLabel', loc))}</span></a></li>
+</ul>
+</div>
+</section>`,
+  };
+};
+
+export const GUIDE_PAGES = GUIDES.map(guideArticlePage);
+
 export const notFoundPage = () => ({
   path: '/404.html', loc: 'en', altPath: '/es/', raw: true,
   title: 'Page not found | Mr. Chile Taproom',
@@ -983,4 +1107,4 @@ export const notFoundPage = () => ({
 </div></div></section>`,
 });
 
-export const PAGE_BUILDERS = [homePage, eventsPage, cumbiaPage, privatePage, menuPage, visitPage, faqPage, privacyPage];
+export const PAGE_BUILDERS = [homePage, eventsPage, cumbiaPage, privatePage, menuPage, visitPage, faqPage, guidesIndexPage, ...GUIDE_PAGES, privacyPage];

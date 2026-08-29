@@ -10,6 +10,7 @@ export const ROUTES = {
   visit:    { en: '/visit/',           es: '/es/visitanos/' },
   faq:      { en: '/faq/',             es: '/es/preguntas/' },
   cumbia:   { en: '/cumbia-rosa/',     es: '/es/cumbia-rosa/' },
+  guides:   { en: '/guides/',          es: '/es/guias/' },
   privacy:  { en: '/privacy/',         es: '/es/privacidad/' },
 };
 
@@ -65,6 +66,13 @@ export const UI = {
   crossStVal:    { en: 'east Santa Rosa',   es: 'este de Santa Rosa' },
 
   cumbiaLabel:   { en: 'Cumbia Rosa',       es: 'Cumbia Rosa' },
+  guidesLabel:   { en: 'Guides',            es: 'Guías' },
+  guidesH:       { en: 'Worth knowing before you come',
+                   es: 'Vale la pena saber antes de venir' },
+  guidesLede:    { en: 'Four things people ask us often enough that they deserve a proper answer.',
+                   es: 'Cuatro cosas que nos preguntan lo suficiente como para merecer una respuesta completa.' },
+  readGuide:     { en: 'Read the guide',    es: 'Leer la guía' },
+  relatedPages:  { en: 'Related',           es: 'Relacionado' },
   nextDance:     { en: 'Next dance',        es: 'Próximo baile' },
   upcomingDates: { en: 'Upcoming dates',    es: 'Próximas fechas' },
   getTickets:    { en: 'Get tickets',       es: 'Comprar boletos' },

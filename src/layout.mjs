@@ -153,6 +153,7 @@ ${esc(site.street)}<br>${esc(site.locality)}, ${site.region} ${site.postal}<br>
 <div>
 <h4>${esc(t('pages', loc))}</h4>
 <ul>${NAV_KEYS.map((k) => `<li><a href="${ROUTES[k][loc]}">${esc(L(UI.nav[k], loc))}</a></li>`).join('')}
+<li><a href="${ROUTES.guides[loc]}">${esc(t('guidesLabel', loc))}</a></li>
 <li><a href="${ROUTES.privacy[loc]}">${esc(t('privacyLabel', loc))}</a></li>
 <li><a href="${altPath}" hreflang="${other}" lang="${other}">${esc(t('langSwitch', loc))}</a></li></ul>
 </div>
