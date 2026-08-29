@@ -42,6 +42,9 @@ export const site = {
   // Google re-checks periodically and removing it can un-verify the property.
   googleSiteVerification: 'ss7t2cU0e-wcAZS7GURrnYLvUm4QFVErcGdN8g43Ru4',
 
+  // Google Analytics 4 measurement ID. Set to null to remove analytics entirely.
+  ga4Id: 'G-3ZJMXL1WDK',
+
   profiles: [
     'https://www.instagram.com/mr.chiletaproom/',
     'https://www.facebook.com/confluencetaproom/',

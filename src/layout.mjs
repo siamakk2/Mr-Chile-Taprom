@@ -187,7 +187,11 @@ export function layout({ path, altPath, loc = 'en', title, description, jsonld, 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400..700&display=swap">
 <link rel="stylesheet" href="${cssHref}">
-<script type="application/ld+json">${jsonld}<\/script>
+<script type="application/ld+json">${jsonld}<\/script>${site.ga4Id ? `
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=${esc(site.ga4Id)}"><\/script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());gtag('config','${esc(site.ga4Id)}');<\/script>` : ''}
 </head>
 <body>
 <a class="skip" href="#main">${esc(t('skip', loc))}</a>
