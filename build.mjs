@@ -6,6 +6,9 @@ import { ROUTES, formatDate } from './src/routes.mjs';
 import { layout } from './src/layout.mjs';
 import { PAGE_BUILDERS, notFoundPage } from './src/pages.mjs';
 import { doorPage } from './src/door.mjs';
+
+// Deploys are git-triggered from main; the production branch is set in
+// Vercel under Settings > Environments > Production > Branch Tracking.
 import { assetMap } from './src/assets.mjs';
 
 const OUT = 'public';
