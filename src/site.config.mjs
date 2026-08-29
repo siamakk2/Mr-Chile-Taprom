@@ -122,6 +122,7 @@ export const site = {
   series: [
     {
       slug: 'cumbia-rosa',
+      pageKey: 'cumbia',
       name: 'Cumbia Rosa',
       kicker: { en: 'First Saturday, monthly', es: 'Cada primer sábado del mes' },
       byDay: 'Saturday',

@@ -9,6 +9,7 @@ export const ROUTES = {
   private:  { en: '/private-events/',  es: '/es/eventos-privados/' },
   visit:    { en: '/visit/',           es: '/es/visitanos/' },
   faq:      { en: '/faq/',             es: '/es/preguntas/' },
+  cumbia:   { en: '/cumbia-rosa/',     es: '/es/cumbia-rosa/' },
   privacy:  { en: '/privacy/',         es: '/es/privacidad/' },
 };
 
@@ -63,8 +64,15 @@ export const UI = {
                    es: 'Se habla español e inglés' },
   crossStVal:    { en: 'east Santa Rosa',   es: 'este de Santa Rosa' },
 
-  // --- cookie notice --------------------------------------------------------
-  privacyLabel:  { en: 'Privacy',           es: 'Privacidad' },
+  cumbiaLabel:   { en: 'Cumbia Rosa',       es: 'Cumbia Rosa' },
+  nextDance:     { en: 'Next dance',        es: 'Próximo baile' },
+  upcomingDates: { en: 'Upcoming dates',    es: 'Próximas fechas' },
+  getTickets:    { en: 'Get tickets',       es: 'Comprar boletos' },
+  howNightRuns:  { en: 'How the night runs', es: 'Cómo va la noche' },
+  doorPrice:     { en: '$15 advance · $20 at the door',
+                   es: '$15 preventa · $20 en la puerta' },
+
+  // --- cookie notice --------------------------------------------------------  privacyLabel:  { en: 'Privacy',           es: 'Privacidad' },
   consentBody:   { en: 'We use cookies to see how the site gets used, so we can make it better. No ads, and we never sell your information.',
                    es: 'Usamos cookies para ver cómo se usa el sitio y así mejorarlo. Sin anuncios, y nunca vendemos tu información.' },
   consentOk:     { en: 'Got it',            es: 'Entendido' },
@@ -111,3 +119,26 @@ export const time12 = (t) => {
   const hh = h % 12 || 12;
   return m ? `${hh}:${String(m).padStart(2, '0')}${ap}` : `${hh}${ap}`;
 };
+
+/**
+ * The next `count` first-Saturdays, today included, as ISO dates.
+ *
+ * Cumbia Rosa is a standing monthly date, so hardcoding it into datedEvents
+ * means the page silently rots the moment nobody remembers to add next month.
+ * Deriving it from the calendar means the schedule is right forever.
+ */
+export function firstSaturdays(count = 4, from = new Date()) {
+  const out = [];
+  const today = `${from.getUTCFullYear()}-${String(from.getUTCMonth() + 1).padStart(2, '0')}-${String(from.getUTCDate()).padStart(2, '0')}`;
+  let y = from.getUTCFullYear(), m = from.getUTCMonth();
+  while (out.length < count) {
+    const first = new Date(Date.UTC(y, m, 1));
+    const offset = (6 - first.getUTCDay() + 7) % 7; // 6 = Saturday
+    const d = new Date(Date.UTC(y, m, 1 + offset));
+    const iso = d.toISOString().slice(0, 10);
+    if (iso >= today) out.push(iso);
+    m += 1;
+    if (m > 11) { m = 0; y += 1; }
+  }
+  return out;
+}

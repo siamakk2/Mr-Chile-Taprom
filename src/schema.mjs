@@ -107,6 +107,7 @@ export const seriesNodes = (loc = 'en') =>
     '@id': `${abs(ROUTES.events[loc])}#${s.slug}`,
     name: L(s.name, loc),
     description: L(s.long, loc),
+    ...(s.pageKey ? { url: abs(ROUTES[s.pageKey][loc]) } : {}),
     ...(s.image ? { image: abs(asset(`/img/${s.image}.jpg`)) } : {}),
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: { '@id': ID.org },

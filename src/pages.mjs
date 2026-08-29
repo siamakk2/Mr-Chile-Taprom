@@ -1,5 +1,5 @@
 import { site, faqs, fullAddress, hoursSummary, L } from './site.config.mjs';
-import { ROUTES, UI, formatDate, shortDate, time12 } from './routes.mjs';
+import { ROUTES, UI, formatDate, shortDate, time12, firstSaturdays } from './routes.mjs';
 import { asset } from './assets.mjs';
 import { esc, pic, flyer, PICADO } from './layout.mjs';
 import * as S from './schema.mjs';
@@ -66,6 +66,13 @@ const COPY = {
     es: 'Casi todas las noches es un taproom de barrio. El primer sábado del mes es una pista de baile hasta las 2am.',
   },
   progEyebrow: { en: 'The programming', es: 'La programación' },
+  cumbiaEyebrow: { en: 'The signature night', es: 'La noche insignia' },
+  cumbiaH: { en: 'Cumbia Rosa', es: 'Cumbia Rosa' },
+  cumbiaLede: {
+    en: 'Once a month the taproom turns into a dance floor. A beginner cumbia class at 8:15pm — no partner, no experience — then DJ Edge until 2am.',
+    es: 'Una vez al mes el taproom se vuelve pista de baile. Clase de cumbia para principiantes a las 8:15pm — sin pareja, sin experiencia — y después DJ Edge hasta las 2am.',
+  },
+  cumbiaCta: { en: 'All about Cumbia Rosa', es: 'Todo sobre Cumbia Rosa' },
   progH: { en: "What's on", es: 'Qué hay' },
   progLede: { en: 'Four things run on repeat, plus dated shows as they are announced.',
               es: 'Cuatro cosas se repiten cada mes, más fechas especiales conforme se anuncian.' },
@@ -158,13 +165,34 @@ ${pic('patio-wide', loc === 'es' ? 'El patio junto al arroyo al anochecer, con l
 </div>
 </section>
 
+<section class="band cumbia-cta">
+<div class="wrap grid grid--split">
+<div>
+<span class="eyebrow eyebrow--chile">${esc(c('cumbiaEyebrow', loc))}</span>
+<h2 class="cumbia-cta__h">${esc(c('cumbiaH', loc))}</h2>
+<p class="lede" style="margin-top:1.25rem">${esc(c('cumbiaLede', loc))}</p>
+<p class="cumbia-cta__next"><span class="cumbia-cta__label">${esc(t('nextDance', loc))}</span>
+<strong>${esc(formatDate(firstSaturdays(1)[0], loc))}</strong> · ${esc(t('doorPrice', loc))} · 21+</p>
+<div class="btn-row" style="margin-top:1.75rem">
+<a class="btn btn--gold" href="${ROUTES.cumbia[loc]}">${esc(c('cumbiaCta', loc))}</a>
+<a class="btn btn--ghost" href="https://www.ritmoypasiondance.com" rel="noopener">${esc(t('getTickets', loc))}</a>
+</div>
+</div>
+<div>
+<a href="${ROUTES.cumbia[loc]}" class="cumbia-cta__flyer">
+${flyer('flyer-cumbia-rosa', loc === 'es' ? 'Flyer de Cumbia Rosa' : 'Cumbia Rosa flyer')}
+</a>
+</div>
+</div>
+</section>
+
 <section class="band">
 <div class="wrap">
 <span class="eyebrow">${esc(c('progEyebrow', loc))}</span>
 <h2>${esc(c('progH', loc))}</h2>
 <p class="lede" style="margin-top:1rem">${esc(c('progLede', loc))}</p>
 <div class="grid grid--4" style="margin-top:2.5rem">
-${site.series.map((s) => `<a class="card card--link" href="${ROUTES.events[loc]}#${s.slug}">
+${site.series.map((s) => `<a class="card card--link" href="${s.pageKey ? ROUTES[s.pageKey][loc] : `${ROUTES.events[loc]}#${s.slug}`}">
 <span class="card__kicker">${esc(L(s.kicker, loc))}</span>
 <h3>${esc(L(s.name, loc))}</h3>
 <p>${esc(L(s.short, loc))}</p>
@@ -766,6 +794,178 @@ ${sections.map(([h, html], i) => `<h2>${esc(h)}</h2>${html}${i === 3 ? optOut : 
   };
 };
 
+// ============================================================================
+// Cumbia Rosa — the monthly dance night, given its own room
+// ============================================================================
+export const cumbiaPage = (loc) => {
+  const path = ROUTES.cumbia[loc];
+  const es = loc === 'es';
+  const s = site.series.find((x) => x.slug === 'cumbia-rosa');
+  const dates = firstSaturdays(5);
+  const next = dates[0];
+
+  const title = es
+    ? 'Cumbia Rosa | Baile de cumbia cada primer sábado en Santa Rosa'
+    : 'Cumbia Rosa | Monthly Cumbia Dance Night in Santa Rosa, CA';
+  const description = es
+    ? 'Cumbia Rosa en Mr. Chile Taproom, Santa Rosa: clase de cumbia para principiantes a las 8:15pm con Maria y Rogelio, luego DJ Edge hasta las 2am. Sin pareja, sin experiencia. $15 preventa, $20 en la puerta. 21+.'
+    : 'Cumbia Rosa at Mr. Chile Taproom, Santa Rosa: beginner cumbia class at 8:15pm with Maria and Rogelio, then DJ Edge until 2am. No partner, no experience needed. $15 advance, $20 at the door. 21+.';
+
+  // Every claim below is already in site.config; nothing new is asserted here.
+  const runOfNight = es ? [
+    ['8:15pm', 'La clase', 'Clase de cumbia para principiantes con Maria y Rogelio, de Ritmo y Pasión Dance. No necesitas pareja ni haber bailado antes.'],
+    ['Después', 'DJ Edge', 'DJ Edge toma la cabina y la pista se abre para todos, con o sin clase.'],
+    ['Hasta 2am', 'Se baila', 'La pista sigue abierta hasta las 2am, con especiales de bebidas toda la noche.'],
+  ] : [
+    ['8:15pm', 'The class', 'Beginner cumbia class with Maria and Rogelio of Ritmo y Pasión Dance. You do not need a partner and you do not need to have danced before.'],
+    ['After', 'DJ Edge', 'DJ Edge takes the booth and the floor opens to everyone, class or no class.'],
+    ['Till 2am', 'The floor', 'Dancing runs until 2am, with drink specials all night.'],
+  ];
+
+  const qa = es ? [
+    ['¿Necesito pareja?', 'No. La clase está diseñada para que llegues solo o acompañado.'],
+    ['¿Necesito saber bailar?', 'No. Es una clase para principiantes; mucha gente llega sin haber bailado cumbia nunca.'],
+    ['¿A qué hora llego?', 'Si quieres la clase, llega antes de las 8:15pm. Si solo vienes a bailar, llega cuando quieras — la pista sigue hasta las 2am.'],
+    ['¿Cuánto cuesta?', 'Boletos $15 en preventa y $20 en la puerta.'],
+    ['¿Hay estacionamiento?', 'Sí, estacionamiento gratis en el lugar, sin permiso ni validación.'],
+    ['¿Cuál es la edad mínima?', 'Solo mayores de 21. Trae identificación.'],
+  ] : [
+    ['Do I need a partner?', 'No. The class is built so you can turn up on your own or with someone.'],
+    ['Do I need to know how to dance?', 'No. It is a beginner class, and plenty of people arrive having never danced cumbia.'],
+    ['What time should I get there?', 'For the class, before 8:15pm. If you are just coming to dance, whenever you like — the floor runs until 2am.'],
+    ['How much is it?', 'Tickets are $15 in advance and $20 at the door.'],
+    ['Is there parking?', 'Yes, a free open lot on site — no permit, no validation.'],
+    ['What is the age limit?', '21 and over. Bring ID.'],
+  ];
+
+  const faqObjs = qa.map(([q, a]) => ({ q, a }));
+
+  const seriesNode = S.seriesNodes(loc).find((n) => n['@id'].endsWith('#cumbia-rosa'));
+  const eventNodes = dates.map((d) => ({
+    '@type': 'Event',
+    '@id': `${site.origin}${ROUTES.events[loc]}#cumbia-rosa-${d}`,
+    name: 'Cumbia Rosa',
+    url: `${site.origin}${path}`,
+    description: L(s.long, loc),
+    startDate: `${d}T${s.startTime}:00-07:00`,
+    endDate: `${nextIso(d)}T${s.endTime}:00-07:00`,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    image: `${site.origin}${asset(`/img/${s.image}.jpg`)}`,
+    location: { '@id': `${site.origin}/#business` },
+    organizer: { '@id': `${site.origin}/#business` },
+    superEvent: { '@id': seriesNode['@id'] },
+    typicalAgeRange: '21-',
+    performer: [
+      { '@type': 'PerformingGroup', name: 'DJ Edge' },
+      { '@type': 'Organization', name: s.partner.name, url: s.partner.url },
+    ],
+    offers: [
+      { '@type': 'Offer', name: es ? 'Preventa' : 'Advance', price: '15', priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock', url: s.partner.url, validFrom: `${d}T00:00:00-07:00` },
+      { '@type': 'Offer', name: es ? 'En la puerta' : 'At the door', price: '20', priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock', url: `${site.origin}${path}`, validFrom: `${d}T00:00:00-07:00` },
+    ],
+  }));
+
+  return {
+    path, loc, altPath: ROUTES.cumbia[es ? 'en' : 'es'], title, description,
+    jsonld: g([
+      ...base(path, title, description, [home(loc), { name: L(UI.nav.events, loc), path: ROUTES.events[loc] }, { name: 'Cumbia Rosa', path }], loc),
+      seriesNode, ...eventNodes, S.faqNode(faqObjs, loc),
+    ]),
+    body: `
+<section class="cumbia-hero">
+${pic('patio-dusk', es ? 'El patio de Mr. Chile Taproom al anochecer con luces colgantes' : 'The Mr. Chile Taproom patio at dusk under string lights', { sizes: '100vw', cls: 'cumbia-hero__bg', eager: true })}
+<div class="wrap cumbia-hero__in">
+<span class="eyebrow eyebrow--chile">${esc(L(s.kicker, loc))} · ${esc(L(s.age, loc))}</span>
+<h1>Cumbia<em>Rosa</em></h1>
+<p class="lede">${es
+      ? 'Una clase de cumbia para principiantes, y después la pista abierta hasta las 2am. Cada primer sábado del mes en Santa Rosa.'
+      : 'A beginner cumbia class, then the floor open until 2am. First Saturday of every month in Santa Rosa.'}</p>
+<p class="cumbia-hero__next"><span class="cumbia-hero__label">${esc(t('nextDance', loc))}</span>
+<strong>${esc(formatDate(next, loc))}</strong> · ${esc(time12(s.startTime))} · ${esc(t('doorPrice', loc))}</p>
+<div class="btn-row">
+<a class="btn btn--gold" href="${s.partner.url}" rel="noopener">${esc(t('getTickets', loc))}</a>
+<a class="btn btn--ghost" href="${tel}">${esc(t('call', loc))} ${site.phone}</a>
+</div>
+</div>
+</section>
+
+${PICADO}
+
+<section class="band band--alt">
+<div class="wrap grid grid--split">
+<div>
+<span class="eyebrow">${es ? 'Qué es' : 'What it is'}</span>
+<h2>${es ? 'Cumbia, con clase incluida' : 'Cumbia, with the lesson included'}</h2>
+<figure class="fig cumbia-flyer" style="margin-top:1.75rem">
+${flyer(s.image, es ? 'Flyer de Cumbia Rosa en Mr. Chile Taproom' : 'Cumbia Rosa flyer at Mr. Chile Taproom')}
+</figure>
+</div>
+<div class="prose">
+<p><strong>${esc(L(s.long, loc))}</strong></p>
+<p>${es
+      ? `Lo presenta <a href="${s.partner.url}" rel="noopener">${esc(s.partner.name)}</a>, y ocurre en el taproom latino de Santa Rosa: pista adentro, patio junto al arroyo afuera, y estacionamiento gratis en el lugar.`
+      : `It is presented by <a href="${s.partner.url}" rel="noopener">${esc(s.partner.name)}</a> and it happens in Santa Rosa's Latino taproom: the floor inside, the creekside patio outside, free parking on site.`}</p>
+</div>
+</div>
+</section>
+
+<section class="band">
+<div class="wrap">
+<span class="eyebrow">${esc(t('howNightRuns', loc))}</span>
+<h2>${es ? 'De la clase a las 2am' : 'From the class to 2am'}</h2>
+<ol class="runsheet">
+${runOfNight.map(([when, what, detail]) => `<li><span class="runsheet__when">${esc(when)}</span>
+<div><h3>${esc(what)}</h3><p>${esc(detail)}</p></div></li>`).join('')}
+</ol>
+</div>
+</section>
+
+<section class="band band--alt">
+<div class="wrap">
+<span class="eyebrow">${esc(t('upcomingDates', loc))}</span>
+<h2>${es ? 'Cada primer sábado' : 'Every first Saturday'}</h2>
+<ul class="dates">
+${dates.map((d, i) => `<li${i === 0 ? ' data-next="true"' : ''}><span class="dates__d">${esc(formatDate(d, loc))}</span>
+<span class="dates__t">${esc(time12(s.startTime))} – 2am</span></li>`).join('')}
+</ul>
+<p class="form__note" style="margin-top:1.25rem">${es
+      ? 'Las fechas se calculan solas: siempre el primer sábado. Confirma en Instagram antes de un día festivo.'
+      : 'These dates work themselves out — always the first Saturday. Check Instagram before a holiday weekend.'}</p>
+</div>
+</section>
+
+<section class="band">
+<div class="wrap grid grid--split">
+<div><span class="eyebrow">${esc(t('allQuestions', loc))}</span>
+<h2>${es ? 'Antes de venir' : 'Before you come'}</h2></div>
+<div>${faqBlock(faqObjs, loc)}</div>
+</div>
+</section>
+
+<section class="band band--chile">
+<div class="wrap grid grid--split">
+<div><span class="eyebrow">${esc(t('nextDance', loc))}</span>
+<h2>${esc(formatDate(next, loc))}</h2></div>
+<div>
+<p class="lede">${esc(t('doorPrice', loc))} · ${esc(L(s.age, loc))} · ${esc(time12(s.startTime))} – 2am</p>
+<div class="btn-row" style="margin-top:1.75rem">
+<a class="btn btn--gold" href="${s.partner.url}" rel="noopener">${esc(t('getTickets', loc))}</a>
+<a class="btn btn--ghost btn--onred" href="${mapUrl}">${esc(t('directions', loc))}</a>
+</div>
+</div>
+</div>
+</section>`,
+  };
+};
+
+function nextIso(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10);
+}
+
 export const notFoundPage = () => ({
   path: '/404.html', loc: 'en', altPath: '/es/', raw: true,
   title: 'Page not found | Mr. Chile Taproom',
@@ -783,4 +983,4 @@ export const notFoundPage = () => ({
 </div></div></section>`,
 });
 
-export const PAGE_BUILDERS = [homePage, eventsPage, privatePage, menuPage, visitPage, faqPage, privacyPage];
+export const PAGE_BUILDERS = [homePage, eventsPage, cumbiaPage, privatePage, menuPage, visitPage, faqPage, privacyPage];

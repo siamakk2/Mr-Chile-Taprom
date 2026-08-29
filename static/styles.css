@@ -650,3 +650,134 @@ a.pill:hover { border-color: var(--marigold); color: var(--marigold); }
   gap: .9rem 1.25rem;
 }
 .optout__state { flex: 1 1 16rem; font-size: .95rem; color: var(--masa-dim); margin: 0; }
+
+/* --- Cumbia Rosa -----------------------------------------------------------
+   The flyer is the artwork the night is already known by, so it leads rather
+   than being decorated over. Hero text sits on a scrim anchored to the text
+   column, same treatment as the home hero. */
+.cumbia-hero {
+  position: relative;
+  isolation: isolate;
+  padding-block: clamp(3.5rem, 9vw, 6.5rem);
+  overflow: hidden;
+}
+.cumbia-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.cumbia-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 30%;
+  filter: saturate(1.05);
+}
+.cumbia-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(100deg, rgba(18,12,10,.95) 0%, rgba(18,12,10,.88) 42%, rgba(22,16,14,.35) 100%),
+    radial-gradient(700px 420px at 6% 0%, rgba(193,39,45,.30), transparent 70%);
+}
+@media (max-width: 719px) {
+  .cumbia-hero::before {
+    background: linear-gradient(180deg, rgba(18,12,10,.62) 0%, rgba(18,12,10,.88) 42%, rgba(22,16,14,.96) 100%);
+  }
+}
+.cumbia-hero__in { max-width: 40rem; }
+.cumbia-hero h1 { margin-block: .9rem .75rem; }
+.cumbia-hero h1 em {
+  display: block;
+  font-style: normal;
+  color: var(--marigold);
+}
+.cumbia-hero .lede { text-shadow: 0 2px 18px rgba(0,0,0,.6); }
+.cumbia-hero__next {
+  margin-top: 1.5rem;
+  padding: .9rem 1.1rem;
+  border: 1px solid var(--line-lit);
+  border-radius: var(--r);
+  background: rgba(22,16,14,.72);
+  font-size: .95rem;
+}
+.cumbia-hero__label,
+.cumbia-cta__label {
+  display: block;
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--marigold);
+  margin-bottom: .2rem;
+}
+.cumbia-hero .btn-row { margin-top: 1.6rem; }
+
+/* run of the night */
+.runsheet { list-style: none; padding: 0; margin: 2.25rem 0 0; display: grid; gap: 1rem; }
+.runsheet li {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--ink-2);
+}
+.runsheet__when {
+  flex: 0 0 auto;
+  min-width: 5.5rem;
+  font-family: var(--mono);
+  font-size: .82rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--marigold);
+  padding-top: .18rem;
+}
+.runsheet h3 { font-size: 1.05rem; margin-bottom: .3rem; }
+.runsheet p { color: var(--masa-dim); font-size: .97rem; }
+@media (max-width: 559px) {
+  .runsheet li { flex-direction: column; gap: .5rem; }
+  .runsheet__when { min-width: 0; }
+}
+
+/* upcoming dates */
+.dates { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; gap: .5rem; }
+.dates li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .5rem 1rem;
+  padding: .95rem 1.15rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+.dates li[data-next="true"] {
+  border-color: var(--marigold);
+  background: rgba(240,168,48,.07);
+}
+.dates__d { font-weight: 600; }
+.dates__t { font-family: var(--mono); font-size: .88rem; color: var(--masa-dim); }
+
+/* homepage feature */
+.cumbia-cta__h { color: var(--marigold); }
+.cumbia-cta__next {
+  margin-top: 1.5rem;
+  padding: .9rem 1.1rem;
+  border: 1px solid var(--line-lit);
+  border-radius: var(--r);
+  background: var(--ink-2);
+  font-size: .95rem;
+}
+.cumbia-cta__flyer { display: block; border-radius: var(--r); overflow: hidden; }
+.cumbia-cta__flyer img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform .3s ease;
+}
+.cumbia-cta__flyer:hover img { transform: scale(1.02); }
+.cumbia-flyer img { border-radius: var(--r); }
+.cumbia-flyer { max-width: 420px; }
