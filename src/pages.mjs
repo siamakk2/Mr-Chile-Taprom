@@ -517,10 +517,10 @@ export const menuPage = (loc) => {
     : 'What Mr. Chile Taproom pours and serves: rotating Sonoma County and North Bay craft beer, cider and wine, cocktails and micheladas, non-alcoholic options, and the full Freaking Tacos menu.';
   const diet = {
     en: [['Vegetarian', 'Vegetarian options are on the kitchen menu.'], ['Vegan', 'Limited. Call ahead if this matters for your group.'],
-      ['Non-alcoholic', "Mexican Coke, Martinelli's, sodas and sparkling water."], ['Kids', 'Families welcome in the taproom and on the patio before 8pm.'],
+      ['Non-alcoholic', 'Non-alcoholic Corona, Lagunitas non-alcoholic IPA, Mexican Coke and fountain drinks.'], ['Kids', 'Families welcome in the taproom and on the patio before 8pm.'],
       ['Large groups', 'The room handles large parties.']],
     es: [['Vegetariano', 'Hay opciones vegetarianas en la cocina.'], ['Vegano', 'Limitado. Llama antes si es importante para tu grupo.'],
-      ['Sin alcohol', "Mexican Coke, Martinelli's, refrescos y agua mineral."], ['Niños', 'Las familias son bienvenidas antes de las 8pm.'],
+      ['Sin alcohol', 'Corona sin alcohol, IPA sin alcohol de Lagunitas, Mexican Coke y refrescos de máquina.'], ['Niños', 'Las familias son bienvenidas antes de las 8pm.'],
       ['Grupos grandes', 'El salón recibe grupos grandes.']],
   }[loc];
 
