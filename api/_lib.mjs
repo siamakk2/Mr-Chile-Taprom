@@ -151,7 +151,10 @@ const supabaseHeaders = () => {
 
 export async function db(path, { method = 'GET', body, prefer } = {}) {
   requireEnv('SUPABASE_URL', 'SUPABASE_SERVICE_KEY');
-  const base = process.env.SUPABASE_URL.replace(/\/+$/, '');
+  // Tolerate the URL being pasted with /rest/v1 already on it, which is how
+  // Supabase presents it in several places. Doubling the path produces
+  // "Invalid path specified in request URL", which names nothing useful.
+  const base = process.env.SUPABASE_URL.trim().replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
   const r = await fetch(`${base}/rest/v1/${path}`, {
     method,
     headers: {

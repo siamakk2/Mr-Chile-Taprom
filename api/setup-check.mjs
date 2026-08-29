@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   const present = (k) => Boolean(process.env[k]);
 
   const url = (process.env.SUPABASE_URL || '').trim();
-  const looksRight = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/.test(url);
+  const looksRight = /^https:\/\/[a-z0-9-]+\.supabase\.co(\/rest\/v1)?\/?$/.test(url);
   add('SUPABASE_URL', looksRight,
     !url ? 'missing'
       : looksRight ? url
