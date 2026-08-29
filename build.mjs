@@ -136,7 +136,7 @@ ${ev.length ? ev.map((e) => {
 }).join('\n') : '- See the events page for current listings.'}
 
 ## Private events
-Bookable for private events up to 150 guests: ${site.privatePackages.map((p) => `${L(p.name, 'en')} (${L(p.capacity, 'en')}) for ${L(p.best, 'en').toLowerCase()}`).join('; ')}. Enquiries: ${site.phone} or ${site.origin}${ROUTES.private.en}
+Bookable for private events: ${site.privatePackages.map((p) => `${L(p.name, 'en')} (${L(p.capacity, 'en')}) for ${L(p.best, 'en').toLowerCase()}`).join('; ')}. Enquiries: ${site.phone} or ${site.origin}${ROUTES.private.en}
 
 ## Food and drink
 ${site.menu.map((s) => `- ${L(s.section, 'en')}: ${s.items.map((i) => L(i.name, 'en')).join(', ')}`).join('\n')}

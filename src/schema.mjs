@@ -45,7 +45,6 @@ export const businessNode = (loc = 'en') => ({
   foundingDate: site.founded,
   smokingAllowed: false,
   publicAccess: true,
-  maximumAttendeeCapacity: 150,
   knowsLanguage: ['en-US', 'es-US'],
   areaServed: [
     { '@type': 'City', name: 'Santa Rosa' },

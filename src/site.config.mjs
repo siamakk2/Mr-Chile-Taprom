@@ -258,7 +258,7 @@ export const site = {
     {
       slug: 'full-venue',
       name: { en: 'Full Venue Buyout', es: 'Lugar Completo' },
-      capacity: { en: 'Up to 150 guests', es: 'Hasta 150 personas' },
+      capacity: { en: 'Indoors and patio together', es: 'Interior y patio juntos' },
       best: {
         en: 'Weddings, fundraisers, album releases, after-parties',
         es: 'Bodas, eventos benéficos, lanzamientos, after-parties',
@@ -412,8 +412,8 @@ export const faqs = [
   {
     q: { en: 'Can you book it for a private event?', es: '¿Se puede rentar para eventos privados?' },
     a: {
-      en: 'Yes. Mr. Chile Taproom books private events for up to 150 guests, including birthdays, quinceañeras, company parties, rehearsal dinners, nonprofit fundraisers and full-venue buyouts. Options are a patio buyout for up to 80 guests, a semi-private back room for 25 to 45, and a full venue buyout with stage, PA and projector. Enquire at (707) 239-4188 or through the booking form on this site.',
-      es: 'Sí. Mr. Chile Taproom renta para eventos privados de hasta 150 personas, incluyendo cumpleaños, quinceañeras, fiestas de empresa, cenas de ensayo, eventos benéficos y renta del lugar completo. Las opciones son el patio hasta 80 personas, el salón trasero semiprivado de 25 a 45, y el lugar completo con escenario, sonido y proyector. Llama al (707) 239-4188 o usa el formulario de este sitio.',
+      en: 'Yes. Mr. Chile Taproom books private events, including birthdays, quinceañeras, company parties, rehearsal dinners, nonprofit fundraisers and full-venue buyouts. Options are a patio buyout for up to 80 guests, a semi-private back room for 25 to 45, and a full venue buyout with stage, PA and projector. Enquire at (707) 239-4188 or through the booking form on this site.',
+      es: 'Sí. Mr. Chile Taproom renta para eventos privados, incluyendo cumpleaños, quinceañeras, fiestas de empresa, cenas de ensayo, eventos benéficos y renta del lugar completo. Las opciones son el patio hasta 80 personas, el salón trasero semiprivado de 25 a 45, y el lugar completo con escenario, sonido y proyector. Llama al (707) 239-4188 o usa el formulario de este sitio.',
     },
   },
   {

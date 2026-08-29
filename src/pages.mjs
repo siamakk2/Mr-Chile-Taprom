@@ -72,8 +72,8 @@ const COPY = {
   privEyebrow: { en: 'Private events', es: 'Eventos privados' },
   privH: { en: 'Book the room', es: 'Renta el salón' },
   privLede: {
-    en: 'Quinceañeras, birthdays, company parties, rehearsal dinners, memorials, fundraisers and full-venue buyouts up to 150 guests. Patio, back room or the whole place.',
-    es: 'Quinceañeras, cumpleaños, fiestas de empresa, cenas de ensayo, memoriales, eventos benéficos y renta completa hasta 150 personas. Patio, salón trasero o todo el lugar.',
+    en: 'Quinceañeras, birthdays, company parties, rehearsal dinners, memorials, fundraisers and full-venue buyouts. Patio, back room or the whole place.',
+    es: 'Quinceañeras, cumpleaños, fiestas de empresa, cenas de ensayo, memoriales, eventos benéficos y renta completa. Patio, salón trasero o todo el lugar.',
   },
   privCta: { en: 'See packages &amp; enquire', es: 'Ver paquetes y cotizar' },
   roomEyebrow: { en: 'The room', es: 'El lugar' },
@@ -347,8 +347,8 @@ export const privatePage = (loc) => {
     ? 'Salón para eventos privados en Santa Rosa | Mr. Chile Taproom'
     : 'Private Event Venue in Santa Rosa | Book Mr. Chile Taproom';
   const description = loc === 'es'
-    ? 'Renta Mr. Chile Taproom en Santa Rosa para eventos privados: quinceañeras, cumpleaños, fiestas de empresa y eventos benéficos. Patio hasta 80, salón 25–45, lugar completo hasta 150. (707) 239-4188.'
-    : 'Book Mr. Chile Taproom in Santa Rosa for private events: quinceañeras, birthdays, company parties, rehearsal dinners and fundraisers. Patio to 80, back room 25–45, full venue to 150. Call (707) 239-4188.';
+    ? 'Renta Mr. Chile Taproom en Santa Rosa para eventos privados: quinceañeras, cumpleaños, fiestas de empresa y eventos benéficos. Patio hasta 80, salón 25–45, o el lugar completo. (707) 239-4188.'
+    : 'Book Mr. Chile Taproom in Santa Rosa for private events: quinceañeras, birthdays, company parties, rehearsal dinners and fundraisers. Patio to 80, back room 25–45, or a full venue buyout. Call (707) 239-4188.';
   const inc = {
     en: [['Outside food', 'Yes for full buyouts and patio bookings — including cake and catering. Alcohol must come from the bar.'],
       ['Taco truck', 'Freaking Tacos can be coordinated for your event. Ask when you enquire.'],
@@ -388,8 +388,8 @@ export const privatePage = (loc) => {
 <span class="eyebrow">${esc(c('privEyebrow', loc))}</span>
 <h1 class="h1--sm">${esc(c('privH', loc))}</h1>
 <p class="lede" style="margin-top:1.25rem">${loc === 'es'
-      ? '<strong>Mr. Chile Taproom renta para eventos privados de hasta 150 personas en Santa Rosa</strong> — quinceañeras, cumpleaños, graduaciones, fiestas de empresa, cenas de ensayo, memoriales y eventos benéficos. Elige el patio junto al arroyo, el salón trasero semiprivado, o todo el lugar.'
-      : '<strong>Mr. Chile Taproom books private events in Santa Rosa for up to 150 guests</strong> — quinceañeras, birthdays, graduations, company parties, team offsites, rehearsal dinners, memorials and nonprofit fundraisers. Choose the creekside patio, the semi-private back room, or a full venue buyout.'}</p>
+      ? '<strong>Mr. Chile Taproom renta para eventos privados en Santa Rosa</strong> — quinceañeras, cumpleaños, graduaciones, fiestas de empresa, cenas de ensayo, memoriales y eventos benéficos. Elige el patio junto al arroyo, el salón trasero semiprivado, o todo el lugar.'
+      : '<strong>Mr. Chile Taproom books private events in Santa Rosa</strong> — quinceañeras, birthdays, graduations, company parties, team offsites, rehearsal dinners, memorials and nonprofit fundraisers. Choose the creekside patio, the semi-private back room, or a full venue buyout.'}</p>
 <div class="btn-row" style="margin-top:1.75rem">
 <a class="btn btn--primary" href="#enquire">${loc === 'es' ? 'Pedir cotización' : 'Send an enquiry'}</a>
 <a class="btn btn--ghost" href="${tel}">${esc(t('call', loc))} ${site.phone}</a>
@@ -459,7 +459,7 @@ ${pic('patio-tacos', loc === 'es' ? 'Sombrillas rojas sobre mesas de picnic con 
 <div class="field"><label for="email">${esc(F.email)}</label><input id="email" name="email" type="email" required autocomplete="email"></div>
 <div class="form__2">
 <div class="field"><label for="date">${esc(F.date)}</label><input id="date" name="date" type="date"></div>
-<div class="field"><label for="guests">${esc(F.guests)}</label><input id="guests" name="guests" type="number" min="10" max="150" inputmode="numeric"></div>
+<div class="field"><label for="guests">${esc(F.guests)}</label><input id="guests" name="guests" type="number" min="10" inputmode="numeric"></div>
 </div>
 <div class="field"><label for="type">${esc(F.type)}</label><select id="type" name="type">${types.map((x) => `<option>${esc(x)}</option>`).join('')}</select></div>
 <div class="field"><label for="space">${esc(F.space)}</label><select id="space" name="space">
