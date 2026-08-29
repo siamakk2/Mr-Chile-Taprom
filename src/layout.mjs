@@ -80,6 +80,32 @@ var tb=document.querySelector('[data-hours-table]');if(tb){var tr=tb.querySelect
 const MENU_JS = `<script>(function(){var b=document.querySelector('[data-menu-btn]'),d=document.querySelector('[data-drawer]');if(!b||!d)return;
 b.addEventListener('click',function(){var o=d.getAttribute('data-open')==='true';d.setAttribute('data-open',String(!o));b.setAttribute('aria-expanded',String(!o));});})();<\/script>`;
 
+/**
+ * Cookie notice. California is a notice-and-opt-out jurisdiction, so analytics
+ * runs by default and this tells people it does; declining flips Consent Mode
+ * to denied for good. Rendered hidden and revealed by script, so a returning
+ * visitor who already answered never sees it flash.
+ */
+const consentBanner = (loc) => !site.ga4Id ? '' : `<div class="cc" data-cc hidden role="region" aria-label="${esc(t('consentLabel', loc))}">
+<div class="cc__in">
+<p class="cc__txt">${esc(t('consentBody', loc))} <a href="${ROUTES.privacy[loc]}">${esc(t('consentMore', loc))}</a></p>
+<div class="cc__btns">
+<button class="btn btn--gold" type="button" data-cc-ok>${esc(t('consentOk', loc))}</button>
+<button class="btn btn--ghost" type="button" data-cc-no>${esc(t('consentNo', loc))}</button>
+</div>
+</div>
+</div>`;
+
+const CONSENT_JS = `<script>(function(){var K='mrc-consent',el=document.querySelector('[data-cc]');if(!el)return;
+var v=null;try{v=localStorage.getItem(K);}catch(e){}
+if(!v)el.hidden=false;
+function set(val){try{localStorage.setItem(K,val);}catch(e){}
+if(val==='denied'&&window.gtag)gtag('consent','update',{analytics_storage:'denied'});
+if(val==='granted'&&window.gtag)gtag('consent','update',{analytics_storage:'granted'});
+el.hidden=true;}
+el.querySelector('[data-cc-ok]').addEventListener('click',function(){set('granted');});
+el.querySelector('[data-cc-no]').addEventListener('click',function(){set('denied');});})();<\/script>`;
+
 function header(path, loc, altPath) {
   const other = loc === 'en' ? 'es' : 'en';
   const nav = NAV_KEYS.map((k) => {
@@ -127,6 +153,7 @@ ${esc(site.street)}<br>${esc(site.locality)}, ${site.region} ${site.postal}<br>
 <div>
 <h4>${esc(t('pages', loc))}</h4>
 <ul>${NAV_KEYS.map((k) => `<li><a href="${ROUTES[k][loc]}">${esc(L(UI.nav[k], loc))}</a></li>`).join('')}
+<li><a href="${ROUTES.privacy[loc]}">${esc(t('privacyLabel', loc))}</a></li>
 <li><a href="${altPath}" hreflang="${other}" lang="${other}">${esc(t('langSwitch', loc))}</a></li></ul>
 </div>
 <div>
@@ -189,9 +216,12 @@ export function layout({ path, altPath, loc = 'en', title, description, jsonld, 
 <link rel="stylesheet" href="${cssHref}">
 <script type="application/ld+json">${jsonld}<\/script>${site.ga4Id ? `
 <link rel="preconnect" href="https://www.googletagmanager.com">
-<script async src="https://www.googletagmanager.com/gtag/js?id=${esc(site.ga4Id)}"><\/script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
-gtag('js',new Date());gtag('config','${esc(site.ga4Id)}');<\/script>` : ''}
+var _c=null;try{_c=localStorage.getItem('mrc-consent');}catch(e){}
+gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',
+analytics_storage:_c==='denied'?'denied':'granted'});
+gtag('js',new Date());gtag('config','${esc(site.ga4Id)}');<\/script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=${esc(site.ga4Id)}"><\/script>` : ''}
 </head>
 <body>
 <a class="skip" href="#main">${esc(t('skip', loc))}</a>
@@ -200,8 +230,10 @@ ${header(path, loc, altPath)}
 ${body}
 </main>
 ${footer(loc, altPath)}
+${consentBanner(loc)}
 ${statusScript(loc)}
 ${MENU_JS}
+${CONSENT_JS}
 </body>
 </html>`;
 }

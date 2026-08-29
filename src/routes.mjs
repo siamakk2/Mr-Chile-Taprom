@@ -9,8 +9,10 @@ export const ROUTES = {
   private:  { en: '/private-events/',  es: '/es/eventos-privados/' },
   visit:    { en: '/visit/',           es: '/es/visitanos/' },
   faq:      { en: '/faq/',             es: '/es/preguntas/' },
+  privacy:  { en: '/privacy/',         es: '/es/privacidad/' },
 };
 
+// Privacy is deliberately absent: it belongs in the footer, not the marquee.
 export const NAV_KEYS = ['events', 'menu', 'private', 'visit', 'faq'];
 
 export const UI = {
@@ -60,6 +62,21 @@ export const UI = {
   langsVal:      { en: 'English and Spanish spoken',
                    es: 'Se habla español e inglés' },
   crossStVal:    { en: 'east Santa Rosa',   es: 'este de Santa Rosa' },
+
+  // --- cookie notice --------------------------------------------------------
+  privacyLabel:  { en: 'Privacy',           es: 'Privacidad' },
+  consentBody:   { en: 'We use cookies to see how the site gets used, so we can make it better. No ads, and we never sell your information.',
+                   es: 'Usamos cookies para ver cómo se usa el sitio y así mejorarlo. Sin anuncios, y nunca vendemos tu información.' },
+  consentOk:     { en: 'Got it',            es: 'Entendido' },
+  consentNo:     { en: 'No thanks',         es: 'No, gracias' },
+  consentMore:   { en: 'Read more',         es: 'Leer más' },
+  consentLabel:  { en: 'Cookie notice',     es: 'Aviso de cookies' },
+  optOutOn:      { en: 'Analytics is on for this browser.',
+                   es: 'Las analíticas están activadas en este navegador.' },
+  optOutOff:     { en: 'Analytics is off for this browser.',
+                   es: 'Las analíticas están desactivadas en este navegador.' },
+  optOutTurnOff: { en: 'Turn analytics off', es: 'Desactivar analíticas' },
+  optOutTurnOn:  { en: 'Turn analytics on',  es: 'Activar analíticas' },
 };
 
 export const MONTHS = {

@@ -583,3 +583,70 @@ a.pill:hover { border-color: var(--marigold); color: var(--marigold); }
 @media (max-width: 359px) { .brand__mark { height: 52px; } }
 
 .ftr__logo { width: 260px; }
+
+/* --- cookie notice ---------------------------------------------------------
+   Anchored to the bottom of the viewport rather than floated over the middle
+   of the page: a dance flyer or a menu is what people came for, and a modal
+   over it is a tax. Sits above the safe-area inset so it clears the home
+   indicator on a phone. */
+.cc {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 60;
+  background: var(--ink-2);
+  border-top: 1px solid var(--line-lit);
+  padding: 1rem var(--gut) calc(1rem + env(safe-area-inset-bottom));
+  box-shadow: 0 -12px 40px rgba(0,0,0,.45);
+}
+.cc[hidden] { display: none; }
+.cc__in {
+  max-width: var(--max);
+  margin-inline: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+.cc__txt {
+  flex: 1 1 22rem;
+  font-size: .95rem;
+  line-height: 1.55;
+  color: var(--masa-dim);
+}
+.cc__txt a { color: var(--masa); text-underline-offset: 3px; }
+.cc__btns { display: flex; gap: .6rem; flex-wrap: wrap; }
+.cc__btns .btn { padding: .68rem 1.15rem; font-size: .82rem; }
+@media (max-width: 559px) {
+  .cc__btns { width: 100%; }
+  .cc__btns .btn { flex: 1 1 auto; justify-content: center; }
+}
+
+/* --- long-form document pages (privacy) ----------------------------------- */
+.prose--doc { max-width: 46rem; }
+.prose--doc h2 {
+  font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+  margin-top: 2.75rem;
+  margin-bottom: .75rem;
+}
+.prose--doc h2:first-child { margin-top: 0; }
+.prose--doc p + p { margin-top: .9rem; }
+.doc__date {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: .82rem;
+  color: var(--masa-dim);
+}
+.optout {
+  margin-top: 1.25rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line-lit);
+  border-radius: var(--r);
+  background: var(--ink-2);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .9rem 1.25rem;
+}
+.optout__state { flex: 1 1 16rem; font-size: .95rem; color: var(--masa-dim); margin: 0; }

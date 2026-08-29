@@ -45,6 +45,9 @@ export const site = {
   // Google Analytics 4 measurement ID. Set to null to remove analytics entirely.
   ga4Id: 'G-3ZJMXL1WDK',
 
+  // Shown at the foot of the privacy page. Bump it whenever that page changes.
+  privacyUpdated: '2026-08-28',
+
   profiles: [
     'https://www.instagram.com/mr.chiletaproom/',
     'https://www.facebook.com/confluencetaproom/',

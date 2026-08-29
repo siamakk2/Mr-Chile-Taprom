@@ -694,6 +694,78 @@ ${PICADO}
   };
 };
 
+// ============================================================================
+// Privacy — plain language, no boilerplate the business cannot actually honour
+// ============================================================================
+export const privacyPage = (loc) => {
+  const path = ROUTES.privacy[loc];
+  const es = loc === 'es';
+  const title = es
+    ? 'Privacidad y cookies | Mr. Chile Taproom, Santa Rosa'
+    : 'Privacy & Cookies | Mr. Chile Taproom, Santa Rosa';
+  const description = es
+    ? 'Qué información recoge el sitio de Mr. Chile Taproom, por qué, y cómo desactivar las analíticas. No vendemos datos personales.'
+    : 'What the Mr. Chile Taproom website collects, why, and how to switch analytics off. We do not sell personal information.';
+
+  const sections = es ? [
+    ['Lo corto', `<p>Somos un taproom en Santa Rosa, no una empresa de datos. Este sitio recoge lo mínimo para saber qué páginas le sirven a la gente. <strong>No vendemos ni compartimos tu información personal</strong>, y no publicamos anuncios aquí.</p>`],
+    ['Qué se recoge', `<p>Usamos Google Analytics, que coloca cookies en tu navegador y registra páginas vistas, tiempo en el sitio, tipo de dispositivo, idioma y una ubicación aproximada por ciudad. Google recibe tu dirección IP y la usa para estimar esa ubicación; no la guardamos nosotros.</p>
+<p>Si nos escribes por el formulario de eventos privados, recibimos lo que escribas ahí — nombre, correo, teléfono y los detalles de tu evento — para responderte. Eso llega a nuestro correo y no entra a ninguna lista de publicidad.</p>`],
+    ['Qué no se recoge', `<p>No hay píxeles de publicidad, ni remarketing, ni perfiles para anunciantes. No pedimos cuenta ni contraseña. No procesamos pagos en este sitio.</p>`],
+    ['Desactivar las analíticas', `<p>Puedes apagarlas para este navegador cuando quieras. El botón de abajo lo recuerda en tu dispositivo.</p>`],
+    ['Tus derechos en California', `<p>Bajo la ley de California (CCPA/CPRA) puedes pedir saber qué información tenemos sobre ti, pedir que la borremos, y pedir que no la vendamos ni compartamos — algo que de todos modos no hacemos. Escríbenos a <a href="mailto:${site.email}">${esc(site.email)}</a> o llama al <a href="${tel}">${site.phone}</a> y lo resolvemos.</p>`],
+    ['Menores', `<p>Este sitio es para adultos que buscan un lugar donde tomar algo. No recogemos información de menores de 13 años a propósito.</p>`],
+    ['Cambios', `<p>Si esto cambia, actualizamos la fecha de abajo. Preguntas: <a href="mailto:${site.email}">${esc(site.email)}</a>.</p>`],
+  ] : [
+    ['The short version', `<p>We are a taproom in Santa Rosa, not a data company. This site collects the minimum needed to know which pages are actually useful. <strong>We do not sell or share your personal information</strong>, and we run no advertising here.</p>`],
+    ['What gets collected', `<p>We use Google Analytics, which sets cookies in your browser and records page views, time on site, device type, language and an approximate city-level location. Google receives your IP address and uses it to estimate that location; we never store it ourselves.</p>
+<p>If you write to us through the private events form, we get what you type into it — name, email, phone and your event details — so we can reply. It lands in our inbox and goes on no mailing list.</p>`],
+    ['What does not', `<p>There are no advertising pixels, no remarketing, no profiles built for advertisers. We ask for no account and no password. No payments are processed on this site.</p>`],
+    ['Switching analytics off', `<p>You can turn it off for this browser whenever you like. The button below remembers your choice on your device.</p>`],
+    ['Your California rights', `<p>Under California law (CCPA/CPRA) you can ask what information we hold about you, ask us to delete it, and opt out of its sale or sharing — which we do not do in the first place. Email <a href="mailto:${site.email}">${esc(site.email)}</a> or call <a href="${tel}">${site.phone}</a> and we will sort it out.</p>`],
+    ['Children', `<p>This site is for adults looking for somewhere to have a drink. We do not knowingly collect information from anyone under 13.</p>`],
+    ['Changes', `<p>If this changes, we update the date below. Questions: <a href="mailto:${site.email}">${esc(site.email)}</a>.</p>`],
+  ];
+
+  const optOut = `<div class="optout" data-optout>
+<p class="optout__state" data-optout-state>${esc(t('optOutOn', loc))}</p>
+<button class="btn btn--ghost" type="button" data-optout-btn>${esc(t('optOutTurnOff', loc))}</button>
+</div>
+<script>(function(){var K='mrc-consent',w=document.querySelector('[data-optout]');if(!w)return;
+var s=w.querySelector('[data-optout-state]'),b=w.querySelector('[data-optout-btn]');
+var T=${JSON.stringify({ on: L(UI.optOutOn, loc), off: L(UI.optOutOff, loc), turnOff: L(UI.optOutTurnOff, loc), turnOn: L(UI.optOutTurnOn, loc) })};
+function get(){try{return localStorage.getItem(K);}catch(e){return null;}}
+function draw(){var off=get()==='denied';s.textContent=off?T.off:T.on;b.textContent=off?T.turnOn:T.turnOff;}
+b.addEventListener('click',function(){var off=get()==='denied',v=off?'granted':'denied';
+try{localStorage.setItem(K,v);}catch(e){}
+if(window.gtag)gtag('consent','update',{analytics_storage:v});draw();});
+draw();})();<\/script>`;
+
+  return {
+    path, loc, altPath: ROUTES.privacy[es ? 'en' : 'es'], title, description,
+    jsonld: g(base(path, title, description, [home(loc), { name: L(UI.privacyLabel, loc), path }], loc)),
+    body: `
+<section class="band band--tight">
+<div class="wrap">
+<span class="eyebrow">${esc(t('privacyLabel', loc))}</span>
+<h1 class="h1--sm">${es ? 'Privacidad y cookies' : 'Privacy & cookies'}</h1>
+<p class="lede" style="margin-top:1.25rem">${es
+      ? 'En términos claros: qué recoge este sitio, por qué, y cómo apagarlo.'
+      : 'In plain terms: what this site collects, why, and how to switch it off.'}</p>
+</div>
+</section>
+
+${PICADO}
+
+<section class="band">
+<div class="wrap prose prose--doc">
+${sections.map(([h, html], i) => `<h2>${esc(h)}</h2>${html}${i === 3 ? optOut : ''}`).join('')}
+<p class="doc__date">${es ? 'Última actualización' : 'Last updated'}: ${esc(site.privacyUpdated)}</p>
+</div>
+</section>`,
+  };
+};
+
 export const notFoundPage = () => ({
   path: '/404.html', loc: 'en', altPath: '/es/', raw: true,
   title: 'Page not found | Mr. Chile Taproom',
@@ -711,4 +783,4 @@ export const notFoundPage = () => ({
 </div></div></section>`,
 });
 
-export const PAGE_BUILDERS = [homePage, eventsPage, privatePage, menuPage, visitPage, faqPage];
+export const PAGE_BUILDERS = [homePage, eventsPage, privatePage, menuPage, visitPage, faqPage, privacyPage];
