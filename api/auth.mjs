@@ -1,111 +1,181 @@
 /**
- * GitHub OAuth for the CMS at /admin.
+ * GET  /api/auth/  — the login screen, opened by the CMS in a popup
+ * POST /api/auth/  — email and password; on success, hand the CMS a token
  *
- * The CMS is a static page in the browser, so it cannot hold a GitHub client
- * secret. This endpoint does the secret half of the handshake: the browser is
- * sent to GitHub, GitHub returns a code here, and this exchanges that code for
- * a token and hands it back to the CMS window.
+ * The CMS expects an OAuth popup. It gets our own login form instead, which is
+ * why editors never see GitHub: the server holds the App key and mints a
+ * one-hour installation token only after a password check passes.
  *
- * Editors sign in with their own GitHub account, so every change on the site is
- * attributed to a person in the commit history. Access is granted by adding
- * them as a collaborator on the repository and removed by taking that away —
- * there is no separate password to rotate when someone leaves.
- *
- *   GET /api/auth/           -> redirect to GitHub
- *   GET /api/auth/?code=...  -> exchange and hand the token back
- *
- * The trailing slash is not optional. vercel.json sets trailingSlash: true,
- * which 308s the bare path, and an OAuth redirect_uri must match the
- * registered callback character for character.
+ * That token is scoped to contents-write on one repository and expires within
+ * the hour, so the worst case for a leaked browser session is bounded.
  */
-import { randomBytes } from 'node:crypto';
-import { ORIGIN } from './_lib.mjs';
-
-const SCOPE = 'repo';
+import { json, readRaw, ORIGIN } from './_lib.mjs';
+import { installationToken } from './_github.mjs';
+import {
+  verifyPassword, createSession, sessionCookie, currentEditor, sitesFor,
+  audit, isLocked, noteFailure, noteSuccess, LOCK_MINUTES,
+} from './_auth.mjs';
+import { db } from './_lib.mjs';
 
 export default async function handler(req, res) {
-  const url = new URL(req.url, 'https://x');
-  const code = url.searchParams.get('code');
-  const origin = ORIGIN();
+  if (req.method === 'GET') return loginPage(res, null, await alreadyIn(req));
+  if (req.method !== 'POST') return json(res, 405, { error: 'method not allowed' });
 
-  if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
-    res.statusCode = 503;
-    res.setHeader('content-type', 'text/plain');
-    return res.end('The site editor is not configured yet: GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET are missing.');
-  }
+  let email = '', password = '';
+  try {
+    const body = JSON.parse((await readRaw(req)).toString() || '{}');
+    email = String(body.email || '').trim().toLowerCase();
+    password = String(body.password || '');
+  } catch { /* handled below */ }
 
-  // Step 1 — no code yet, so send them to GitHub.
-  if (!code) {
-    const state = randomBytes(16).toString('hex');
-    const to = new URL('https://github.com/login/oauth/authorize');
-    to.searchParams.set('client_id', process.env.GITHUB_CLIENT_ID);
-    to.searchParams.set('scope', SCOPE);
-    to.searchParams.set('state', state);
-    to.searchParams.set('redirect_uri', `${origin}/api/auth/`);
-    res.statusCode = 302;
-    res.setHeader('cache-control', 'no-store');
-    res.setHeader('set-cookie', `cms_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`);
-    res.setHeader('location', to.toString());
-    return res.end();
-  }
-
-  // Step 2 — GitHub sent us back. Check state, then trade the code for a token.
-  const cookie = String(req.headers.cookie || '');
-  const expected = /(?:^|;\s*)cms_state=([a-f0-9]+)/.exec(cookie)?.[1];
-  const state = url.searchParams.get('state');
-  if (!expected || !state || state !== expected) {
-    return finish(res, { error: 'Sign-in expired or was tampered with. Close this window and try again.' }, origin);
-  }
+  if (!email || !password) return json(res, 400, { error: 'Email and password are required.' });
 
   try {
-    const r = await fetch('https://github.com/login/oauth/access_token', {
-      method: 'POST',
-      headers: { accept: 'application/json', 'content-type': 'application/json' },
-      body: JSON.stringify({
-        client_id: process.env.GITHUB_CLIENT_ID,
-        client_secret: process.env.GITHUB_CLIENT_SECRET,
-        code,
-        redirect_uri: `${origin}/api/auth/`,
-      }),
-    });
-    const data = await r.json();
-    if (!data.access_token) throw new Error(data.error_description || 'GitHub declined the sign-in');
-    return finish(res, { token: data.access_token, provider: 'github' }, origin);
+    const rows = await db(`editors?email=eq.${encodeURIComponent(email)}&select=*`);
+    const editor = rows?.[0];
+
+    // The same message and the same work either way, so this cannot be used to
+    // discover which email addresses have accounts.
+    if (!editor || editor.status !== 'active') {
+      await verifyPassword(password, 'scrypt$16384$8$1$AAAA$AAAA').catch(() => {});
+      await audit('login_failed', { email, detail: 'no such active account', req });
+      return json(res, 401, { error: 'Email or password is not right.' });
+    }
+
+    if (isLocked(editor)) {
+      await audit('login_blocked', { editorId: editor.id, email, detail: 'locked', req });
+      return json(res, 429, { error: `Too many attempts. Try again in ${LOCK_MINUTES} minutes.` });
+    }
+
+    if (!(await verifyPassword(password, editor.password_hash))) {
+      await noteFailure(editor);
+      await audit('login_failed', { editorId: editor.id, email, detail: 'bad password', req });
+      return json(res, 401, { error: 'Email or password is not right.' });
+    }
+
+    const sites = await sitesFor(editor.id);
+    if (!sites.length) {
+      await audit('login_failed', { editorId: editor.id, email, detail: 'no sites assigned', req });
+      return json(res, 403, { error: 'This account is not assigned to a site yet.' });
+    }
+
+    await noteSuccess(editor.id);
+    const { token: sessionToken, expires } = await createSession(editor.id, req);
+    const { token: ghToken } = await installationToken();
+    await audit('login', { editorId: editor.id, email, detail: sites.map((s) => s.slug).join(','), req });
+
+    res.setHeader('set-cookie', sessionCookie(sessionToken, expires));
+    return json(res, 200, { ok: true, name: editor.name || editor.email, token: ghToken });
   } catch (e) {
-    return finish(res, { error: e.message }, origin);
+    await audit('login_error', { email, detail: e.message, req });
+    return json(res, e.statusCode || 500, { error: e.message });
   }
 }
 
-/**
- * Hand the result back to the CMS window that opened this one, using the
- * postMessage handshake it expects, then close.
- */
-function finish(res, payload, origin) {
-  const ok = !payload.error;
-  const message = ok
-    ? `authorization:github:success:${JSON.stringify(payload)}`
-    : `authorization:github:error:${JSON.stringify(payload)}`;
+/** If they already have a valid session, skip straight to handing over a token. */
+async function alreadyIn(req) {
+  try {
+    const editor = await currentEditor(req);
+    if (!editor) return null;
+    const sites = await sitesFor(editor.id);
+    if (!sites.length) return null;
+    const { token } = await installationToken();
+    return { name: editor.name || editor.email, token };
+  } catch { return null; }
+}
 
-  res.statusCode = ok ? 200 : 401;
+function loginPage(res, error, session) {
+  const origin = ORIGIN();
+  res.statusCode = 200;
   res.setHeader('content-type', 'text/html; charset=utf-8');
   res.setHeader('cache-control', 'no-store');
-  res.setHeader('set-cookie', 'cms_state=; Path=/; Max-Age=0');
-  res.end(`<!doctype html><meta charset="utf-8"><title>Signing in…</title>
-<body style="font:400 16px system-ui;padding:2rem;background:#16100E;color:#F2E9D8">
-<p>${ok ? 'Signed in. This window will close.' : escapeHtml(payload.error)}</p>
+  res.setHeader('x-robots-tag', 'noindex');
+  res.end(`<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Sign in — Mr. Chile Taproom</title>
+<style>
+:root{--ink:#16100E;--ink2:#211815;--masa:#F2E9D8;--dim:#B7A992;
+--chile:#C1272D;--marigold:#F0A830;--line:rgba(242,233,216,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--ink);
+color:var(--masa);font:400 16px/1.5 system-ui,-apple-system,sans-serif;padding:1.5rem}
+.card{width:100%;max-width:22rem}
+img.logo{width:190px;height:auto;display:block;margin:0 auto 1.75rem}
+h1{font-size:1.15rem;margin:0 0 .35rem;text-align:center}
+p.sub{margin:0 0 1.75rem;color:var(--dim);font-size:.9rem;text-align:center}
+label{display:block;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;
+color:var(--dim);margin:0 0 .35rem}
+input{width:100%;font:inherit;padding:.85rem 1rem;margin-bottom:1rem;border-radius:10px;
+border:1px solid var(--line);background:var(--ink2);color:var(--masa)}
+input:focus{outline:2px solid var(--marigold);outline-offset:1px}
+button{width:100%;font:600 1rem system-ui;padding:.9rem;border:0;border-radius:10px;
+background:var(--chile);color:#fff;cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+.err{background:rgba(193,39,45,.15);border:1px solid var(--chile);border-radius:10px;
+padding:.75rem 1rem;margin-bottom:1rem;font-size:.9rem}
+.ok{text-align:center;color:var(--dim)}
+.foot{margin-top:1.5rem;text-align:center;font-size:.8rem;color:var(--dim)}
+</style></head><body>
+<div class="card">
+<img class="logo" src="/admin/logo.png" alt="Mr. Chile Taproom">
+${session ? `<p class="ok">Signed in as ${escapeHtml(session.name)}.<br>Opening the editor…</p>` : `
+<h1>Sign in to edit the site</h1>
+<p class="sub">Mr. Chile Taproom</p>
+<div id="err" class="err" style="display:none"></div>
+<label for="email">Email</label>
+<input id="email" type="email" autocomplete="username" autocapitalize="off" autofocus>
+<label for="password">Password</label>
+<input id="password" type="password" autocomplete="current-password">
+<button id="go">Sign in</button>
+<p class="foot">Trouble signing in? Contact Siamak.</p>`}
+</div>
 <script>
 (function(){
-  var msg = ${JSON.stringify(message)};
-  function send(e){
-    if (e.data !== 'authorizing:github') return;
-    window.removeEventListener('message', send, false);
-    window.opener.postMessage(msg, ${JSON.stringify(origin)});
+  var ORIGIN = ${JSON.stringify(origin)};
+  var existing = ${session ? JSON.stringify(session.token) : 'null'};
+
+  function handOver(token){
+    var msg = 'authorization:github:success:' + JSON.stringify({ token: token, provider: 'github' });
+    function reply(e){
+      if (e.data !== 'authorizing:github') return;
+      window.removeEventListener('message', reply, false);
+      window.opener.postMessage(msg, ORIGIN);
+    }
+    window.addEventListener('message', reply, false);
+    if (window.opener) window.opener.postMessage('authorizing:github', ORIGIN);
   }
-  window.addEventListener('message', send, false);
-  if (window.opener) window.opener.postMessage('authorizing:github', ${JSON.stringify(origin)});
+
+  if (existing) { handOver(existing); return; }
+
+  var btn = document.getElementById('go');
+  var err = document.getElementById('err');
+  function show(m){ err.textContent = m; err.style.display = 'block'; }
+
+  function submit(){
+    var email = document.getElementById('email').value.trim();
+    var password = document.getElementById('password').value;
+    if (!email || !password) return show('Enter your email and password.');
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    fetch('/api/auth/', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
+      .then(function(res){
+        if (!res.ok) { show(res.d.error || 'Could not sign in.'); btn.disabled = false; btn.textContent = 'Sign in'; return; }
+        btn.textContent = 'Opening the editor…';
+        handOver(res.d.token);
+      }).catch(function(){
+        show('Network problem. Try again.'); btn.disabled = false; btn.textContent = 'Sign in';
+      });
+  }
+
+  btn.addEventListener('click', submit);
+  document.getElementById('password').addEventListener('keydown', function(e){ if (e.key === 'Enter') submit(); });
+  document.getElementById('email').addEventListener('keydown', function(e){ if (e.key === 'Enter') submit(); });
 })();
-<\/script></body>`);
+<\/script></body></html>`);
 }
 
-const escapeHtml = (s) => String(s).replace(/[&<>"]/g, (c) =>
+const escapeHtml = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

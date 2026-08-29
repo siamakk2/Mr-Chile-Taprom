@@ -10,6 +10,10 @@ import { createHmac, timingSafeEqual, randomBytes } from 'node:crypto';
 
 export const env = (k) => process.env[k];
 
+/** An error carrying an HTTP status, so handlers can rethrow without mapping. */
+export const fail = (message, statusCode = 500) =>
+  Object.assign(new Error(message), { statusCode });
+
 /**
  * The site origin, with any trailing slash removed.
  *

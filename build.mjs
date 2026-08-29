@@ -6,6 +6,7 @@ import { ROUTES, formatDate } from './src/routes.mjs';
 import { layout } from './src/layout.mjs';
 import { PAGE_BUILDERS, notFoundPage } from './src/pages.mjs';
 import { doorPage } from './src/door.mjs';
+import { teamPage } from './src/team.mjs';
 
 // Deploys are git-triggered from main; the production branch is set in
 // Vercel under Settings > Environments > Production > Branch Tracking.
@@ -48,6 +49,11 @@ writeFileSync(join(OUT, 'door', 'index.html'), doorPage());
 // still. Not cached long, since it is fetched once per login.
 mkdirSync(join(OUT, 'admin'), { recursive: true });
 copyFileSync(join('static', 'img', 'logo-horizontal.png'), join(OUT, 'admin', 'logo.png'));
+
+// Managing who has access is a different job from editing content, so it gets
+// its own page rather than being wedged into the CMS.
+mkdirSync(join(OUT, 'team'), { recursive: true });
+writeFileSync(join(OUT, 'team', 'index.html'), teamPage());
 
 // --- static ------------------------------------------------------------------
 // Copy every static file to its content-hashed name (see src/assets.mjs).
@@ -102,8 +108,9 @@ Disallow: /door/
 Disallow: /tickets/
 Disallow: /api/
 Disallow: /admin/
+Disallow: /team/
 
-${AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\nDisallow: /door/\nDisallow: /tickets/\nDisallow: /api/\nDisallow: /admin/`).join('\n\n')}
+${AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\nDisallow: /door/\nDisallow: /tickets/\nDisallow: /api/\nDisallow: /admin/\nDisallow: /team/`).join('\n\n')}
 
 Sitemap: ${site.origin}/sitemap.xml
 `);

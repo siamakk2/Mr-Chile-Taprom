@@ -9,7 +9,7 @@
   ],
   "headers": [
     {
-      "source": "/(door|tickets|admin)/(.*)",
+      "source": "/(door|tickets|admin|team)/(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",
