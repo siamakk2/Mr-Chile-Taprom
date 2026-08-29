@@ -65,7 +65,10 @@
           }
         },
         {
-          "name": "Licuachela",
+          "name": {
+            "en": "Licuachela",
+            "es": "Licuachela"
+          },
           "price": "17.99",
           "desc": {
             "en": "The big one — a loaded michelada built to share, or not.",
@@ -128,7 +131,10 @@
       },
       "items": [
         {
-          "name": "Taco",
+          "name": {
+            "en": "Taco",
+            "es": "Taco"
+          },
           "price": "3.50",
           "desc": {
             "en": "Corn tortilla, choice of meat, cilantro, onions and red salsa.",
@@ -136,7 +142,10 @@
           }
         },
         {
-          "name": "Sopes",
+          "name": {
+            "en": "Sopes",
+            "es": "Sopes"
+          },
           "price": "5.75",
           "desc": {
             "en": "Homemade thick crispy tortilla, refried beans, lettuce, sour cream and cotija cheese.",
@@ -144,7 +153,10 @@
           }
         },
         {
-          "name": "Torpedo Burrito",
+          "name": {
+            "en": "Torpedo Burrito",
+            "es": "Torpedo Burrito"
+          },
           "price": "14.50",
           "desc": {
             "en": "Flour tortilla, choice of meat, rice, whole pinto beans, mozzarella, sour cream and green salsa. Their best seller.",
@@ -218,7 +230,10 @@
           }
         },
         {
-          "name": "Wet-Rito",
+          "name": {
+            "en": "Wet-Rito",
+            "es": "Wet-Rito"
+          },
           "price": "16.99",
           "desc": {
             "en": "Flour tortilla, rice, refried beans, mozzarella and sour cream, topped with green enchilada sauce.",
@@ -226,7 +241,10 @@
           }
         },
         {
-          "name": "Mexi-Salad",
+          "name": {
+            "en": "Mexi-Salad",
+            "es": "Mexi-Salad"
+          },
           "price": "14.50",
           "desc": {
             "en": "Choice of meat, lettuce, pico de gallo, rice, whole pinto beans, green salsa and cotija.",
@@ -256,7 +274,10 @@
           }
         },
         {
-          "name": "Esquites",
+          "name": {
+            "en": "Esquites",
+            "es": "Esquites"
+          },
           "price": "5.99",
           "desc": {
             "en": "Corn, mayonnaise, Valentina, Tajín, lime and cheese.",
@@ -343,7 +364,10 @@
           }
         },
         {
-          "name": "Guac Poppers",
+          "name": {
+            "en": "Guac Poppers",
+            "es": "Guac Poppers"
+          },
           "price": "7.99",
           "desc": {
             "en": "Fresh guacamole with their special chips.",
@@ -482,7 +506,10 @@
           }
         },
         {
-          "name": "Mexican Coke",
+          "name": {
+            "en": "Mexican Coke",
+            "es": "Mexican Coke"
+          },
           "desc": {
             "en": "Cane sugar, glass bottle.",
             "es": "Azúcar de caña, botella de vidrio."
@@ -500,7 +527,10 @@
           }
         },
         {
-          "name": "Horchata",
+          "name": {
+            "en": "Horchata",
+            "es": "Horchata"
+          },
           "price": "4.99",
           "desc": {
             "en": "Sweet rice milk with cinnamon and vanilla.",
@@ -519,7 +549,10 @@
           }
         },
         {
-          "name": "Jarritos",
+          "name": {
+            "en": "Jarritos",
+            "es": "Jarritos"
+          },
           "price": "4.00",
           "desc": {
             "en": "Mandarin, tamarind, pineapple, sidral mundet or sangria.",

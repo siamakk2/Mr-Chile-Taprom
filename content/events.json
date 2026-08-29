@@ -3,7 +3,10 @@
     {
       "slug": "cumbia-rosa",
       "pageKey": "cumbia",
-      "name": "Cumbia Rosa",
+      "name": {
+        "en": "Cumbia Rosa",
+        "es": "Cumbia Rosa"
+      },
       "kicker": {
         "en": "First Saturday, monthly",
         "es": "Cada primer sábado del mes"
@@ -12,7 +15,10 @@
       "byMonthWeek": 1,
       "startTime": "20:15",
       "endTime": "02:00",
-      "age": "21+",
+      "age": {
+        "en": "21+",
+        "es": "21+"
+      },
       "image": "flyer-cumbia-rosa",
       "partner": {
         "name": "Ritmo y Pasión Dance",
@@ -26,7 +32,10 @@
         "en": "Cumbia Rosa runs on the first Saturday of every month, presented by Ritmo y Pasión Dance. A beginner cumbia class with Maria and Rogelio starts at 8:15pm — no partner and no experience needed — then DJ Edge takes over and the floor stays open until 2am. Drink specials run all night. Tickets are $15 in advance and $20 at the door. Entry is 21 and over.",
         "es": "Cumbia Rosa es cada primer sábado del mes, presentado por Ritmo y Pasión Dance. La clase de cumbia para principiantes con Maria y Rogelio empieza a las 8:15pm — sin pareja y sin experiencia — y después DJ Edge toma la cabina y la pista sigue abierta hasta las 2am. Hay especiales de bebidas toda la noche. Boletos $15 en preventa y $20 en la puerta. Solo mayores de 21."
       },
-      "genre": "Cumbia"
+      "genre": {
+        "en": "Cumbia",
+        "es": "Cumbia"
+      }
     },
     {
       "slug": "sonidero",
@@ -41,7 +50,10 @@
       "byDay": "Saturday",
       "startTime": "21:00",
       "endTime": "02:00",
-      "age": "21+",
+      "age": {
+        "en": "21+",
+        "es": "21+"
+      },
       "image": "flyer-sonidero",
       "short": {
         "en": "Sonidero sound systems, cumbia sonidera and saludos. Tickets at the door, 9pm.",
@@ -140,7 +152,10 @@
       "date": "2026-09-05",
       "start": "20:15",
       "end": "02:00",
-      "name": "Cumbia Rosa",
+      "name": {
+        "en": "Cumbia Rosa",
+        "es": "Cumbia Rosa"
+      },
       "lineup": "DJ Edge · Clase con Maria y Rogelio",
       "price": "15",
       "priceNote": {

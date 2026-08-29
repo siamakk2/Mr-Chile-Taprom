@@ -62,6 +62,56 @@ test('every key in the content files is declared in the CMS config', () => {
     `these keys would be deleted the first time an editor saves:\n  ${missing.join('\n  ')}`);
 });
 
+/**
+ * A field declared as an English/Spanish pair must be a pair in every record.
+ * Where one row holds a plain string, the CMS shows two empty boxes and
+ * refuses to save the whole screen as "fields missing" — with no clue which.
+ * That shipped once: 11 menu names were plain strings, and the editor reported
+ * 22 missing fields and would not save at all.
+ */
+test('bilingual fields are pairs in every record, not sometimes plain strings', () => {
+  const isPair = (v) => v && typeof v === 'object' && !Array.isArray(v) && ('en' in v || 'es' in v);
+
+  // Shapes are gathered by logical path across the whole tree, so
+  // menu[].items[].name is judged over every section rather than the first.
+  const shapes = new Map();
+  const note = (path, kind, where) => {
+    if (!shapes.has(path)) shapes.set(path, new Map());
+    if (!shapes.get(path).has(kind)) shapes.get(path).set(kind, where);
+  };
+
+  const walkNode = (node, path) => {
+    if (Array.isArray(node)) {
+      node.forEach((row, i) => walkNode(row, `${path}[]`, i));
+      return;
+    }
+    if (!node || typeof node !== 'object') return;
+    for (const [k, v] of Object.entries(node)) {
+      const child = `${path}.${k}`;
+      if (typeof v === 'string') note(child, 'string', v.slice(0, 30));
+      else if (isPair(v)) note(child, 'pair', '');
+      else walkNode(v, child);
+    }
+  };
+
+  for (const col of yaml.collections) {
+    for (const file of col.files) {
+      const data = JSON.parse(readFileSync(file.file, 'utf8'));
+      walkNode(data, parse(file.file).name);
+    }
+  }
+
+  const problems = [];
+  for (const [path, kinds] of shapes) {
+    if (kinds.size > 1) {
+      problems.push(`${path} is sometimes a pair and sometimes a plain string (e.g. "${kinds.get('string')}")`);
+    }
+  }
+
+  assert.deepEqual(problems, [],
+    `the editor will report these as missing fields and refuse to save:\n  ${problems.join('\n  ')}`);
+});
+
 test('technical settings are not exposed to the CMS at all', () => {
   const edited = new Set(yaml.collections.flatMap((c) => c.files.map((f) => f.file)));
   assert.ok(!edited.has('content/technical.json'),

@@ -21,7 +21,10 @@
       "schemaDay": "Tuesday",
       "open": "15:00",
       "close": "21:00",
-      "label": "3pm – 9pm"
+      "label": {
+        "en": "3pm – 9pm",
+        "es": "3pm – 9pm"
+      }
     },
     {
       "day": {
@@ -31,7 +34,10 @@
       "schemaDay": "Wednesday",
       "open": "15:00",
       "close": "21:00",
-      "label": "3pm – 9pm"
+      "label": {
+        "en": "3pm – 9pm",
+        "es": "3pm – 9pm"
+      }
     },
     {
       "day": {
@@ -41,7 +47,10 @@
       "schemaDay": "Thursday",
       "open": "15:00",
       "close": "21:00",
-      "label": "3pm – 9pm"
+      "label": {
+        "en": "3pm – 9pm",
+        "es": "3pm – 9pm"
+      }
     },
     {
       "day": {
@@ -51,7 +60,10 @@
       "schemaDay": "Friday",
       "open": "15:00",
       "close": "22:00",
-      "label": "3pm – 10pm"
+      "label": {
+        "en": "3pm – 10pm",
+        "es": "3pm – 10pm"
+      }
     },
     {
       "day": {
@@ -61,7 +73,10 @@
       "schemaDay": "Saturday",
       "open": "09:00",
       "close": "22:00",
-      "label": "9am – 10pm"
+      "label": {
+        "en": "9am – 10pm",
+        "es": "9am – 10pm"
+      }
     },
     {
       "day": {
@@ -71,7 +86,10 @@
       "schemaDay": "Sunday",
       "open": "09:00",
       "close": "17:00",
-      "label": "9am – 5pm"
+      "label": {
+        "en": "9am – 5pm",
+        "es": "9am – 5pm"
+      }
     }
   ],
   "happyHour": {
