@@ -15,7 +15,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 export async function sendTicketEmail({ to, name, event, tickets }) {
-  const origin = process.env.SITE_ORIGIN || 'https://mrchiletaproom.com';
+  const origin = process.env.SITE_ORIGIN || 'https://www.mrchiletaproom.com';
   const subject = `Your tickets — ${event?.name ?? 'Cumbia Rosa'}, ${event?.occurs_on ?? ''}`.trim();
 
   const rows = tickets.map((t) => `

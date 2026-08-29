@@ -35,7 +35,10 @@ export const site = {
 
   // Create a free Formspree form and paste the endpoint here (2 minutes).
   formEndpoint: 'https://formspree.io/f/REPLACE_WITH_FORM_ID',
-  origin: 'https://mrchiletaproom.com',
+  // The apex 301s to www, so www is the real host. Canonicals, hreflang,
+  // og:url, every JSON-LD @id and the sitemap are all built from this — a
+  // canonical pointing at a URL that redirects is a signal Google discounts.
+  origin: 'https://www.mrchiletaproom.com',
 
   // Google Search Console, URL-prefix property. Rendered into every page head.
   // Set to null once the property is verified by DNS instead, or leave it —
