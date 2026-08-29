@@ -11,8 +11,12 @@
  * them as a collaborator on the repository and removed by taking that away —
  * there is no separate password to rotate when someone leaves.
  *
- *   GET /api/auth            -> redirect to GitHub
- *   GET /api/auth?code=...   -> exchange and hand the token back
+ *   GET /api/auth/           -> redirect to GitHub
+ *   GET /api/auth/?code=...  -> exchange and hand the token back
+ *
+ * The trailing slash is not optional. vercel.json sets trailingSlash: true,
+ * which 308s the bare path, and an OAuth redirect_uri must match the
+ * registered callback character for character.
  */
 import { randomBytes } from 'node:crypto';
 
@@ -36,7 +40,7 @@ export default async function handler(req, res) {
     to.searchParams.set('client_id', process.env.GITHUB_CLIENT_ID);
     to.searchParams.set('scope', SCOPE);
     to.searchParams.set('state', state);
-    to.searchParams.set('redirect_uri', `${origin}/api/auth`);
+    to.searchParams.set('redirect_uri', `${origin}/api/auth/`);
     res.statusCode = 302;
     res.setHeader('cache-control', 'no-store');
     res.setHeader('set-cookie', `cms_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`);
@@ -60,7 +64,7 @@ export default async function handler(req, res) {
         client_id: process.env.GITHUB_CLIENT_ID,
         client_secret: process.env.GITHUB_CLIENT_SECRET,
         code,
-        redirect_uri: `${origin}/api/auth`,
+        redirect_uri: `${origin}/api/auth/`,
       }),
     });
     const data = await r.json();

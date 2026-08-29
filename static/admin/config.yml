@@ -15,7 +15,7 @@ backend:
   repo: siamakk2/Mr-Chile-Taprom
   branch: main
   base_url: https://www.mrchiletaproom.com
-  auth_endpoint: api/auth
+  auth_endpoint: api/auth/
 
 publish_mode: simple
 media_folder: static/img

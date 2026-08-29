@@ -3,10 +3,6 @@
   "trailingSlash": true,
   "rewrites": [
     {
-      "source": "/api/:fn",
-      "destination": "/api/:fn"
-    },
-    {
       "source": "/tickets/:serial/",
       "destination": "/api/ticket?serial=:serial"
     }

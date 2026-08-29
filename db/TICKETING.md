@@ -15,7 +15,7 @@ chargeback.
 
 - Create the account, complete business verification.
 - Copy the secret key (`sk_live_…`).
-- Add a webhook endpoint: `https://mrchiletaproom.com/api/webhook`
+- Add a webhook endpoint (the trailing slash matters): `https://www.mrchiletaproom.com/api/webhook/`
   Events: `checkout.session.completed`, `charge.refunded`, `charge.dispute.created`
 - Copy the signing secret (`whsec_…`).
 

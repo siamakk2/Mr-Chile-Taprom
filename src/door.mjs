@@ -78,7 +78,7 @@ padding:2rem;z-index:10}
        if(saved.code) els.code.value=saved.code;
        if(saved.ev) els.ev.dataset.want=saved.ev; }catch(e){}
 
-  fetch('/api/events').then(function(r){return r.json()}).then(function(list){
+  fetch('/api/events/').then(function(r){return r.json()}).then(function(list){
     (list.events||[]).forEach(function(e){
       var o=document.createElement('option');
       o.value=e.id; o.textContent=e.name+' — '+e.occurs_on;
@@ -113,7 +113,7 @@ padding:2rem;z-index:10}
     // the same code read twice in a second is one person, not two
     if(serial===last && Date.now()-lastAt<2500) return;
     last=serial; lastAt=Date.now(); busy=true; remember();
-    fetch('/api/scan',{method:'POST',
+    fetch('/api/scan/',{method:'POST',
       headers:{'content-type':'application/json','x-door-code':els.code.value},
       body:JSON.stringify({serial:serial,eventId:els.ev.value,by:'door'})})
     .then(function(r){return r.json()})
@@ -129,7 +129,7 @@ padding:2rem;z-index:10}
     if(v.length!==10){show('unknown','code should be 10 characters',null);return;}
     // will-call types the readable half; the server needs the signed form,
     // so it is resolved server-side by body rather than by full serial
-    fetch('/api/scan',{method:'POST',
+    fetch('/api/scan/',{method:'POST',
       headers:{'content-type':'application/json','x-door-code':els.code.value},
       body:JSON.stringify({body:v,eventId:els.ev.value,by:'willcall'})})
     .then(function(r){return r.json()}).then(function(d){
