@@ -19,13 +19,14 @@
  * registered callback character for character.
  */
 import { randomBytes } from 'node:crypto';
+import { ORIGIN } from './_lib.mjs';
 
 const SCOPE = 'repo';
 
 export default async function handler(req, res) {
   const url = new URL(req.url, 'https://x');
   const code = url.searchParams.get('code');
-  const origin = process.env.SITE_ORIGIN || 'https://www.mrchiletaproom.com';
+  const origin = ORIGIN();
 
   if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
     res.statusCode = 503;

@@ -9,13 +9,13 @@
  * The human-readable serial is in the email body as well, so will-call can
  * find the order when the phone is dead.
  */
-import { db } from './_lib.mjs';
+import { db, ORIGIN } from './_lib.mjs';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 export async function sendTicketEmail({ to, name, event, tickets }) {
-  const origin = process.env.SITE_ORIGIN || 'https://www.mrchiletaproom.com';
+  const origin = ORIGIN();
   const subject = `Your tickets — ${event?.name ?? 'Cumbia Rosa'}, ${event?.occurs_on ?? ''}`.trim();
 
   const rows = tickets.map((t) => `

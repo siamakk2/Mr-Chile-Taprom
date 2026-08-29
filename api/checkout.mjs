@@ -8,7 +8,7 @@
  * Price is read from the database, never from the request. A client that posts
  * its own price is the oldest bug in e-commerce.
  */
-import { json, readRaw, stripe, db, TICKETING_ON, requireEnv } from './_lib.mjs';
+import { json, readRaw, stripe, db, TICKETING_ON, requireEnv, ORIGIN } from './_lib.mjs';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'method not allowed' });
@@ -43,7 +43,7 @@ export default async function handler(req, res) {
       }
     }
 
-    const origin = process.env.SITE_ORIGIN;
+    const origin = ORIGIN();
     const session = await stripe('checkout/sessions', {
       mode: 'payment',
       success_url: `${origin}/tickets/confirmed/?s={CHECKOUT_SESSION_ID}`,

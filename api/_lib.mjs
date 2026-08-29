@@ -10,6 +10,17 @@ import { createHmac, timingSafeEqual, randomBytes } from 'node:crypto';
 
 export const env = (k) => process.env[k];
 
+/**
+ * The site origin, with any trailing slash removed.
+ *
+ * Someone will paste "https://www.mrchiletaproom.com/" into the environment
+ * variable, and every URL built from it then carries a double slash. An OAuth
+ * redirect_uri fails outright on that, and ticket links quietly 404. Normalise
+ * once here rather than trusting the value.
+ */
+export const ORIGIN = () =>
+  (process.env.SITE_ORIGIN || 'https://www.mrchiletaproom.com').replace(/\/+$/, '');
+
 /** Every route calls this first. Missing config must fail closed, not half-work. */
 export function requireEnv(...keys) {
   const absent = keys.filter((k) => !process.env[k]);
