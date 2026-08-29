@@ -305,7 +305,7 @@ export const GUIDES = [
         h: { en: 'Booking in Santa Rosa', es: 'Rentar en Santa Rosa' },
         p: {
           en: ['Mr. Chile Taproom answers these directly: a creekside patio buyout for up to 80, a semi-private back room for 25 to 45, or a full venue buyout with stage, PA and projector. Free parking on site, bilingual staff, and a licensed bar so alcohol is not a separate problem to solve.',
-               'Call (707) 239-4188 or send an enquiry, and ask every question on this list — of us and of everyone else you are considering.'],
+               'Call (707) 239-4188 or send an inquiry, and ask every question on this list — of us and of everyone else you are considering.'],
           es: ['Mr. Chile Taproom responde esto directamente: renta del patio junto al arroyo hasta 80 personas, salón trasero semiprivado de 25 a 45, o el lugar completo con escenario, sonido y proyector. Estacionamiento gratis, personal bilingüe, y barra con licencia para que el alcohol no sea otro problema que resolver.',
                'Llama al (707) 239-4188 o manda tu solicitud, y haz cada pregunta de esta lista — a nosotros y a todos los demás que estés considerando.'],
         },

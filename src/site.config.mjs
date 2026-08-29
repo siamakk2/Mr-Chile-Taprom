@@ -68,12 +68,12 @@ export const site = {
   // to Google, Yelp, Apple and Facebook on the same day.
   hours: [
     { day: { en: 'Monday', es: 'Lunes' },        schemaDay: 'Monday',    open: null,    close: null,    label: { en: 'Closed', es: 'Cerrado' } },
-    { day: { en: 'Tuesday', es: 'Martes' },      schemaDay: 'Tuesday',   open: '16:00', close: '21:00', label: '4pm – 9pm' },
-    { day: { en: 'Wednesday', es: 'Miércoles' }, schemaDay: 'Wednesday', open: '16:00', close: '21:00', label: '4pm – 9pm' },
-    { day: { en: 'Thursday', es: 'Jueves' },     schemaDay: 'Thursday',  open: '16:00', close: '21:00', label: '4pm – 9pm' },
-    { day: { en: 'Friday', es: 'Viernes' },      schemaDay: 'Friday',    open: '15:00', close: '23:00', label: '3pm – 11pm' },
-    { day: { en: 'Saturday', es: 'Sábado' },     schemaDay: 'Saturday',  open: '15:00', close: '23:00', label: '3pm – 11pm' },
-    { day: { en: 'Sunday', es: 'Domingo' },      schemaDay: 'Sunday',    open: '12:00', close: '21:00', label: '12pm – 9pm' },
+    { day: { en: 'Tuesday', es: 'Martes' },      schemaDay: 'Tuesday',   open: '15:00', close: '21:00', label: '3pm – 9pm' },
+    { day: { en: 'Wednesday', es: 'Miércoles' }, schemaDay: 'Wednesday', open: '15:00', close: '21:00', label: '3pm – 9pm' },
+    { day: { en: 'Thursday', es: 'Jueves' },     schemaDay: 'Thursday',  open: '15:00', close: '21:00', label: '3pm – 9pm' },
+    { day: { en: 'Friday', es: 'Viernes' },      schemaDay: 'Friday',    open: '15:00', close: '22:00', label: '3pm – 10pm' },
+    { day: { en: 'Saturday', es: 'Sábado' },     schemaDay: 'Saturday',  open: '09:00', close: '22:00', label: '9am – 10pm' },
+    { day: { en: 'Sunday', es: 'Domingo' },      schemaDay: 'Sunday',    open: '09:00', close: '17:00', label: '9am – 5pm' },
   ],
 
   amenities: [
@@ -108,8 +108,8 @@ export const site = {
     {
       name: { en: 'Taco truck out back', es: 'Camión de tacos atrás' },
       detail: {
-        en: 'Freaking Tacos parks on the patio. Al pastor is the order.',
-        es: 'Freaking Tacos se estaciona en el patio. Pide los de al pastor.',
+        en: 'Freaking Tacos is the kitchen here, serving their full menu — tacos, burritos, tortas and plates.',
+        es: 'Freaking Tacos es la cocina aquí, con su menú completo — tacos, burritos, tortas y platillos.',
       },
     },
     {
@@ -331,19 +331,23 @@ export const site = {
       ],
     },
     {
-      section: { en: 'Kitchen', es: 'Cocina' },
+      section: { en: 'Food — Freaking Tacos', es: 'Comida — Freaking Tacos' },
       note: {
-        en: 'Bar comfort food and Mexican-inspired plates, built to go with beer. Vegetarian options available.',
-        es: 'Comida de bar y platillos de inspiración mexicana para acompañar la cerveza. Hay opciones vegetarianas.',
+        en: 'The kitchen is Freaking Tacos, serving their full menu here on Montgomery Drive — tacos, burritos, tortas, quesadillas and plates, made to order.',
+        es: 'La cocina es Freaking Tacos, con su menú completo aquí en Montgomery Drive — tacos, burritos, tortas, quesadillas y platillos, hechos al momento.',
       },
       items: [
-        { name: 'Ed Hops Wings', price: '8.99', priceNote: { en: '6 pc · 12 pc $13.99', es: '6 pzas · 12 pzas $13.99' }, desc: { en: 'Baked, not fried, seasoned and served with a choice of sauces. The item regulars come back for.', es: 'Horneadas, no fritas, sazonadas y con salsa a elegir. El platillo por el que la gente regresa.' } },
-        { name: 'Yo Adrin', desc: { en: 'Cheese garlic bread, baked fresh and loaded.', es: 'Pan de ajo horneado y cargado de queso.' } },
-        { name: { en: 'Meat Lovers Sandwich', es: 'Sándwich Meat Lovers' }, desc: { en: 'The heaviest thing on the board.', es: 'Lo más contundente del menú.' } },
-        { name: 'Louie The Mac', desc: { en: 'Baked mac and cheese.', es: 'Macarrones con queso al horno.' } },
-        { name: { en: 'Fish Tacos', es: 'Tacos de pescado' }, desc: { en: 'Fresh, off the regular menu.', es: 'Frescos, del menú regular.' } },
-        { name: { en: 'Ceviche Tostadas', es: 'Tostadas de ceviche' }, price: '4.99', desc: { en: 'Cold, sharp and cheap.', es: 'Frescas, ácidas y económicas.' } },
-        { name: { en: 'Chips & Salsa', es: 'Totopos y Salsa' }, desc: { en: 'Homemade salsa.', es: 'Salsa hecha en casa.' } },
+        { name: { en: 'Tacos', es: 'Tacos' }, desc: { en: 'Choice of meat, red salsa, onions and cilantro. The whole taco menu is served here.', es: 'Carne a elegir, salsa roja, cebolla y cilantro. Todo el menú de tacos se sirve aquí.' } },
+        { name: 'Torpedo Burrito', desc: { en: 'Flour tortilla, choice of meat, rice, whole pinto beans, mozzarella, sour cream and green salsa. Their best seller.', es: 'Tortilla de harina, carne a elegir, arroz, frijoles enteros, mozzarella, crema y salsa verde. Su más vendido.' } },
+        { name: 'Wet-Rito', desc: { en: 'Flour tortilla, rice, refried beans, mozzarella and sour cream, topped with green enchilada sauce and cilantro.', es: 'Tortilla de harina, arroz, frijoles refritos, mozzarella y crema, bañado en salsa verde de enchilada con cilantro.' } },
+        { name: { en: 'Torta', es: 'Torta' }, desc: { en: 'Mexican white bread, choice of meat, refried beans, lettuce, tomato, onion, melted cheese and avocado. Jalapeños on the side on request.', es: 'Pan blanco mexicano, carne a elegir, frijoles refritos, lechuga, jitomate, cebolla, queso derretido y aguacate. Jalapeños aparte si los pides.' } },
+        { name: { en: 'Quesadilla', es: 'Quesadilla' }, desc: { en: 'Flour tortilla, melted mozzarella, green salsa and sour cream.', es: 'Tortilla de harina, mozzarella derretido, salsa verde y crema.' } },
+        { name: 'Mexi-Salad', desc: { en: 'Choice of meat, lettuce, pico de gallo, rice, whole pinto beans, green salsa and cotija.', es: 'Carne a elegir, lechuga, pico de gallo, arroz, frijoles enteros, salsa verde y cotija.' } },
+        { name: { en: 'Combo #1 — Two Tacos', es: 'Combo #1 — Dos Tacos' }, desc: { en: 'Two tacos with choice of meat, red salsa, onions and cilantro, plus chips and salsa and a fountain drink.', es: 'Dos tacos con carne a elegir, salsa roja, cebolla y cilantro, más totopos con salsa y un refresco.' } },
+        { name: { en: 'Sopes, esquites, nachos & fajita plates', es: 'Sopes, esquites, nachos y platillos de fajitas' }, desc: { en: 'Also on the Freaking Tacos menu, alongside sides like guacamole and chips, and rice and beans.', es: 'También en el menú de Freaking Tacos, junto con guarniciones como guacamole con totopos, y arroz con frijoles.' } },
+        { name: 'Tacos de cabeza', desc: { en: 'On the taco list alongside the rest of the meats.', es: 'En la lista de tacos junto con las demás carnes.' } },
+        { name: { en: 'Pupusas on event nights', es: 'Pupusas en noches de evento' }, desc: { en: 'Made fresh, on special event days only.', es: 'Hechas al momento, solo en días de evento especial.' } },
+        { name: { en: 'Horchata & Jarritos', es: 'Horchata y Jarritos' }, desc: { en: 'From the Freaking Tacos drinks list.', es: 'De la lista de bebidas de Freaking Tacos.' } },
       ],
     },
     {
@@ -356,19 +360,6 @@ export const site = {
         { name: 'Mexican Coke', desc: { en: 'Cane sugar, glass bottle.', es: 'Azúcar de caña, botella de vidrio.' } },
         { name: "Martinelli's", desc: { en: 'Apple juice from just down the road.', es: 'Jugo de manzana de aquí cerca.' } },
         { name: { en: 'Sodas & sparkling water', es: 'Refrescos y agua mineral' }, desc: { en: 'Standard non-alcoholic lineup.', es: 'Opciones sin alcohol de siempre.' } },
-      ],
-    },
-    {
-      section: 'Freaking Tacos',
-      note: {
-        en: 'An independent taco truck on the patio, run in collaboration with the taproom. Its hours can differ from the bar.',
-        es: 'Un camión de tacos independiente en el patio, en colaboración con el taproom. Su horario puede variar del bar.',
-      },
-      items: [
-        { name: 'Tacos al pastor', desc: { en: 'The order to place. Named again and again in reviews.', es: 'Lo que hay que pedir. Mencionados una y otra vez en las reseñas.' } },
-        { name: 'Tacos de cabeza', desc: { en: 'Served at the bar as part of the collaboration.', es: 'Se sirven en la barra como parte de la colaboración.' } },
-        { name: { en: 'Full taqueria menu', es: 'Menú completo de taquería' }, desc: { en: 'Ordered at the truck, eaten on the patio.', es: 'Se pide en el camión y se come en el patio.' } },
-        { name: { en: 'Pupusas on event nights', es: 'Pupusas en noches de evento' }, desc: { en: 'Made fresh, on special event days only.', es: 'Hechas al momento, solo en días de evento especial.' } },
       ],
     },
   ],
@@ -416,7 +407,7 @@ export const faqs = [
   {
     q: { en: 'Can you book it for a private event?', es: '¿Se puede rentar para eventos privados?' },
     a: {
-      en: 'Yes. Mr. Chile Taproom books private events, including birthdays, quinceañeras, company parties, rehearsal dinners, nonprofit fundraisers and full-venue buyouts. Options are a patio buyout for up to 80 guests, a semi-private back room for 25 to 45, and a full venue buyout with stage, PA and projector. Enquire at (707) 239-4188 or through the booking form on this site.',
+      en: 'Yes. Mr. Chile Taproom books private events, including birthdays, quinceañeras, company parties, rehearsal dinners, nonprofit fundraisers and full-venue buyouts. Options are a patio buyout for up to 80 guests, a semi-private back room for 25 to 45, and a full venue buyout with stage, PA and projector. Inquire at (707) 239-4188 or through the booking form on this site.',
       es: 'Sí. Mr. Chile Taproom renta para eventos privados, incluyendo cumpleaños, quinceañeras, fiestas de empresa, cenas de ensayo, eventos benéficos y renta del lugar completo. Las opciones son el patio hasta 80 personas, el salón trasero semiprivado de 25 a 45, y el lugar completo con escenario, sonido y proyector. Llama al (707) 239-4188 o usa el formulario de este sitio.',
     },
   },
@@ -430,8 +421,8 @@ export const faqs = [
   {
     q: { en: 'Is there food?', es: '¿Hay comida?' },
     a: {
-      en: 'Yes. Mr. Chile Taproom has a kitchen serving baked Ed Hops Wings, Louie The Mac mac and cheese, cheese garlic bread, chips and salsa and rotating sandwiches, with vegetarian options. An independent taco truck, Freaking Tacos, parks on the patio and is known for its al pastor. Street food vendors also set up for some event nights.',
-      es: 'Sí. Mr. Chile Taproom tiene cocina con alitas Ed Hops horneadas, macarrones con queso Louie The Mac, pan de ajo con queso, totopos con salsa y sándwiches, además de opciones vegetarianas. Un camión independiente, Freaking Tacos, se estaciona en el patio y es conocido por sus tacos al pastor. En algunas noches de evento también hay vendedores de comida.',
+      en: 'Yes. The kitchen at Mr. Chile Taproom is Freaking Tacos, and the full Freaking Tacos menu is served here — tacos, Torpedo Burritos, Wet-Ritos, tortas, quesadillas, Mexi-Salads, sopes, esquites, nachos and fajita plates, with sides and horchata. Street food vendors also set up for some event nights.',
+      es: 'Sí. La cocina de Mr. Chile Taproom es Freaking Tacos, y aquí se sirve su menú completo — tacos, Torpedo Burritos, Wet-Ritos, tortas, quesadillas, Mexi-Salads, sopes, esquites, nachos y platillos de fajitas, con guarniciones y horchata. En algunas noches de evento también hay vendedores de comida.',
     },
   },
   {
@@ -459,7 +450,37 @@ export const faqs = [
 
 export const fullAddress = `${site.street}, ${site.locality}, ${site.region} ${site.postal}`;
 
-export const hoursSummary = {
-  en: 'Closed Mon · Tue–Thu 4–9pm · Fri–Sat 3–11pm · Sun 12–9pm',
-  es: 'Lun cerrado · Mar–Jue 4–9pm · Vie–Sáb 3–11pm · Dom 12–9pm',
+/**
+ * One-line hours, derived from site.hours rather than typed.
+ *
+ * This was a hardcoded string and it silently disagreed with the table above
+ * the moment the hours changed. Runs of identical days are collapsed, so
+ * Tue/Wed/Thu at the same times reads "Tue-Thu".
+ */
+const summarise = (loc) => {
+  const abbr = {
+    en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    es: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+  }[loc];
+  const order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const idx = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
+  const days = order.map((d) => site.hours.find((h) => h.schemaDay === d));
+
+  const runs = [];
+  for (const h of days) {
+    const label = typeof h.label === 'string' ? h.label : h.label[loc];
+    const prev = runs[runs.length - 1];
+    if (prev && prev.label === label) prev.end = h;
+    else runs.push({ start: h, end: h, label });
+  }
+
+  return runs.map(({ start, end, label }) => {
+    const a = abbr[idx[start.schemaDay]];
+    const b = abbr[idx[end.schemaDay]];
+    const span = a === b ? a : `${a}–${b}`;
+    if (!start.open) return loc === 'es' ? `${span} cerrado` : `${span} closed`;
+    return `${span} ${label.replace(/\s*–\s*/, '–')}`;
+  }).join(' · ');
 };
+
+export const hoursSummary = { en: summarise('en'), es: summarise('es') };

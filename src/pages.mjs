@@ -83,7 +83,7 @@ const COPY = {
     en: 'Quinceañeras, birthdays, company parties, rehearsal dinners, memorials, fundraisers and full-venue buyouts. Patio, back room or the whole place.',
     es: 'Quinceañeras, cumpleaños, fiestas de empresa, cenas de ensayo, memoriales, eventos benéficos y renta completa. Patio, salón trasero o todo el lugar.',
   },
-  privCta: { en: 'See packages &amp; enquire', es: 'Ver paquetes y cotizar' },
+  privCta: { en: 'See packages &amp; inquire', es: 'Ver paquetes y cotizar' },
   roomEyebrow: { en: 'The room', es: 'El lugar' },
   roomH: { en: 'Why people come back', es: 'Por qué la gente regresa' },
   roomP: {
@@ -380,18 +380,18 @@ export const privatePage = (loc) => {
     : 'Book Mr. Chile Taproom in Santa Rosa for private events: quinceañeras, birthdays, company parties, rehearsal dinners and fundraisers. Patio to 80, back room 25–45, or a full venue buyout. Call (707) 239-4188.';
   const inc = {
     en: [['Outside food', 'Yes for full buyouts and patio bookings — including cake and catering. Alcohol must come from the bar.'],
-      ['Taco truck', 'Freaking Tacos can be coordinated for your event. Ask when you enquire.'],
+      ['Tacos', 'The Freaking Tacos menu can be catered for your event. Ask when you inquire.'],
       ['Sound', 'Stage, PA and projector on full buyouts. Bring your own DJ or we can suggest one.'],
       ['Decor', 'Bring your own. Setup time is included in the booking window.'],
-      ['Minors', 'Welcome at daytime and early-evening events. Bar-service events after 8pm are 21+.'],
+      ['Minors', 'Welcome at daytime and early-evening events. Event nights are 21+.'],
       ['Deposit', 'A deposit holds the date and applies to your final bill.'],
       ['Parking', 'Free on-site lot, no validation needed.'],
       ['Languages', 'We plan events in English and Spanish.']],
     es: [['Comida externa', 'Sí para renta completa y patio — incluyendo pastel y catering. El alcohol debe venir del bar.'],
-      ['Camión de tacos', 'Podemos coordinar Freaking Tacos para tu evento. Pregunta al cotizar.'],
+      ['Tacos', 'Podemos incluir el menú de Freaking Tacos en tu evento. Pregunta al cotizar.'],
       ['Sonido', 'Escenario, sonido y proyector con renta completa. Trae tu DJ o te recomendamos uno.'],
       ['Decoración', 'Trae la tuya. El tiempo de montaje está incluido.'],
-      ['Menores', 'Bienvenidos en eventos de día y temprano. Los eventos con bar después de las 8pm son 21+.'],
+      ['Menores', 'Bienvenidos en eventos de día y temprano. Las noches de evento son 21+.'],
       ['Depósito', 'Un depósito aparta la fecha y se aplica a la cuenta final.'],
       ['Estacionamiento', 'Gratis en el lugar, sin validación.'],
       ['Idiomas', 'Planeamos eventos en español e inglés.']],
@@ -401,7 +401,7 @@ export const privatePage = (loc) => {
     es: ['Cumpleaños', 'Quinceañera', 'Graduación', 'Fiesta de empresa', 'Cena de ensayo', 'Memorial', 'Evento benéfico', 'Música en vivo o lanzamiento', 'Otro'],
   }[loc];
   const F = {
-    en: { name: 'Your name', phone: 'Phone', email: 'Email', date: 'Preferred date', guests: 'Guest count', type: 'Type of event', space: 'Space', notes: 'Anything else', unsure: 'Not sure yet', send: 'Send enquiry', blank: 'Leave blank', ph: 'Food, music, timing, decor, budget range…', reply: 'You get a reply within one business day. We do not share your details.' },
+    en: { name: 'Your name', phone: 'Phone', email: 'Email', date: 'Preferred date', guests: 'Guest count', type: 'Type of event', space: 'Space', notes: 'Anything else', unsure: 'Not sure yet', send: 'Send inquiry', blank: 'Leave blank', ph: 'Food, music, timing, decor, budget range…', reply: 'You get a reply within one business day. We do not share your details.' },
     es: { name: 'Tu nombre', phone: 'Teléfono', email: 'Correo', date: 'Fecha preferida', guests: 'Número de personas', type: 'Tipo de evento', space: 'Espacio', notes: 'Algo más', unsure: 'Todavía no sé', send: 'Enviar solicitud', blank: 'Dejar en blanco', ph: 'Comida, música, horario, decoración, presupuesto…', reply: 'Te respondemos en un día hábil. No compartimos tus datos.' },
   }[loc];
 
@@ -420,7 +420,7 @@ export const privatePage = (loc) => {
       ? '<strong>Mr. Chile Taproom renta para eventos privados en Santa Rosa</strong> — quinceañeras, cumpleaños, graduaciones, fiestas de empresa, cenas de ensayo, memoriales y eventos benéficos. Elige el patio junto al arroyo, el salón trasero semiprivado, o todo el lugar.'
       : '<strong>Mr. Chile Taproom books private events in Santa Rosa</strong> — quinceañeras, birthdays, graduations, company parties, team offsites, rehearsal dinners, memorials and nonprofit fundraisers. Choose the creekside patio, the semi-private back room, or a full venue buyout.'}</p>
 <div class="btn-row" style="margin-top:1.75rem">
-<a class="btn btn--primary" href="#enquire">${loc === 'es' ? 'Pedir cotización' : 'Send an enquiry'}</a>
+<a class="btn btn--primary" href="#inquire">${loc === 'es' ? 'Pedir cotización' : 'Send an inquiry'}</a>
 <a class="btn btn--ghost" href="${tel}">${esc(t('call', loc))} ${site.phone}</a>
 </div>
 </div>
@@ -467,10 +467,10 @@ ${pic('patio-tacos', loc === 'es' ? 'Sombrillas rojas sobre mesas de picnic con 
 </div>
 </section>
 
-<section class="band" id="enquire">
+<section class="band" id="inquire">
 <div class="wrap grid grid--split">
 <div>
-<span class="eyebrow eyebrow--chile">${loc === 'es' ? 'Cotización' : 'Enquiry'}</span>
+<span class="eyebrow eyebrow--chile">${loc === 'es' ? 'Cotización' : 'Inquiry'}</span>
 <h2>${loc === 'es' ? 'Cuéntanos de tu evento' : 'Tell us about the night'}</h2>
 <p class="prose" style="margin-top:1.25rem">${loc === 'es'
       ? 'Entre más nos digas, más precisa la cotización. Si prefieres hablarlo, llama al'
@@ -478,7 +478,7 @@ ${pic('patio-tacos', loc === 'es' ? 'Sombrillas rojas sobre mesas de picnic con 
 </div>
 <div>
 <form class="form" method="POST" action="${site.formEndpoint}">
-<input type="hidden" name="_subject" value="Private event enquiry — ${loc}">
+<input type="hidden" name="_subject" value="Private event inquiry — ${loc}">
 <input type="hidden" name="_language" value="${loc}">
 <p class="vh"><label>${esc(F.blank)}<input name="_gotcha" tabindex="-1" autocomplete="off"></label></p>
 <div class="form__2">
@@ -513,8 +513,8 @@ export const menuPage = (loc) => {
     ? 'Cerveza, vino y comida | Mr. Chile Taproom, Santa Rosa'
     : 'Beer, Wine & Food Menu | Mr. Chile Taproom, Santa Rosa';
   const description = loc === 'es'
-    ? 'Lo que sirve Mr. Chile Taproom: cerveza artesanal, sidra y vino del condado de Sonoma, alitas Ed Hops horneadas, Louie The Mac, totopos con salsa, opciones sin alcohol y tacos al pastor del camión Freaking Tacos.'
-    : 'What Mr. Chile Taproom pours and serves: rotating Sonoma County craft beer, cider and wine, baked Ed Hops Wings, Louie The Mac, chips and salsa, non-alcoholic options and al pastor from the Freaking Tacos truck.';
+    ? 'Lo que sirve Mr. Chile Taproom: cerveza artesanal, sidra y vino del condado de Sonoma y el North Bay, cócteles y micheladas, opciones sin alcohol, y el menú completo de Freaking Tacos.'
+    : 'What Mr. Chile Taproom pours and serves: rotating Sonoma County and North Bay craft beer, cider and wine, cocktails and micheladas, non-alcoholic options, and the full Freaking Tacos menu.';
   const diet = {
     en: [['Vegetarian', 'Vegetarian options are on the kitchen menu.'], ['Vegan', 'Limited. Call ahead if this matters for your group.'],
       ['Non-alcoholic', "Mexican Coke, Martinelli's, sodas and sparkling water."], ['Kids', 'Families welcome in the taproom and on the patio before 8pm.'],
@@ -534,8 +534,8 @@ export const menuPage = (loc) => {
 <span class="eyebrow">${esc(L(UI.nav.menu, loc))}</span>
 <h1 class="h1--sm">${loc === 'es' ? 'Lo que servimos' : 'What we pour'}</h1>
 <p class="lede" style="margin-top:1.25rem">${loc === 'es'
-      ? '<strong>Mr. Chile Taproom sirve una lista rotativa de cerveza artesanal, sidra y vino del condado de Sonoma y el North Bay, junto con cocina de bar.</strong> Los platillos insignia son las alitas Ed Hops horneadas y Louie The Mac. Un camión independiente, Freaking Tacos, se estaciona en el patio.'
-      : '<strong>Mr. Chile Taproom serves a rotating list of Sonoma County and North Bay craft beer, cider and wine alongside a bar-food kitchen.</strong> The signature items are the baked Ed Hops Wings and Louie The Mac. An independent taco truck, Freaking Tacos, parks on the patio.'}</p>
+      ? '<strong>Mr. Chile Taproom sirve una lista rotativa de cerveza artesanal, sidra y vino del condado de Sonoma y el North Bay.</strong> La cocina es Freaking Tacos, y aquí servimos su menú completo — tacos, burritos, tortas, quesadillas y platillos.'
+      : '<strong>Mr. Chile Taproom serves a rotating list of Sonoma County and North Bay craft beer, cider and wine.</strong> The kitchen is Freaking Tacos, and we serve their full menu here — tacos, burritos, tortas, quesadillas and plates.'}</p>
 ${status(loc)}
 </div>
 </section>
