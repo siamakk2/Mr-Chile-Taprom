@@ -5,6 +5,7 @@ import { site, faqs, hoursSummary, fullAddress, L, LOCALES } from './src/site.co
 import { ROUTES, formatDate } from './src/routes.mjs';
 import { layout } from './src/layout.mjs';
 import { PAGE_BUILDERS, notFoundPage } from './src/pages.mjs';
+import { doorPage } from './src/door.mjs';
 import { assetMap } from './src/assets.mjs';
 
 const OUT = 'public';
@@ -33,6 +34,11 @@ for (const build of PAGE_BUILDERS) {
 }
 const nf = notFoundPage();
 writeFileSync(join(OUT, '404.html'), layout({ ...nf, cssHref: CSS_HREF }));
+
+// Staff door scanner. Standalone, noindex, no shared layout — it must load on a
+// bad phone signal in a car park and share nothing with the marketing site.
+mkdirSync(join(OUT, 'door'), { recursive: true });
+writeFileSync(join(OUT, 'door', 'index.html'), doorPage());
 
 // --- static ------------------------------------------------------------------
 // Copy every static file to its content-hashed name (see src/assets.mjs).
@@ -83,8 +89,11 @@ writeFileSync(join(OUT, 'robots.txt'),
 
 User-agent: *
 Allow: /
+Disallow: /door/
+Disallow: /tickets/
+Disallow: /api/
 
-${AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /`).join('\n\n')}
+${AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\nDisallow: /door/\nDisallow: /tickets/\nDisallow: /api/`).join('\n\n')}
 
 Sitemap: ${site.origin}/sitemap.xml
 `);
