@@ -14,6 +14,10 @@
 app_title: Mr. Chile Taproom
 site_url: https://www.mrchiletaproom.com
 logout_redirect_url: https://www.mrchiletaproom.com
+# logo_url is the older spelling and logo is the current one. Both are given so
+# the branding survives a version change in either direction; the CMS is beta
+# and this option was renamed once already.
+logo_url: /admin/logo.png
 logo:
   src: /admin/logo.png
   show_in_header: true
