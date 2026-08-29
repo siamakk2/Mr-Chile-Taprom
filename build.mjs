@@ -188,6 +188,29 @@ if (missing.length) {
 }
 console.log(`Verified ${refs.size} asset references, all present.`);
 
+// --- guard: a missing copy key must not reach a visitor ----------------------
+// L() on an absent UI key returns undefined, which template-literals happily
+// render as the word "undefined". That shipped once. Never again.
+// Inline scripts legitimately contain null/undefined, so they are stripped
+// before scanning; only text a visitor can actually read is checked.
+const leaks = [];
+for (const f of listHtml(OUT)) {
+  const visible = readFileSync(f, 'utf8')
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '');
+  for (const m of visible.matchAll(/>([^<]*\b(?:undefined|NaN)\b[^<]*)</g)) {
+    leaks.push(`  ${f}: ${m[1].trim().slice(0, 60)}`);
+  }
+  for (const m of visible.matchAll(/(?:alt|title|content|aria-label)="([^"]*\b(?:undefined|NaN)\b[^"]*)"/g)) {
+    leaks.push(`  ${f} [attr]: ${m[1].trim().slice(0, 60)}`);
+  }
+}
+if (leaks.length) {
+  console.error(`\nUNRESOLVED COPY IN OUTPUT:\n${leaks.join('\n')}`);
+  process.exit(1);
+}
+console.log('No unresolved copy keys in output.');
+
 function listHtml(dir) {
   const out = [];
   for (const f of readdirSync(dir)) {

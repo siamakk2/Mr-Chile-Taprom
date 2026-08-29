@@ -320,7 +320,8 @@ p { text-wrap: pretty; }
 /* --- footer -------------------------------------------------------------- */
 .ftr { border-top: 1px solid var(--line); background: var(--ink-2); }
 .ftr__grid { display: grid; gap: 2.25rem; }
-@media (min-width: 760px) { .ftr__grid { grid-template-columns: 1.3fr 1fr 1.2fr; gap: 3rem; } }
+@media (min-width: 760px) { .ftr__grid { grid-template-columns: 1.25fr 1fr 1fr; gap: 3rem 2.5rem; } }
+@media (min-width: 1040px) { .ftr__grid { grid-template-columns: 1.25fr .9fr .9fr 1fr; } }
 .ftr h4 { font-family: var(--mono); font-weight: 400; font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--marigold); margin-bottom: .9rem; }
 .ftr a { color: var(--masa-dim); text-decoration: none; }
 .ftr a:hover { color: var(--masa); text-decoration: underline; }

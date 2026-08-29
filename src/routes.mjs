@@ -72,7 +72,8 @@ export const UI = {
   doorPrice:     { en: '$15 advance · $20 at the door',
                    es: '$15 preventa · $20 en la puerta' },
 
-  // --- cookie notice --------------------------------------------------------  privacyLabel:  { en: 'Privacy',           es: 'Privacidad' },
+  // --- cookie notice --------------------------------------------------------
+  privacyLabel:  { en: 'Privacy',           es: 'Privacidad' },
   consentBody:   { en: 'We use cookies to see how the site gets used, so we can make it better. No ads, and we never sell your information.',
                    es: 'Usamos cookies para ver cómo se usa el sitio y así mejorarlo. Sin anuncios, y nunca vendemos tu información.' },
   consentOk:     { en: 'Got it',            es: 'Entendido' },

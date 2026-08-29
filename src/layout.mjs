@@ -153,9 +153,16 @@ ${esc(site.street)}<br>${esc(site.locality)}, ${site.region} ${site.postal}<br>
 <div>
 <h4>${esc(t('pages', loc))}</h4>
 <ul>${NAV_KEYS.map((k) => `<li><a href="${ROUTES[k][loc]}">${esc(L(UI.nav[k], loc))}</a></li>`).join('')}
-<li><a href="${ROUTES.cumbia[loc]}">Cumbia Rosa</a></li>
 <li><a href="${ROUTES.privacy[loc]}">${esc(t('privacyLabel', loc))}</a></li>
 <li><a href="${altPath}" hreflang="${other}" lang="${other}">${esc(t('langSwitch', loc))}</a></li></ul>
+</div>
+<div>
+<h4>${esc(L(UI.nav.events, loc))}</h4>
+<ul>
+<li><a href="${ROUTES.cumbia[loc]}">Cumbia Rosa</a></li>
+${site.series.filter((s) => !s.pageKey).map((s) => `<li><a href="${ROUTES.events[loc]}#${s.slug}">${esc(L(s.name, loc))}</a></li>`).join('')}
+<li><a href="${ROUTES.events[loc]}">${esc(t('fullCalendar', loc))}</a></li>
+</ul>
 </div>
 <div>
 <h4>${esc(t('hours', loc))}</h4>
