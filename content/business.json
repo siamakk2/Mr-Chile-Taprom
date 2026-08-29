@@ -1,0 +1,24 @@
+{
+  "name": "Mr. Chile Taproom",
+  "altName": "Mr. Chile TAPROOM Beer & Culture",
+  "tagline": "Beer & Culture",
+  "phone": "(707) 239-4188",
+  "phoneE164": "+17072394188",
+  "email": "mr.chiletaproominfo@gmail.com",
+  "street": "4357 Montgomery Dr, Suite B",
+  "locality": "Santa Rosa",
+  "region": "CA",
+  "postal": "95405",
+  "country": "US",
+  "crossStreet": "Mission Blvd & Montgomery Dr",
+  "county": {
+    "en": "Sonoma County",
+    "es": "Condado de Sonoma"
+  },
+  "priceRange": "$$",
+  "profiles": [
+    "https://www.instagram.com/mr.chiletaproom/",
+    "https://www.facebook.com/confluencetaproom/",
+    "https://www.yelp.com/biz/mr-chile-taproom-santa-rosa"
+  ]
+}

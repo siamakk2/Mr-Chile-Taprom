@@ -1,0 +1,154 @@
+{
+  "series": [
+    {
+      "slug": "cumbia-rosa",
+      "pageKey": "cumbia",
+      "name": "Cumbia Rosa",
+      "kicker": {
+        "en": "First Saturday, monthly",
+        "es": "Cada primer sábado del mes"
+      },
+      "byDay": "Saturday",
+      "byMonthWeek": 1,
+      "startTime": "20:15",
+      "endTime": "02:00",
+      "age": "21+",
+      "image": "flyer-cumbia-rosa",
+      "partner": {
+        "name": "Ritmo y Pasión Dance",
+        "url": "https://www.ritmoypasiondance.com"
+      },
+      "short": {
+        "en": "Cumbia class at 8:15pm, then dancing until 2am. $15 advance, $20 at the door.",
+        "es": "Clase de cumbia a las 8:15pm y baile hasta las 2am. $15 preventa, $20 en la puerta."
+      },
+      "long": {
+        "en": "Cumbia Rosa runs on the first Saturday of every month, presented by Ritmo y Pasión Dance. A beginner cumbia class with Maria and Rogelio starts at 8:15pm — no partner and no experience needed — then DJ Edge takes over and the floor stays open until 2am. Drink specials run all night. Tickets are $15 in advance and $20 at the door. Entry is 21 and over.",
+        "es": "Cumbia Rosa es cada primer sábado del mes, presentado por Ritmo y Pasión Dance. La clase de cumbia para principiantes con Maria y Rogelio empieza a las 8:15pm — sin pareja y sin experiencia — y después DJ Edge toma la cabina y la pista sigue abierta hasta las 2am. Hay especiales de bebidas toda la noche. Boletos $15 en preventa y $20 en la puerta. Solo mayores de 21."
+      },
+      "genre": "Cumbia"
+    },
+    {
+      "slug": "sonidero",
+      "name": {
+        "en": "Sonidero Nights",
+        "es": "Noches Sonideras"
+      },
+      "kicker": {
+        "en": "Select Saturdays",
+        "es": "Sábados selectos"
+      },
+      "byDay": "Saturday",
+      "startTime": "21:00",
+      "endTime": "02:00",
+      "age": "21+",
+      "image": "flyer-sonidero",
+      "short": {
+        "en": "Sonidero sound systems, cumbia sonidera and saludos. Tickets at the door, 9pm.",
+        "es": "Sonidos, cumbia sonidera y saludos. Boletos en taquilla, 9pm."
+      },
+      "long": {
+        "en": "Full sonidero nights with visiting sound systems and live saludos, starting at 9pm. Tickets are sold at the door only. Street food vendors set up on the patio for these nights. Entry is 21 and over.",
+        "es": "Noches sonideras completas con sonidos invitados y saludos en vivo, a partir de las 9pm. Los boletos se venden solo en taquilla. Hay vendedores de comida en el patio esas noches. Solo mayores de 21."
+      },
+      "genre": {
+        "en": "Cumbia sonidera",
+        "es": "Cumbia sonidera"
+      }
+    },
+    {
+      "slug": "live-music",
+      "name": {
+        "en": "Live Music Weekends",
+        "es": "Música en Vivo"
+      },
+      "kicker": {
+        "en": "Most Fridays & Saturdays",
+        "es": "Casi todos los viernes y sábados"
+      },
+      "byDay": "Friday",
+      "startTime": "19:00",
+      "endTime": "22:00",
+      "age": {
+        "en": "All ages until 8pm",
+        "es": "Todas las edades hasta las 8pm"
+      },
+      "short": {
+        "en": "Local bands and DJs — cumbia, rock en español, soul and more.",
+        "es": "Bandas y DJs locales — cumbia, rock en español, soul y más."
+      },
+      "long": {
+        "en": "Live sets from Sonoma County and North Bay artists, weighted toward Latin music, cumbia and rock en español, with soul and blues in the mix.",
+        "es": "Presentaciones en vivo de artistas del condado de Sonoma y el North Bay, con énfasis en música latina, cumbia y rock en español, además de soul y blues."
+      },
+      "genre": {
+        "en": "Live Music",
+        "es": "Música en vivo"
+      }
+    },
+    {
+      "slug": "drink-for-a-cause",
+      "name": {
+        "en": "Drink For A Cause",
+        "es": "Beber Por Una Causa"
+      },
+      "kicker": {
+        "en": "Quarterly benefit",
+        "es": "Evento benéfico trimestral"
+      },
+      "byDay": "Friday",
+      "startTime": "18:00",
+      "endTime": "21:00",
+      "age": {
+        "en": "All ages until 8pm",
+        "es": "Todas las edades hasta las 8pm"
+      },
+      "short": {
+        "en": "10% of the night goes to a Sonoma County nonprofit.",
+        "es": "El 10% de la noche apoya a una organización local."
+      },
+      "long": {
+        "en": "A recurring benefit night where 10% of proceeds go to a local nonprofit. Past partners include Latino Service Providers, which works on equity and wellbeing for Latinx youth and families in Sonoma County.",
+        "es": "Una noche benéfica donde el 10% de las ventas apoya a una organización local. Entre los socios anteriores está Latino Service Providers, que trabaja por la equidad y el bienestar de jóvenes y familias latinas en el condado de Sonoma."
+      },
+      "genre": {
+        "en": "Community",
+        "es": "Comunidad"
+      }
+    }
+  ],
+  "datedEvents": [
+    {
+      "seriesSlug": "sonidero",
+      "date": "2026-08-29",
+      "start": "21:00",
+      "end": "02:00",
+      "name": {
+        "en": "Sonidero Night",
+        "es": "Noche Sonidera"
+      },
+      "lineup": "Familia Linares · Beto Méndez",
+      "food": "Galindo's Street Hot Dogs",
+      "priceNote": {
+        "en": "Tickets at the door",
+        "es": "Boletos en taquilla"
+      },
+      "image": "flyer-sonidero"
+    },
+    {
+      "seriesSlug": "cumbia-rosa",
+      "date": "2026-09-05",
+      "start": "20:15",
+      "end": "02:00",
+      "name": "Cumbia Rosa",
+      "lineup": "DJ Edge · Clase con Maria y Rogelio",
+      "price": "15",
+      "priceNote": {
+        "en": "$15 advance / $20 door",
+        "es": "$15 preventa / $20 en la puerta"
+      },
+      "ticketUrl": "https://www.ritmoypasiondance.com",
+      "image": "flyer-cumbia-rosa"
+    }
+  ]
+}

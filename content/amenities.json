@@ -1,0 +1,64 @@
+{
+  "amenities": [
+    {
+      "name": {
+        "en": "Creekside patio",
+        "es": "Patio junto al arroyo"
+      },
+      "detail": {
+        "en": "Outdoor seating under mature oaks backing onto Santa Rosa Creek, strung with lights and warmed by heat lamps after dark.",
+        "es": "Asientos al aire libre bajo robles junto al arroyo de Santa Rosa, con luces colgantes y calentadores al anochecer."
+      }
+    },
+    {
+      "name": {
+        "en": "Family-friendly early",
+        "es": "Apto para familias temprano"
+      },
+      "detail": {
+        "en": "Families are welcome in the taproom and on the patio. Dance nights are 21 and over.",
+        "es": "Las familias son bienvenidas en el taproom y en el patio. Las noches de baile son solo para mayores de 21."
+      }
+    },
+    {
+      "name": {
+        "en": "Sports on the projector",
+        "es": "Deportes en pantalla"
+      },
+      "detail": {
+        "en": "Games go up on the bar wall plus screens around the room — NFL, NBA, MLB and fútbol.",
+        "es": "Los partidos se proyectan en la pared del bar y en pantallas por todo el salón — NFL, NBA, MLB y fútbol."
+      }
+    },
+    {
+      "name": {
+        "en": "Free parking",
+        "es": "Estacionamiento gratis"
+      },
+      "detail": {
+        "en": "Open surface lot on site. No permit, no validation, usually space even on event nights.",
+        "es": "Estacionamiento abierto en el lugar. Sin permiso ni validación, casi siempre hay espacio."
+      }
+    },
+    {
+      "name": {
+        "en": "Taco truck out back",
+        "es": "Camión de tacos atrás"
+      },
+      "detail": {
+        "en": "Freaking Tacos is the kitchen here, serving their full menu — tacos, burritos, tortas and plates.",
+        "es": "Freaking Tacos es la cocina aquí, con su menú completo — tacos, burritos, tortas y platillos."
+      }
+    },
+    {
+      "name": {
+        "en": "Room for big groups",
+        "es": "Espacio para grupos grandes"
+      },
+      "detail": {
+        "en": "Long communal tables inside, picnic tables and yard games outside.",
+        "es": "Mesas comunales adentro, mesas de picnic y juegos afuera."
+      }
+    }
+  ]
+}

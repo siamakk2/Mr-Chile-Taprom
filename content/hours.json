@@ -1,0 +1,110 @@
+{
+  "hours": [
+    {
+      "day": {
+        "en": "Monday",
+        "es": "Lunes"
+      },
+      "schemaDay": "Monday",
+      "open": null,
+      "close": null,
+      "label": {
+        "en": "Closed",
+        "es": "Cerrado"
+      }
+    },
+    {
+      "day": {
+        "en": "Tuesday",
+        "es": "Martes"
+      },
+      "schemaDay": "Tuesday",
+      "open": "15:00",
+      "close": "21:00",
+      "label": "3pm – 9pm"
+    },
+    {
+      "day": {
+        "en": "Wednesday",
+        "es": "Miércoles"
+      },
+      "schemaDay": "Wednesday",
+      "open": "15:00",
+      "close": "21:00",
+      "label": "3pm – 9pm"
+    },
+    {
+      "day": {
+        "en": "Thursday",
+        "es": "Jueves"
+      },
+      "schemaDay": "Thursday",
+      "open": "15:00",
+      "close": "21:00",
+      "label": "3pm – 9pm"
+    },
+    {
+      "day": {
+        "en": "Friday",
+        "es": "Viernes"
+      },
+      "schemaDay": "Friday",
+      "open": "15:00",
+      "close": "22:00",
+      "label": "3pm – 10pm"
+    },
+    {
+      "day": {
+        "en": "Saturday",
+        "es": "Sábado"
+      },
+      "schemaDay": "Saturday",
+      "open": "09:00",
+      "close": "22:00",
+      "label": "9am – 10pm"
+    },
+    {
+      "day": {
+        "en": "Sunday",
+        "es": "Domingo"
+      },
+      "schemaDay": "Sunday",
+      "open": "09:00",
+      "close": "17:00",
+      "label": "9am – 5pm"
+    }
+  ],
+  "happyHour": {
+    "name": {
+      "en": "Hoppy Hour",
+      "es": "Hoppy Hour"
+    },
+    "days": {
+      "en": "Tuesday to Friday",
+      "es": "Martes a viernes"
+    },
+    "schemaDays": [
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "opens": "16:00",
+    "closes": "18:00",
+    "window": "4pm – 6pm",
+    "deals": {
+      "en": [
+        "Bottled beer $4.99",
+        "Draft beer $5.99",
+        "Cocktails $6.99",
+        "Buy two or more drinks and get 15% off your Freaking Tacos order"
+      ],
+      "es": [
+        "Cerveza en botella $4.99",
+        "Cerveza de barril $5.99",
+        "Cócteles $6.99",
+        "Con dos bebidas o más, 15% de descuento en tu orden de Freaking Tacos"
+      ]
+    }
+  }
+}

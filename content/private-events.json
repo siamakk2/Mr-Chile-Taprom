@@ -1,0 +1,91 @@
+{
+  "privatePackages": [
+    {
+      "slug": "patio",
+      "name": {
+        "en": "Patio Buyout",
+        "es": "Patio Completo"
+      },
+      "capacity": {
+        "en": "Up to 80 guests",
+        "es": "Hasta 80 personas"
+      },
+      "best": {
+        "en": "Birthdays, quinceañeras, graduations, baby showers",
+        "es": "Cumpleaños, quinceañeras, graduaciones, baby showers"
+      },
+      "includes": {
+        "en": [
+          "Oak-shaded creekside patio",
+          "String lights and heat lamps",
+          "Picnic tables and yard games",
+          "Taco truck coordination"
+        ],
+        "es": [
+          "Patio con robles junto al arroyo",
+          "Luces colgantes y calentadores",
+          "Mesas de picnic y juegos",
+          "Coordinación con el camión de tacos"
+        ]
+      }
+    },
+    {
+      "slug": "back-room",
+      "name": {
+        "en": "Back Room",
+        "es": "Salón Trasero"
+      },
+      "capacity": {
+        "en": "25–45 guests",
+        "es": "25–45 personas"
+      },
+      "best": {
+        "en": "Company parties, team offsites, rehearsal dinners, memorials",
+        "es": "Fiestas de empresa, reuniones de equipo, cenas de ensayo, memoriales"
+      },
+      "includes": {
+        "en": [
+          "Semi-private seating",
+          "Projector for slideshows",
+          "Dedicated bartender",
+          "Reserved tab or drink tickets"
+        ],
+        "es": [
+          "Área semiprivada",
+          "Proyector para presentaciones",
+          "Bartender dedicado",
+          "Cuenta reservada o boletos de bebida"
+        ]
+      }
+    },
+    {
+      "slug": "full-venue",
+      "name": {
+        "en": "Full Venue Buyout",
+        "es": "Lugar Completo"
+      },
+      "capacity": {
+        "en": "Indoors and patio together",
+        "es": "Interior y patio juntos"
+      },
+      "best": {
+        "en": "Weddings, fundraisers, album releases, after-parties",
+        "es": "Bodas, eventos benéficos, lanzamientos, after-parties"
+      },
+      "includes": {
+        "en": [
+          "Indoor taproom plus the whole patio",
+          "Stage, PA and projector",
+          "Full bar and kitchen",
+          "Event staff on site"
+        ],
+        "es": [
+          "Taproom interior y todo el patio",
+          "Escenario, sonido y proyector",
+          "Bar y cocina completos",
+          "Personal de eventos"
+        ]
+      }
+    }
+  ]
+}

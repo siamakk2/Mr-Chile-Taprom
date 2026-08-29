@@ -6,9 +6,10 @@
   "type": "module",
   "scripts": {
     "prebuild": "node scripts/fetch-assets.mjs",
-    "build": "node build.mjs",
+    "build": "node --test test/*.test.mjs && node build.mjs",
     "images": "python3 scripts/build-images.py",
-    "dev": "node build.mjs && npx --yes serve public -l 3000"
+    "dev": "node build.mjs && npx --yes serve public -l 3000",
+    "test": "node --test test/*.test.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -92,8 +92,9 @@ Allow: /
 Disallow: /door/
 Disallow: /tickets/
 Disallow: /api/
+Disallow: /admin/
 
-${AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\nDisallow: /door/\nDisallow: /tickets/\nDisallow: /api/`).join('\n\n')}
+${AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\nDisallow: /door/\nDisallow: /tickets/\nDisallow: /api/\nDisallow: /admin/`).join('\n\n')}
 
 Sitemap: ${site.origin}/sitemap.xml
 `);
