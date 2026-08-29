@@ -135,13 +135,27 @@ export const humanSerial = (serial) => {
 };
 
 // --- Supabase (PostgREST + RPC) ----------------------------------------------
+/**
+ * Supabase has two generations of server key and they are not interchangeable
+ * in transport: the legacy JWT service_role key is accepted as a Bearer token,
+ * while the newer sb_secret_ keys are rejected in an Authorization header and
+ * must travel only as apikey. Sending both breaks the new format, so the
+ * header set is chosen from the key itself rather than assumed.
+ */
+const supabaseHeaders = () => {
+  const key = process.env.SUPABASE_SERVICE_KEY;
+  return key.startsWith('sb_')
+    ? { apikey: key }
+    : { apikey: key, authorization: `Bearer ${key}` };
+};
+
 export async function db(path, { method = 'GET', body, prefer } = {}) {
   requireEnv('SUPABASE_URL', 'SUPABASE_SERVICE_KEY');
-  const r = await fetch(`${process.env.SUPABASE_URL}/rest/v1/${path}`, {
+  const base = process.env.SUPABASE_URL.replace(/\/+$/, '');
+  const r = await fetch(`${base}/rest/v1/${path}`, {
     method,
     headers: {
-      apikey: process.env.SUPABASE_SERVICE_KEY,
-      authorization: `Bearer ${process.env.SUPABASE_SERVICE_KEY}`,
+      ...supabaseHeaders(),
       'content-type': 'application/json',
       ...(prefer ? { prefer } : {}),
     },

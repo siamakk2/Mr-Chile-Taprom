@@ -20,7 +20,13 @@ export default async function handler(req, res) {
   const present = (k) => Boolean(process.env[k]);
 
   add('SUPABASE_URL', present('SUPABASE_URL'), present('SUPABASE_URL') ? 'set' : 'missing');
-  add('SUPABASE_SERVICE_KEY', present('SUPABASE_SERVICE_KEY'), present('SUPABASE_SERVICE_KEY') ? 'set' : 'missing');
+  const k = process.env.SUPABASE_SERVICE_KEY || '';
+  add('SUPABASE_SERVICE_KEY', Boolean(k),
+    !k ? 'missing'
+      : k.startsWith('sb_secret_') ? 'set (new-style secret key)'
+      : k.startsWith('sb_publishable_') ? 'WRONG KEY — this is the publishable key; use the secret key'
+      : k.startsWith('eyJ') ? 'set (legacy service_role key)'
+      : 'set (unrecognised format)');
   add('SESSION_SECRET', present('SESSION_SECRET'), present('SESSION_SECRET') ? 'set' : 'missing');
   add('GITHUB_APP_ID', present('GITHUB_APP_ID'), process.env.GITHUB_APP_ID || 'missing');
   add('GITHUB_APP_PRIVATE_KEY', present('GITHUB_APP_PRIVATE_KEY'),
