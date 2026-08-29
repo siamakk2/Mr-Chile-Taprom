@@ -19,7 +19,12 @@ export default async function handler(req, res) {
 
   const present = (k) => Boolean(process.env[k]);
 
-  add('SUPABASE_URL', present('SUPABASE_URL'), present('SUPABASE_URL') ? 'set' : 'missing');
+  const url = (process.env.SUPABASE_URL || '').trim();
+  const looksRight = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/.test(url);
+  add('SUPABASE_URL', looksRight,
+    !url ? 'missing'
+      : looksRight ? url
+      : `${url}  <-- should be exactly https://<project-ref>.supabase.co with nothing after it`);
   const k = process.env.SUPABASE_SERVICE_KEY || '';
   add('SUPABASE_SERVICE_KEY', Boolean(k),
     !k ? 'missing'
@@ -51,7 +56,8 @@ export default async function handler(req, res) {
     const sites = await db('sites?select=slug,name');
     add('Database', true, `${sites.length} site(s): ${sites.map((s) => s.slug).join(', ')}`);
   } catch (e) {
-    add('Database', false, e.message);
+    const base = (process.env.SUPABASE_URL || '').trim().replace(/\/+$/, '');
+    add('Database', false, `${e.message} — tried ${base}/rest/v1/sites?select=slug,name`);
   }
 
   const ready = checks.every((c) => c.ok);
