@@ -27,8 +27,58 @@ const ALLOWED = {
 
 const MAX_VALUE = 2000;
 
+/**
+ * Lists that may have rows added or removed, and the ceiling on each.
+ *
+ * Deliberately not every list. series is absent because a recurring night owns
+ * a slug that appears in URLs, in the event schema and in the routing table -
+ * adding one from a form would produce a page that half exists. Those still
+ * go through a developer.
+ */
+const LISTS = {
+  'menu.json':           { 'menu': 12, 'menu[].items': 40 },
+  'events.json':         { 'datedEvents': 60 },
+  'faq.json':            { 'faqs': 40 },
+  'amenities.json':      { 'amenities': 24 },
+  'private-events.json': { 'privatePackages': 12 },
+};
+
+/** Match a concrete path like menu[2].items against the patterns above. */
+const listRule = (file, path) => {
+  const shape = path.replace(/\[\d+\]/g, '[]');
+  return LISTS[file]?.[shape];
+};
+
+/**
+ * A blank row shaped like the ones already there.
+ *
+ * Copying the shape rather than inventing one keeps the invariant the rest of
+ * the system relies on: a field that is an { en, es } pair everywhere stays a
+ * pair. A row added as a plain string would show up in the editor as an empty
+ * required field and block saving the whole screen - the exact bug that came
+ * from mixed shapes before.
+ */
+function blankLike(sample) {
+  if (Array.isArray(sample)) return [];
+  if (sample === null) return null;
+  if (typeof sample === 'boolean') return false;
+  if (typeof sample === 'number') return 0;
+  if (typeof sample === 'string') return '';
+  if (typeof sample === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(sample)) {
+      // Identifiers are left out entirely rather than blanked; an empty slug
+      // is worse than an absent one.
+      if (['slug', 'pageKey', 'image', 'byDay', 'byMonthWeek', 'schemaDay'].includes(k)) continue;
+      out[k] = blankLike(v);
+    }
+    return out;
+  }
+  return '';
+}
+
 export default async function handler(req, res) {
-  if (req.method !== 'PATCH' && req.method !== 'GET') {
+  if (!['GET', 'PATCH', 'POST'].includes(req.method)) {
     return json(res, 405, { error: 'method not allowed' });
   }
 
@@ -57,6 +107,9 @@ export default async function handler(req, res) {
     const body = JSON.parse((await readRaw(req)).toString() || '{}');
     const file = String(body.file || '');
     const path = String(body.path || '');
+
+    // POST handles structure: adding and removing rows.
+    if (req.method === 'POST') return structure(res, site, me, body, req);
 
     if (!Object.hasOwn(ALLOWED, file)) return json(res, 400, { error: `Not an editable file: ${file}` });
     const root = path.split(/[.[]/)[0];
@@ -110,6 +163,60 @@ export default async function handler(req, res) {
 }
 
 const truncate = (v) => String(v).slice(0, 80);
+
+/** Add or remove one row in a list, keeping the shape of its siblings. */
+async function structure(res, site, me, body, req) {
+  const file = String(body.file || '');
+  const path = String(body.path || '');
+  const op = String(body.op || '');
+
+  if (!Object.hasOwn(ALLOWED, file)) return json(res, 400, { error: `Not an editable file: ${file}` });
+  const max = listRule(file, path);
+  if (!max) return json(res, 400, { error: 'That list cannot be changed here.' });
+  if (!['add', 'remove'].includes(op)) return json(res, 400, { error: 'Unknown operation.' });
+
+  const { token } = await installationToken();
+  const repoPath = `content/${file}`;
+  const current = await gh(`/repos/${site.repo}/contents/${repoPath}`, { token });
+  const doc = JSON.parse(Buffer.from(current.content, 'base64').toString('utf8'));
+
+  const list = getPath(doc, path);
+  if (!Array.isArray(list)) return json(res, 400, { error: `${path} is not a list.` });
+
+  let detail;
+  if (op === 'add') {
+    if (list.length >= max) return json(res, 400, { error: `That list is limited to ${max} items.` });
+    if (!list.length) return json(res, 400, { error: 'Cannot add to an empty list from here yet.' });
+    list.push(blankLike(list[0]));
+    detail = `added row ${list.length} to ${path}`;
+  } else {
+    const index = Number(body.index);
+    if (!Number.isInteger(index) || index < 0 || index >= list.length) {
+      return json(res, 400, { error: 'No such row.' });
+    }
+    if (list.length <= 1) return json(res, 400, { error: 'Cannot remove the last one.' });
+    const [gone] = list.splice(index, 1);
+    detail = `removed ${path}[${index}] (${truncate(labelOf(gone))})`;
+  }
+
+  await gh(`/repos/${site.repo}/contents/${repoPath}`, {
+    token, method: 'PUT',
+    body: {
+      message: `${op === 'add' ? 'Add' : 'Remove'} item in ${file} via the site editor`,
+      content: Buffer.from(JSON.stringify(doc, null, 2) + '\n', 'utf8').toString('base64'),
+      sha: current.sha,
+      committer: { name: me.name || me.email, email: me.email },
+    },
+  });
+
+  await audit('content_structure', { editorId: me.id, email: me.email, detail: `${file}: ${detail}`, req });
+  return json(res, 200, { ok: true, count: list.length });
+}
+
+const labelOf = (row) => {
+  const v = row?.name ?? row?.section ?? row?.q ?? row?.date ?? '';
+  return typeof v === 'object' ? (v.en ?? '') : v;
+};
 
 async function gh(path, { token, method = 'GET', body } = {}) {
   const r = await fetch(`https://api.github.com${path}`, {

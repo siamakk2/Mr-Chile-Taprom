@@ -72,6 +72,12 @@ background:var(--chile);color:#fff;cursor:pointer}
 .center button{width:100%;font:600 1rem system-ui;padding:.85rem;border:0;border-radius:10px;
 background:var(--chile);color:#fff;cursor:pointer}
 .viewlink{font-size:.85rem}
+.rowacts{margin-top:.9rem;display:flex;justify-content:flex-end}
+button.del{font:inherit;font-size:.85rem;padding:.4rem .8rem;border-radius:8px;cursor:pointer;
+background:transparent;border:1px solid var(--chile);color:var(--chile)}
+button.add{font:600 .9rem system-ui;padding:.6rem 1rem;border-radius:9px;cursor:pointer;
+background:transparent;border:1px dashed var(--marigold);color:var(--marigold);width:100%;margin-top:.5rem}
+button.add:hover{background:rgba(240,168,48,.1)}
 </style></head>
 <body>
 <div id="app"><p class="center">Loading…</p></div>
@@ -98,6 +104,19 @@ background:var(--chile);color:#fff;cursor:pointer}
   // Never editable here: identifiers and machine values that would break links
   // or structured data if a human retyped them.
   var LOCKED = ['slug','pageKey','schemaDay','schemaDays','image','byDay','byMonthWeek','seriesSlug','id'];
+  // Mirrors the server's list. The server decides; this only shows the buttons,
+  // and showing one the server refuses would be worse than showing none.
+  var EDITABLE_LISTS = {
+    'menu.json':['menu','menu[].items'],
+    'events.json':['datedEvents'],
+    'faq.json':['faqs'],
+    'amenities.json':['amenities'],
+    'private-events.json':['privatePackages']
+  };
+  function canEditList(path){
+    var shape = path.replace(/\[\d+\]/g,'[]');
+    return (EDITABLE_LISTS[state.file]||[]).indexOf(shape) >= 0;
+  }
 
   var app = document.getElementById('app');
   var state = { file:null, data:null, dirty:{}, role:null, name:null };
@@ -192,15 +211,25 @@ background:var(--chile);color:#fff;cursor:pointer}
   }
 
   function list(arr,path,key){
+    var editable = canEditList(path) && state.role!=='viewer';
     var out='<fieldset><legend>'+esc(human(key))+'</legend>';
     for(var i=0;i<arr.length;i++){
       var item=arr[i];
       var title = item && (pick(item.name)||pick(item.section)||pick(item.q)||pick(item.day)||item.date||('Item '+(i+1)));
-      out+='<fieldset><legend>'+esc(title)+'</legend>'+
+      out+='<fieldset><legend>'+esc(title||('Item '+(i+1)))+'</legend>'+
         (typeof item==='object'&&item!==null?render(item,path+'['+i+']'):textField(item,path+'['+i+']',''))+
+        (editable&&arr.length>1?'<div class="rowacts"><button type="button" class="del" data-list="'+esc(path)+
+          '" data-i="'+i+'" data-title="'+esc(title||'this item')+'">Delete</button></div>':'')+
         '</fieldset>';
     }
+    if(editable){
+      out+='<button type="button" class="add" data-list="'+esc(path)+'">+ Add '+esc(singular(key))+'</button>';
+    }
     return out+'</fieldset>';
+  }
+  function singular(k){
+    var h=human(k).toLowerCase();
+    return h.replace(/ies$/,'y').replace(/s$/,'');
   }
   function pick(v){ return isPair(v)?v.en:(typeof v==='string'?v:null); }
 
@@ -254,6 +283,16 @@ background:var(--chile);color:#fff;cursor:pointer}
       });
     });
 
+    Array.prototype.forEach.call(document.querySelectorAll('button.add'),function(b){
+      b.addEventListener('click',function(){ structure('add', b.dataset.list, null, b); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('button.del'),function(b){
+      b.addEventListener('click',function(){
+        if(!confirm('Delete '+b.dataset.title+'? This cannot be undone from here.')) return;
+        structure('remove', b.dataset.list, Number(b.dataset.i), b);
+      });
+    });
+
     var save=document.getElementById('save'), reset=document.getElementById('reset');
     if(save) save.addEventListener('click',commit);
     if(reset) reset.addEventListener('click',function(){
@@ -271,6 +310,36 @@ background:var(--chile);color:#fff;cursor:pointer}
     st.textContent = readOnly ? 'You can look but not change.'
       : n ? (n===1?'1 change not saved':n+' changes not saved')
           : 'Signed in as '+state.name;
+  }
+
+  /**
+   * Adding or removing a row renumbers everything after it, so any unsaved
+   * edits keyed by index would land on the wrong item. Save first, then
+   * reload — refusing is safer than silently writing to the wrong row.
+   */
+  function structure(op, path, index, btn){
+    if(Object.keys(state.dirty).length){
+      alert('Save your other changes first — adding or deleting renumbers the list.');
+      return;
+    }
+    var st=document.getElementById('st');
+    btn.disabled=true; st.textContent = op==='add' ? 'Adding…' : 'Deleting…';
+    fetch('/api/content/',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({file:state.file,path:path,op:op,index:index})})
+      .then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
+      .then(function(res){
+        if(!res.ok){ btn.disabled=false; st.textContent=res.d.error||'Could not do that.'; return; }
+        // Re-read from the server so indices and titles match what was written.
+        var e=FILES.filter(function(f){return f.file===state.file;})[0];
+        open(e);
+        setTimeout(function(){
+          var m=document.getElementById('m');
+          if(m){ m.className='msg ok';
+            m.textContent = op==='add'
+              ? 'Added. Fill it in, then Save changes.'
+              : 'Deleted. Live in about a minute.'; }
+        }, 400);
+      }).catch(function(){ btn.disabled=false; st.textContent='Something went wrong.'; });
   }
 
   function commit(){
