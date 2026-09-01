@@ -16,7 +16,6 @@
             "en": "Local craft beer",
             "es": "Cerveza artesanal local"
           },
-          "price": "",
           "desc": {
             "en": "A rotating lineup weighted toward Sonoma County and North Bay breweries — IPAs, lagers, stouts and sours.",
             "es": "Selección rotativa de cervecerías del condado de Sonoma y el North Bay — IPAs, lagers, stouts y sours."
@@ -27,7 +26,6 @@
             "en": "Cider",
             "es": "Sidra"
           },
-          "price": "",
           "desc": {
             "en": "Dry and semi-dry ciders from California producers.",
             "es": "Sidras secas y semisecas de productores de California."
@@ -38,7 +36,6 @@
             "en": "Wine",
             "es": "Vino"
           },
-          "price": "",
           "desc": {
             "en": "Reds and whites by the glass.",
             "es": "Tintos y blancos por copa."
@@ -83,7 +80,6 @@
             "en": "Margarita",
             "es": "Margarita"
           },
-          "price": "",
           "desc": {
             "en": "Traditional, strawberry or passion fruit.",
             "es": "Tradicional, fresa o maracuyá."
@@ -494,7 +490,6 @@
             "en": "Non-alcoholic Corona",
             "es": "Corona sin alcohol"
           },
-          "price": "",
           "desc": {
             "en": "A cold one without the alcohol, same as everyone else is drinking.",
             "es": "Una fría sin alcohol, igual que la de todos."
@@ -505,7 +500,6 @@
             "en": "Lagunitas non-alcoholic IPA",
             "es": "IPA sin alcohol de Lagunitas"
           },
-          "price": "",
           "desc": {
             "en": "Hoppy and alcohol-free, brewed down the road in Petaluma.",
             "es": "Con lúpulo y sin alcohol, de Petaluma, aquí cerca."
@@ -516,7 +510,6 @@
             "en": "Mexican Coke",
             "es": "Mexican Coke"
           },
-          "price": "",
           "desc": {
             "en": "Cane sugar, glass bottle.",
             "es": "Azúcar de caña, botella de vidrio."
