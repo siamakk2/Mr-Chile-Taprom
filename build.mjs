@@ -7,6 +7,7 @@ import { layout } from './src/layout.mjs';
 import { PAGE_BUILDERS, notFoundPage } from './src/pages.mjs';
 import { doorPage } from './src/door.mjs';
 import { teamPage } from './src/team.mjs';
+import { adminApp } from './src/adminApp.mjs';
 
 // Deploys are git-triggered from main; the production branch is set in
 // Vercel under Settings > Environments > Production > Branch Tracking.
@@ -49,6 +50,7 @@ writeFileSync(join(OUT, 'door', 'index.html'), doorPage());
 // still. Not cached long, since it is fetched once per login.
 mkdirSync(join(OUT, 'admin'), { recursive: true });
 copyFileSync(join('static', 'img', 'logo-horizontal.png'), join(OUT, 'admin', 'logo.png'));
+writeFileSync(join(OUT, 'admin', 'index.html'), adminApp());
 
 // Managing who has access is a different job from editing content, so it gets
 // its own page rather than being wedged into the CMS.

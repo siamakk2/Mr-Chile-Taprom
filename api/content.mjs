@@ -28,7 +28,9 @@ const ALLOWED = {
 const MAX_VALUE = 2000;
 
 export default async function handler(req, res) {
-  if (req.method !== 'PATCH') return json(res, 405, { error: 'method not allowed' });
+  if (req.method !== 'PATCH' && req.method !== 'GET') {
+    return json(res, 405, { error: 'method not allowed' });
+  }
 
   try {
     const me = await currentEditor(req);
@@ -38,6 +40,19 @@ export default async function handler(req, res) {
     const site = sites[0];
     if (!site) return json(res, 403, { error: 'No site assigned.' });
     if (site.role === 'viewer') return json(res, 403, { error: 'Viewers cannot make changes.' });
+
+    // GET returns a whole content file so the admin can render forms from it.
+    if (req.method === 'GET') {
+      const want = new URL(req.url, 'https://x').searchParams.get('file') || '';
+      if (!Object.hasOwn(ALLOWED, want)) return json(res, 400, { error: `Not a content file: ${want}` });
+      const { token } = await installationToken();
+      const file0 = await gh(`/repos/${site.repo}/contents/content/${want}`, { token });
+      return json(res, 200, {
+        file: want,
+        role: site.role,
+        data: JSON.parse(Buffer.from(file0.content, 'base64').toString('utf8')),
+      });
+    }
 
     const body = JSON.parse((await readRaw(req)).toString() || '{}');
     const file = String(body.file || '');
