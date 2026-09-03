@@ -86,24 +86,6 @@
           "Personal de eventos"
         ]
       }
-    },
-    {
-      "name": {
-        "en": "",
-        "es": ""
-      },
-      "capacity": {
-        "en": "",
-        "es": ""
-      },
-      "best": {
-        "en": "",
-        "es": ""
-      },
-      "includes": {
-        "en": [],
-        "es": []
-      }
     }
   ]
 }
