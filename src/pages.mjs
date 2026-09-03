@@ -18,6 +18,31 @@ const cms = (file, path, value, loc) => {
   return ` data-cms="${file}:${path}${isPair ? `.${loc}` : ''}"`;
 };
 
+/**
+ * Contextual links into the guides.
+ *
+ * The guides were reachable only from the footer and their own index — two
+ * links each, against fourteen for every other page. Internal links are one of
+ * the signals Google weighs when deciding a page is worth indexing, and four
+ * nearly-orphaned pages look like filler.
+ *
+ * Placed where they are relevant rather than blanket-dropped: someone reading
+ * about booking the room wants the quinceañera timeline, not a cumbia lesson.
+ */
+const relatedGuides = (slugs, loc) => {
+  const items = GUIDES.filter((g) => slugs.includes(g.slug.en));
+  if (!items.length) return '';
+  return `<section class="band band--tight">
+<div class="wrap">
+<span class="eyebrow">${esc(L(UI.guidesLabel, loc))}</span>
+<ul class="dates" style="margin-top:1.25rem">
+${items.map((g) => `<li><a href="${ROUTES.guides[loc]}${g.slug[loc]}/">
+<span class="dates__d">${esc(L(g.title, loc))}</span></a></li>`).join('')}
+</ul>
+</div>
+</section>`;
+};
+
 const g = S.graph;
 const t = (k, loc) => L(UI[k], loc);
 const mapUrl = `https://www.google.com/maps/search/?api=1&query=${site.lat},${site.lng}`;
@@ -370,6 +395,8 @@ ${s.partner ? `<a class="pill pill--gold" href="${s.partner.url}" rel="noopener"
 </div>
 </section>
 
+${relatedGuides(['what-is-a-sonidero', 'cumbia-for-beginners'], loc)}
+
 <section class="band band--alt">
 <div class="wrap grid grid--split">
 <div><span class="eyebrow">${esc(c('privEyebrow', loc))}</span><h2>${esc(c('privH', loc))}</h2></div>
@@ -479,6 +506,8 @@ ${pic('patio-tacos', loc === 'es' ? 'Sombrillas rojas sobre mesas de picnic con 
 </div>
 </div>
 </section>
+
+${relatedGuides(['planning-a-quinceanera-in-santa-rosa', 'private-event-venue-checklist'], loc)}
 
 <section class="band" id="inquire">
 <div class="wrap grid grid--split">
@@ -722,6 +751,8 @@ ${PICADO}
 <div class="wrap">${faqBlock(faqs, loc)}</div>
 </section>
 
+${relatedGuides(['planning-a-quinceanera-in-santa-rosa', 'cumbia-for-beginners'], loc)}
+
 <section class="band band--chile">
 <div class="wrap grid grid--split">
 <div><span class="eyebrow">${loc === 'es' ? '¿Todavía lo piensas?' : 'Still deciding?'}</span>
@@ -958,6 +989,8 @@ ${dates.map((d, i) => `<li${i === 0 ? ' data-next="true"' : ''}><span class="dat
 <div>${faqBlock(faqObjs, loc)}</div>
 </div>
 </section>
+
+${relatedGuides(['cumbia-for-beginners', 'what-is-a-sonidero'], loc)}
 
 <section class="band band--chile">
 <div class="wrap grid grid--split">
